@@ -16,6 +16,7 @@
 package com.coralblocks.coralqueue.multiplexer;
 
 /**
+ * A holder for a multiplexer producer. It contains a reference to the multiplexer and the producer index.
  * 
  * @param <E> The mutable transfer object to be used by this queue
  */
@@ -29,18 +30,36 @@ public class Producer<E> {
 		this.mux = mux;
 	}
 	
+	/**
+	 * Delegates to the multiplexer with the right producer index.
+	 * 
+	 * @return the next object to dispatch
+	 */
 	public final E nextToDispatch() {
 		return mux.nextToDispatch(index);
 	}
 	
+	/**
+	 * Delegates to the multiplexer with the right producer index.
+	 * 
+	 * @param lazySet true for lazy or false for immediately
+	 */
 	public final void flush(boolean lazySet) {
 		mux.flush(index, lazySet);
 	}
 	
+	/**
+	 * Delegates to the multiplexer with the right producer index.
+	 */
 	public final void flush() {
 		mux.flush(index);
 	}
 	
+	/**
+	 * Return the zero-based index of this producer
+	 * 
+	 * @return the zero-based index of this producer
+	 */
 	public final int getIndex() {
 		return index;
 	}
