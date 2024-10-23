@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package com.coralblocks.coralqueue;
+package com.coralblocks.coralqueue.queue;
 
 /**
  * <p>A Queue API that allows offering and polling objects to and from the queue. Implementations should naturally/natively support batching (for speed) and pooling (for zero garbage).
