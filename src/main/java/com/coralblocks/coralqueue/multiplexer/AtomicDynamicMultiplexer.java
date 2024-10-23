@@ -48,11 +48,11 @@ public class AtomicDynamicMultiplexer<E> implements DynamicMultiplexer<E> {
 	private final List<AvailHolder<E>> availHolders;
 	
 	/**
-	 * Creates a <code>DynamicAtomicMultiplexer</code> with the given capacity and number of initial producers using the given {@link Builder} to populate it.
+	 * Creates a <code>AtomicDynamicMultiplexer</code> with the given capacity and number of initial producers using the given {@link Builder} to populate it.
 	 * 
-	 * @param capacity the capacity of the <code>DynamicAtomicMultiplexer</code>
-	 * @param builder the {@link Builder} used to populate the <code>DynamicAtomicMultiplexer</code>
-	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
+	 * @param capacity the capacity of the <code>AtomicDynamicMultiplexer</code>
+	 * @param builder the {@link Builder} used to populate the <code>AtomicDynamicMultiplexer</code>
+	 * @param initialNumberOfProducers the initial number of producers that will use this <code>AtomicDynamicMultiplexer</code>
 	 */
     public AtomicDynamicMultiplexer(final int capacity, final Builder<E> builder, final int initialNumberOfProducers) {
 		
@@ -80,31 +80,31 @@ public class AtomicDynamicMultiplexer<E> implements DynamicMultiplexer<E> {
 	}
     
 	/**
-	 * Creates a <code>DynamicAtomicMultiplexer</code> with the default capacity (1024) and number of initial producers using the given {@link Builder} to populate it.
+	 * Creates a <code>AtomicDynamicMultiplexer</code> with the default capacity (1024) and number of initial producers using the given {@link Builder} to populate it.
 	 * 
-	 * @param builder the {@link Builder} used to populate the <code>DynamicAtomicMultiplexer</code>
-	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
+	 * @param builder the {@link Builder} used to populate the <code>AtomicDynamicMultiplexer</code>
+	 * @param initialNumberOfProducers the number of producers that will use this <code>AtomicDynamicMultiplexer</code>
 	 */
     public AtomicDynamicMultiplexer(final Builder<E> builder, final int initialNumberOfProducers) {
     	this(DEFAULT_CAPACITY, builder, initialNumberOfProducers);
     }
 	
 	/**
-	 * Creates a <code>DynamicAtomicMultiplexer</code> with the given capacity and number of initial producers using the given class to populate it.
+	 * Creates a <code>AtomicDynamicMultiplexer</code> with the given capacity and number of initial producers using the given class to populate it.
 	 * 
-	 * @param capacity the capacity of the <code>DynamicAtomicMultiplexer</code>
-	 * @param klass the class used to populate the <code>DynamicAtomicMultiplexer</code>
-	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
+	 * @param capacity the capacity of the <code>AtomicDynamicMultiplexer</code>
+	 * @param klass the class used to populate the <code>AtomicDynamicMultiplexer</code>
+	 * @param initialNumberOfProducers the number of producers that will use this <code>AtomicDynamicMultiplexer</code>
 	 */
 	public AtomicDynamicMultiplexer(final int capacity, final Class<E> klass, final int initialNumberOfProducers) {
 		this(capacity, Builder.createBuilder(klass), initialNumberOfProducers);
 	}
 	
 	/**
-	 * Creates a <code>DynamicAtomicMultiplexer</code> with the default capacity (1024) and number of initial producers using the given class to populate it.
+	 * Creates a <code>AtomicDynamicMultiplexer</code> with the default capacity (1024) and number of initial producers using the given class to populate it.
 	 * 
-	 * @param klass the class used to populate the <code>DynamicAtomicMultiplexer</code>
-	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
+	 * @param klass the class used to populate the <code>AtomicDynamicMultiplexer</code>
+	 * @param initialNumberOfProducers the number of producers that will use this <code>AtomicDynamicMultiplexer</code>
 	 */
 	public AtomicDynamicMultiplexer(final Class<E> klass, final int initialNumberOfProducers) {
 		this(DEFAULT_CAPACITY, klass, initialNumberOfProducers);
