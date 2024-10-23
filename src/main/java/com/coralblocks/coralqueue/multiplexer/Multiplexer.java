@@ -28,7 +28,7 @@ public interface Multiplexer<E> {
 	 * <p>Clear the multiplexer, so that it can be re-used.</p>
 	 * 
 	 * <p>Make sure you only call this method when the multiplexer is idle, in other words, when you are sure
-	 * there are currently no threads accessing the multiplexer. Also note that all consumer threads must be dead or you
+	 * there are currently no threads accessing the multiplexer. Also note that the consumer thread must be dead or you
 	 * might run into visibility problems.</p>
 	 */
 	public void clear();
@@ -91,7 +91,7 @@ public interface Multiplexer<E> {
 
 	/**
 	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
-	 * you poll what you can/want to poll and call this method to signal the producers that you are done.</p>
+	 * you poll what you can/want to poll and call this method to signal the producer threads that you are done.</p>
 	 * 
 	 * @param lazySet true to notify the producers in a lazy way or false to notify the producers <b>immediately</b>
 	 */

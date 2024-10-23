@@ -36,7 +36,7 @@ public interface Queue<E> {
 	 * <p>Clear the queue, so that it can be re-used.</p>
 	 * 
 	 * <p>Make sure you only call this method when the queue is idle, in other words, when you are sure
-	 * there are currently no threads accessing the queue. Also note that all consumer threads must be dead or you
+	 * there are currently no threads accessing the queue. Also note that the consumer thread must be dead or you
 	 * might run into visibility problems.</p>
 	 */
 	public void clear();
@@ -103,6 +103,9 @@ public interface Queue<E> {
 	/**
 	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
 	 * you poll what you can/want to poll and call this method to signal the producer that you are done.</p>
+	 * 
+	 * <p><b>NOTE:</b> This method only needs to be called if there was something available to be polled by the consumer, in other words,
+	 * if {@link #availableToPoll()} returned zero then this method does not need to be called.</p>
 	 * 
 	 * @param lazySet true to notify the producer in a lazy way or false to notify the producer <b>immediately</b>
 	 */
