@@ -15,10 +15,16 @@
  */
 package com.coralblocks.coralqueue.demultiplexer;
 
+import com.coralblocks.coralqueue.queue.AtomicQueue;
 import com.coralblocks.coralqueue.util.Builder;
 import com.coralblocks.coralqueue.util.MathUtils;
-import com.coralblocks.coralqueue.queue.AtomicQueue;
 
+/**
+ * An implementation of {@link Demultiplexer} that uses <i>memory barriers</i> to synchronize producer and consumers sequences.
+ * Two different consumers will never poll the same message.
+ *
+ * @param <E> The mutable transfer object to be used by this demultiplexer
+ */
 public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	
 	private final static int DEFAULT_CAPACITY = 1024;
@@ -30,6 +36,13 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	private int currConsumerIndex = 0;
 	private final Consumer<E>[] consumers;
 
+	/**
+	 * Creates an <code>AtomicDemultiplexer</code> with the given capacity and number of consumers using the given {@link Builder} to populate it.
+	 * 
+	 * @param capacity the capacity of the <code>AtomicDemultiplexer</code>
+	 * @param builder the {@link Builder} used to populate the <code>AtomicDemultiplexer</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicDemultiplexer</code>
+	 */
 	@SuppressWarnings("unchecked")
 	public AtomicDemultiplexer(int capacity, Builder<E> builder, int numberOfConsumers) {
 		MathUtils.ensurePowerOfTwo(capacity);
@@ -44,16 +57,35 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 		}
 	}
 
+	/**
+	 * Creates an <code>AtomicDemultiplexer</code> with the default capacity (1024) and number of consumers using the given {@link Builder} to populate it.
+	 * 
+	 * @param builder the {@link Builder} used to populate the <code>AtomicDemultiplexer</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicDemultiplexer</code>
+	 */
 	public AtomicDemultiplexer(Builder<E> builder, int numberOfConsumers) {
 		this(DEFAULT_CAPACITY, builder, numberOfConsumers);
 	}
 	
-	public AtomicDemultiplexer(Class<E> klass, int numberOfConsumers) {
-		this(Builder.createBuilder(klass), numberOfConsumers);
-	}
-	
+	/**
+	 * Creates an <code>AtomicDemultiplexer</code> with the given capacity and number of consumers using the given class to populate it.
+	 * 
+	 * @param capacity the capacity of the <code>AtomicDemultiplexer</code>
+	 * @param klass the class used to populate the <code>AtomicDemultiplexer</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicDemultiplexer</code>
+	 */
 	public AtomicDemultiplexer(int capacity, Class<E> klass, int numberOfConsumers) {
 		this(capacity, Builder.createBuilder(klass), numberOfConsumers);
+	}
+	
+	/**
+	 * Creates an <code>AtomicDemultiplexer</code> with the default capacity (1024) and number of consumers using the given class to populate it.
+	 * 
+	 * @param klass the class used to populate the <code>AtomicDemultiplexer</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicDemultiplexer</code>
+	 */
+	public AtomicDemultiplexer(Class<E> klass, int numberOfConsumers) {
+		this(Builder.createBuilder(klass), numberOfConsumers);
 	}
 	
 	@Override
