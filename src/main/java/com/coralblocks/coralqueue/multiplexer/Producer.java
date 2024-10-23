@@ -18,7 +18,7 @@ package com.coralblocks.coralqueue.multiplexer;
 /**
  * A holder for a multiplexer producer. It contains a reference to the multiplexer and the producer index.
  * 
- * @param <E> The mutable transfer object to be used by this queue
+ * @param <E> The mutable transfer object to be used by this multiplexer
  */
 public class Producer<E> {
 	
