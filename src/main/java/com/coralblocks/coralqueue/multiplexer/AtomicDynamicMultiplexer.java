@@ -33,7 +33,7 @@ import com.coralblocks.coralqueue.util.ObjectPool;
  * 
  * @param <E>The mutable transfer object to be used by this multiplexer
  */
-public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
+public class AtomicDynamicMultiplexer<E> implements DynamicMultiplexer<E> {
 	
 	private final static int DEFAULT_CAPACITY = 1024;
 	
@@ -54,7 +54,7 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
 	 * @param builder the {@link Builder} used to populate the <code>DynamicAtomicMultiplexer</code>
 	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
 	 */
-    public AtomicDynamicDemultiplexer(final int capacity, final Builder<E> builder, final int initialNumberOfProducers) {
+    public AtomicDynamicMultiplexer(final int capacity, final Builder<E> builder, final int initialNumberOfProducers) {
 		
 		Builder<Queue<E>> poolBuilder = new Builder<Queue<E>>() {
 			@Override
@@ -85,7 +85,7 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
 	 * @param builder the {@link Builder} used to populate the <code>DynamicAtomicMultiplexer</code>
 	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
 	 */
-    public AtomicDynamicDemultiplexer(final Builder<E> builder, final int initialNumberOfProducers) {
+    public AtomicDynamicMultiplexer(final Builder<E> builder, final int initialNumberOfProducers) {
     	this(DEFAULT_CAPACITY, builder, initialNumberOfProducers);
     }
 	
@@ -96,7 +96,7 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
 	 * @param klass the class used to populate the <code>DynamicAtomicMultiplexer</code>
 	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
 	 */
-	public AtomicDynamicDemultiplexer(final int capacity, final Class<E> klass, final int initialNumberOfProducers) {
+	public AtomicDynamicMultiplexer(final int capacity, final Class<E> klass, final int initialNumberOfProducers) {
 		this(capacity, Builder.createBuilder(klass), initialNumberOfProducers);
 	}
 	
@@ -106,7 +106,7 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
 	 * @param klass the class used to populate the <code>DynamicAtomicMultiplexer</code>
 	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
 	 */
-	public AtomicDynamicDemultiplexer(final Class<E> klass, final int initialNumberOfProducers) {
+	public AtomicDynamicMultiplexer(final Class<E> klass, final int initialNumberOfProducers) {
 		this(DEFAULT_CAPACITY, klass, initialNumberOfProducers);
 	}
 	
