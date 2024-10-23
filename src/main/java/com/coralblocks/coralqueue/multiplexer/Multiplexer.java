@@ -20,7 +20,7 @@ package com.coralblocks.coralqueue.multiplexer;
  * 
  * <p><b>NOTE:</b> A multiplexer must have a <b>fixed</b> number of producers specified by its constructor.</p>
  *
- * @param <E> The mutable transfer object to be used by this queue
+ * @param <E> The mutable transfer object to be used by this multiplexer
  */
 public interface Multiplexer<E> {
 	
