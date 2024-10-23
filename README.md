@@ -13,4 +13,10 @@ The Queue allows a single producer thread sending messages to the queue and a si
 
 <img src="images/Mux.png" alt="Queue" width="50%" height="50%" />
 
-The Multiplexer allows a multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM.
+The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM.
+
+## Demultiplexer
+
+<img src="images/Demux.png" alt="Queue" width="50%" height="50%" />
+
+The Demultiplexer allows a single producer thread sending messages to the demultiplexer and multiple consumer threads receiving messages from the demultiplexer, all running inside the same JVM. `Note that messages are not duplicated by the demultiplexer.` They are distributed to the consumer threads, in other words, a message is processed only once by one of the consumers.
