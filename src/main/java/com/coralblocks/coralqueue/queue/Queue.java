@@ -94,14 +94,14 @@ public interface Queue<E> {
 	public E poll();
 	
 	/**
-	 * aaaa
+	 * Replace the last polled object by the given one.
 	 * 
-	 * @param newVal bbb
+	 * @param newVal the new object to replace the last polled object from this queue
 	 */
 	public void replace(E newVal);
 
 	/**
-	 * <p>Must be called to indicate that all polling have been concluded, in other words, 
+	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
 	 * you poll what you can/want to poll and call this method to signal the producer that you are done.</p>
 	 * 
 	 * @param lazySet true to notify the producer in a lazy way or false to notify the producer <b>immediately</b>
