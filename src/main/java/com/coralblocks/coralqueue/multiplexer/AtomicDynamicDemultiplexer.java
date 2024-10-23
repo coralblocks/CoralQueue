@@ -33,8 +33,8 @@ import com.coralblocks.coralqueue.util.ObjectPool;
  * 
  * @param <E>The mutable transfer object to be used by this multiplexer
  */
-public class DynamicAtomicMultiplexer<E> implements DynamicMultiplexer<E> {
-
+public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
+	
 	private static class AvailHolder<E> {
 		long[] avail;
 		Queue<E> queue;
@@ -52,7 +52,7 @@ public class DynamicAtomicMultiplexer<E> implements DynamicMultiplexer<E> {
 	 * @param builder the {@link Builder} used to populate the <code>DynamicAtomicMultiplexer</code>
 	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
 	 */
-    public DynamicAtomicMultiplexer(final int capacity, final Builder<E> builder, final int initialNumberOfProducers) {
+    public AtomicDynamicDemultiplexer(final int capacity, final Builder<E> builder, final int initialNumberOfProducers) {
 		
 		Builder<Queue<E>> poolBuilder = new Builder<Queue<E>>() {
 			@Override
@@ -84,7 +84,7 @@ public class DynamicAtomicMultiplexer<E> implements DynamicMultiplexer<E> {
 	 * @param klass the class used to populate the <code>DynamicAtomicMultiplexer</code>
 	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
 	 */
-	public DynamicAtomicMultiplexer(final int capacity, final Class<E> klass, final int initialNumberOfProducers) {
+	public AtomicDynamicDemultiplexer(final int capacity, final Class<E> klass, final int initialNumberOfProducers) {
 		this(capacity, Builder.createBuilder(klass), initialNumberOfProducers);
 	}
 	

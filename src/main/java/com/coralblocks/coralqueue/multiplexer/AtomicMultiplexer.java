@@ -26,6 +26,8 @@ import com.coralblocks.coralqueue.util.Builder;
  */
 public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	
+	private final static int DEFAULT_CAPACITY = 1024;
+	
 	private final int numberOfProducers;
 	private final Queue<E>[] queues;
 	private final long[] avail;
@@ -54,6 +56,16 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	}
 	
 	/**
+	 * Creates an <code>AtomicMultiplexer</code> with the default capacity (1024) and number of producers using the given {@link Builder} to populate it.
+	 * 
+	 * @param builder the {@link Builder} used to populate the <code>AtomicMultiplexer</code>
+	 * @param numberOfProducers the number of producers that will use this <code>AtomicMultiplexer</code>
+	 */
+	public AtomicMultiplexer(Builder<E> builder, int numberOfProducers) {
+		this(DEFAULT_CAPACITY, builder, numberOfProducers);
+	}
+	
+	/**
 	 * Creates an <code>AtomicMultiplexer</code> with the given capacity and number of producers using the given class to populate it.
 	 * 
 	 * @param capacity the capacity of the <code>AtomicMultiplexer</code>
@@ -62,6 +74,16 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	 */
 	public AtomicMultiplexer(int capacity, Class<E> klass, int numberOfProducers) {
 		this(capacity, Builder.createBuilder(klass), numberOfProducers);
+	}
+	
+	/**
+	 * Creates an <code>AtomicMultiplexer</code> with the default capacity (1024) and number of producers using the given class to populate it.
+	 * 
+	 * @param klass the class used to populate the <code>AtomicMultiplexer</code>
+	 * @param numberOfProducers the number of producers that will use this <code>AtomicMultiplexer</code>
+	 */
+	public AtomicMultiplexer(Class<E> klass, int numberOfProducers) {
+		this(DEFAULT_CAPACITY, klass, numberOfProducers);
 	}
 	
 	@Override
