@@ -16,7 +16,7 @@
 package com.coralblocks.coralqueue.multiplexer;
 
 /**
- * <p>The Multiplexer API that allows allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer.</p>
+ * <p>The Multiplexer API that allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer.</p>
  * 
  * <p><b>NOTE:</b> A multiplexer must have a <b>fixed</b> number of producers specified by its constructor.</p>
  *
