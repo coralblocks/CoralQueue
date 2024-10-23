@@ -35,6 +35,8 @@ import com.coralblocks.coralqueue.util.ObjectPool;
  */
 public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
 	
+	private final static int DEFAULT_CAPACITY = 1024;
+	
 	private static class AvailHolder<E> {
 		long[] avail;
 		Queue<E> queue;
@@ -76,6 +78,16 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
 		this.availHolderPool = new LinkedObjectPool<AvailHolder<E>>(initialNumberOfProducers, availBuilder);
 		this.availHolders = new ArrayList<AvailHolder<E>>(initialNumberOfProducers * 2);
 	}
+    
+	/**
+	 * Creates a <code>DynamicAtomicMultiplexer</code> with the default capacity (1024) and number of initial producers using the given {@link Builder} to populate it.
+	 * 
+	 * @param builder the {@link Builder} used to populate the <code>DynamicAtomicMultiplexer</code>
+	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
+	 */
+    public AtomicDynamicDemultiplexer(final Builder<E> builder, final int initialNumberOfProducers) {
+    	this(DEFAULT_CAPACITY, builder, initialNumberOfProducers);
+    }
 	
 	/**
 	 * Creates a <code>DynamicAtomicMultiplexer</code> with the given capacity and number of initial producers using the given class to populate it.
@@ -86,6 +98,16 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicMultiplexer<E> {
 	 */
 	public AtomicDynamicDemultiplexer(final int capacity, final Class<E> klass, final int initialNumberOfProducers) {
 		this(capacity, Builder.createBuilder(klass), initialNumberOfProducers);
+	}
+	
+	/**
+	 * Creates a <code>DynamicAtomicMultiplexer</code> with the default capacity (1024) and number of initial producers using the given class to populate it.
+	 * 
+	 * @param klass the class used to populate the <code>DynamicAtomicMultiplexer</code>
+	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
+	 */
+	public AtomicDynamicDemultiplexer(final Class<E> klass, final int initialNumberOfProducers) {
+		this(DEFAULT_CAPACITY, klass, initialNumberOfProducers);
 	}
 	
 	@Override
