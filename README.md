@@ -11,12 +11,18 @@ The Queue allows a single producer thread sending messages to the queue and a si
 
 ## Multiplexer
 
-<img src="images/Mux.png" alt="Queue" width="50%" height="50%" />
+<img src="images/Mux.png" alt="Multiplexer" width="50%" height="50%" />
 
 The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM.
 
 ## Demultiplexer
 
-<img src="images/Demux.png" alt="Queue" width="50%" height="50%" />
+<img src="images/Demux.png" alt="Demultiplexer" width="50%" height="50%" />
 
-The Demultiplexer allows a single producer thread sending messages to the demultiplexer and multiple consumer threads receiving messages from the demultiplexer, all running inside the same JVM. `Note that messages are not duplicated by the demultiplexer.` They are distributed to the consumer threads, in other words, a message is processed only once by one of the consumers.
+The Demultiplexer allows a single producer thread sending messages to the demultiplexer and multiple consumer threads receiving messages from the demultiplexer, all running inside the same JVM. `Note that messages are not duplicated by the demultiplexer.` They are distributed across the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is completely undetermined.`
+
+## MpMc
+
+<img src="images/MpMc.png" alt="MpMc" width="50%" height="50%" />
+
+The MpMc (i.e. Multiple Producers Multiple Consumers) allows multiple producer threads sending messages to the mpmc and multiple consumer threads receiving messages from the mpmc, all running inside the same JVM. `Note that messages are not duplicated by the mpmc.` They are distributed across the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is completely undetermined.`
