@@ -13,13 +13,13 @@ The Queue allows a single producer thread sending messages to the queue and a si
 
 <img src="images/Mux.png" alt="Multiplexer" width="50%" height="50%" />
 
-The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM. A multiplexer can be static (with a fixed number of producers) or dynamic (new producers can join at any time). Dynamic multiplexers are a bit slower than static multiplexers.
+The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM. A multiplexer can be static (with a fixed number of producers) or dynamic (new producers can join at any time). Dynamic multiplexers are slower than static multiplexers because they require locks.
 
 ## Demultiplexer
 
 <img src="images/Demux.png" alt="Demultiplexer" width="50%" height="50%" />
 
-The Demultiplexer allows a single producer thread sending messages to the demultiplexer and multiple consumer threads receiving messages from the demultiplexer, all running inside the same JVM. `Note that messages are not duplicated by the demultiplexer.` They are distributed among the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is undetermined.`
+The Demultiplexer allows a single producer thread sending messages to the demultiplexer and multiple consumer threads receiving messages from the demultiplexer, all running inside the same JVM. `Note that messages are not duplicated by the demultiplexer.` They are distributed among the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is undetermined.` A demultiplexer can be static (with a fixed number of consumers) or dynamic (new consumers can join at any time). Dynamic demultiplexers are slower than static demultiplexers because they require locks.
 
 ## MpMc
 
