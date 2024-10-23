@@ -13,7 +13,7 @@ The Queue allows a single producer thread sending messages to the queue and a si
 
 <img src="images/Mux.png" alt="Multiplexer" width="50%" height="50%" />
 
-The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM.
+The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM. A multiplexer can be static (with a fixed number of producers) or dynamic (new producers can join at any time).
 
 ## Demultiplexer
 
