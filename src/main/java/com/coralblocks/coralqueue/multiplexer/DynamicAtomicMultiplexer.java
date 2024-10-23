@@ -84,8 +84,8 @@ public class DynamicAtomicMultiplexer<E> implements DynamicMultiplexer<E> {
 	 * @param klass the class used to populate the <code>DynamicAtomicMultiplexer</code>
 	 * @param initialNumberOfProducers the number of producers that will use this <code>DynamicAtomicMultiplexer</code>
 	 */
-	public DynamicAtomicMultiplexer(final int size, final Class<E> klass, final int initialNumberOfProducers) {
-		this(size, Builder.createBuilder(klass), initialNumberOfProducers);
+	public DynamicAtomicMultiplexer(final int capacity, final Class<E> klass, final int initialNumberOfProducers) {
+		this(capacity, Builder.createBuilder(klass), initialNumberOfProducers);
 	}
 	
 	@Override
