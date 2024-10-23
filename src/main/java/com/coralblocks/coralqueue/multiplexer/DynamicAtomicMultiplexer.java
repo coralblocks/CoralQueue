@@ -29,7 +29,7 @@ import com.coralblocks.coralqueue.util.ObjectPool;
 /**
  * An implementation of {@link DynamicMultiplexer} that uses <i>memory barriers</i> to synchronize producers and consumer sequences.
  * 
- * It uses an <code>IdentityMap + Thread.currentThread()</code> to maintain its producers, that can be added and removed dynamically.
+ * It uses an <code>IdentityMap + Thread.currentThread()</code> to maintain its producers, that can be added dynamically.
  * 
  * @param <E>The mutable transfer object to be used by this multiplexer
  */
