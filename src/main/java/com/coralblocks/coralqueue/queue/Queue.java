@@ -77,7 +77,7 @@ public interface Queue<E> {
 	 * 
 	 * <p>If the queue is empty, this method returns 0.</p>
 	 * 
-	 * @return number of objects that can be polled
+	 * @return the number of objects that can be polled
 	 */
 	public long availableToPoll();
 
