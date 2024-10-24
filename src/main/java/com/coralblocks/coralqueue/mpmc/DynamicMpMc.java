@@ -91,4 +91,19 @@ public interface DynamicMpMc<E> {
 	 * <p>That's the same as calling <code>donePolling(false)</code>, in other words, the producers will be notified <b>immediately</b> that polling is done.</p>
 	 */
 	public void donePolling();
+	
+	/**
+	 * Return the current number of consumers that this mpmc has.
+	 * 
+	 * @return the current number of consumers
+	 */
+	public int getNumberOfConsumers();
+	
+	/**
+	 * Return the current number of producers that this mpmc has.
+	 * 
+	 * @return the current number of producers
+	 */
+	public int getNumberOfProducers();
+	
 }
