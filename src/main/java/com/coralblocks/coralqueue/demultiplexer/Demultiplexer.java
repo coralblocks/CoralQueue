@@ -109,10 +109,10 @@ public interface Demultiplexer<E> {
 	public void donePolling(int consumerIndex, boolean lazySet);
 	
 	/**
-	 * <p>That's the same as calling <code>donePolling(consumerIndex, false)</code>, in other words, the producers will be notified <b>immediately</b> that polling is done.
+	 * <p>That's the same as calling <code>donePolling(consumerIndex, false)</code>, in other words, the producer will be notified <b>immediately</b> that polling is done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * @param consumerIndex he index of the consumer thread calling this method
+	 * @param consumerIndex the index of the consumer thread calling this method
 	 */
 	public void donePolling(int consumerIndex);
 	
