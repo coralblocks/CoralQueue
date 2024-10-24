@@ -26,7 +26,7 @@ package com.coralblocks.coralqueue.mpmc;
 public interface MpMc<E> {
 	
 	/**
-	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc.</p>
+	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc. The producer thread calling this method must pass its producer index.</p>
 	 * 
 	 * <p>If no object is currently available (i.e. the mpmc is full) this method returns null.</p>
 	 * 
@@ -36,7 +36,7 @@ public interface MpMc<E> {
 	public E nextToDispatch(int producerIndex);
 	
 	/**
-	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc.
+	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc. The producer thread calling this method must pass its producer index.
 	 * This method allows you to specify the consumer that you want to receive the message.</p>
 	 * 
 	 * <p>If no object is currently available (i.e. the mpmc is full) this method returns null.</p>
@@ -48,7 +48,7 @@ public interface MpMc<E> {
 	public E nextToDispatch(int producerIndex, int toConsumerIndex);
 
 	/**
-	 * <p>Dispatch/Flush all previously obtained objects through the {@link #nextToDispatch(int)} method to the consumers.</p>
+	 * <p>Dispatch/Flush all previously obtained objects through the {@link #nextToDispatch(int)} method to the consumers. The producer thread calling this method must pass its producer index.</p>
 	 * 
 	 * @param producerIndex the index of the producer to use
 	 * @param lazySet true to flush (i.e. notify the consumers) in a lazy way or false to flush <b>immediately</b>
@@ -56,7 +56,7 @@ public interface MpMc<E> {
 	public void flush(int producerIndex, boolean lazySet);
 	
 	/**
-	 * <p>Dispatch <b>immediately</b> all previously obtained objects through the {@link #nextToDispatch(int)} method to the consumers.
+	 * <p>Dispatch <b>immediately</b> all previously obtained objects through the {@link #nextToDispatch(int)} method to the consumers. The producer thread calling this method must pass its producer index.
 	 * Note that this is the same as calling <code>flush(producerIndex, false)</code>.</p>
 	 * 
 	 * @param producerIndex the index of the producer to use
