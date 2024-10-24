@@ -53,6 +53,30 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	}
 	
 	@Override
+	public E nextToDispatch(int producerIndex) {
+		Producer<E> producer = getProducer(producerIndex);
+		return producer.nextToDispatch();
+	}
+	
+	@Override
+	public E nextToDispatch(int producerIndex, int toConsumerIndex) {
+		Producer<E> producer = getProducer(producerIndex);
+		return producer.nextToDispatch(toConsumerIndex);
+	}
+	
+	@Override
+	public void flush(int producerIndex, boolean lazySet) {
+		Producer<E> producer = getProducer(producerIndex);
+		producer.flush(lazySet);
+	}
+	
+	@Override
+	public void flush(int producerIndex) {
+		Producer<E> producer = getProducer(producerIndex);
+		producer.flush();
+	}
+	
+	@Override
 	public Producer<E> nextProducer() {
 		synchronized(producers) {
 			if (currProducerIndex == producers.length) return null;

@@ -26,6 +26,44 @@ package com.coralblocks.coralqueue.mpmc;
 public interface MpMc<E> {
 	
 	/**
+	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc.</p>
+	 * 
+	 * <p>If no object is currently available (i.e. the mpmc is full) this method returns null.</p>
+	 * 
+	 * @param producerIndex the index of the producer to use
+	 * @return the next mutable object that can be used by the given producer or null if the mpmc is full
+	 */
+	public E nextToDispatch(int producerIndex);
+	
+	/**
+	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc.
+	 * This method allows you to specify the consumer that you want to receive the message.</p>
+	 * 
+	 * <p>If no object is currently available (i.e. the mpmc is full) this method returns null.</p>
+	 * 
+	 * @param producerIndex the index of the producer to use
+	 * @param toConsumerIndex the consumer that you want to receive the message
+	 * @return the next mutable object that can be used by the given producer or null if the mpmc is full
+	 */
+	public E nextToDispatch(int producerIndex, int toConsumerIndex);
+
+	/**
+	 * <p>Dispatch/Flush all previously obtained objects through the {@link #nextToDispatch(int)} method to the consumers.</p>
+	 * 
+	 * @param producerIndex the index of the producer to use
+	 * @param lazySet true to flush (i.e. notify the consumers) in a lazy way or false to flush <b>immediately</b>
+	 */
+	public void flush(int producerIndex, boolean lazySet);
+	
+	/**
+	 * <p>Dispatch <b>immediately</b> all previously obtained objects through the {@link #nextToDispatch(int)} method to the consumers.
+	 * Note that this is the same as calling <code>flush(producerIndex, false)</code>.</p>
+	 * 
+	 * @param producerIndex the index of the producer to use
+	 */
+	public void flush(int producerIndex);
+	
+	/**
 	 * Return the next producer that can be used or null if all producers were already returned.
 	 * 
 	 * @return the next produced to be used or null
