@@ -91,34 +91,4 @@ public interface DynamicMpMc<E> {
 	 * <p>That's the same as calling <code>donePolling(false)</code>, in other words, the producers will be notified <b>immediately</b> that polling is done.</p>
 	 */
 	public void donePolling();
-	
-	/**
-	 * Return the next producer that can be used or null if all producers were already returned.
-	 * 
-	 * @return the next produced to be used or null
-	 */
-	public Producer<E> nextProducer();
-	
-	/**
-	 * Return the producer corresponding to the given index. If a bad index is given this method throws a <code>RuntimeException</code>.
-	 * 
-	 * @param index the producer index
-	 * @return the producer for the given index
-	 */
-	public Producer<E> getProducer(int index);
-	
-	/**
-	 * Return the next consumer that can be used or null if all consumers were already returned.
-	 * 
-	 * @return the next consumer to be used or null
-	 */
-	public Consumer<E> nextConsumer();
-	
-	/**
-	 * Return the consumer corresponding to the given index. If a bad index is given this method throws a <code>RuntimeException</code>.
-	 * 
-	 * @param index the consumer index
-	 * @return the consumer for the given index
-	 */
-	public Consumer<E> getConsumer(int index);
 }
