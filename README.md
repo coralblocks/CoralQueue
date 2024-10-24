@@ -1,5 +1,5 @@
 # CoralQueue
-CoralQueue is a ultra-low-latency, lock-free and garbage-free concurrent circular queue for inter-thread communication. It uses memory barriers instead of locks to allow Java Threads (producers and consumers) to exchange messages as fast as possible.
+CoralQueue is a ultra-low-latency, lock-free and garbage-free concurrent circular queue for inter-thread communication. It uses memory barriers instead of locks to allow Java Threads (producers and consumers) to exchange messages as fast as possible. For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
 It comes in many flavors for you to choose: Queue (one-producer-to-one-consumer), Multiplexer (many-producers-to-one-consumer), Demultiplexer (one-producer-to-many-consumers), MpMc (many-producers-to-many-consumers), etc.
 
@@ -25,4 +25,4 @@ The Demultiplexer allows a single producer thread sending messages to the demult
 
 <img src="images/MpMc.png" alt="MpMc" width="50%" height="50%" />
 
-The MpMc (i.e. Multiple Producers Multiple Consumers) allows multiple producer threads sending messages to the mpmc and multiple consumer threads receiving messages from the mpmc, all running inside the same JVM. `Note that messages are not duplicated by the mpmc.` They are distributed among the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is undetermined.`
+The MpMc (i.e. Multiple Producers / Multiple Consumers) allows multiple producer threads sending messages to the mpmc and multiple consumer threads receiving messages from the mpmc, all running inside the same JVM. `Note that messages are not duplicated by the mpmc.` They are distributed among the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is undetermined.`
