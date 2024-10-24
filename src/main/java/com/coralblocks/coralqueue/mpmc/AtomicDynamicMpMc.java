@@ -27,6 +27,13 @@ import com.coralblocks.coralqueue.util.LinkedObjectPool;
 import com.coralblocks.coralqueue.util.MutableLong;
 import com.coralblocks.coralqueue.util.ObjectPool;
 
+/**
+ * An implementation of {@link DynamicMpMc} that uses <i>memory barriers</i> and locks to synchronize producers and consumers.
+ * 
+ * It uses an <code>IdentityMap + Thread.currentThread()</code> to maintain its consumers and producers, that can be added dynamically.
+ *
+ * @param <E> The mutable transfer object to be used by this mpmc
+ */
 public class AtomicDynamicMpMc<E> implements DynamicMpMc<E> {
 	
 	private final static int DEFAULT_CAPACITY = 1024;
@@ -38,18 +45,48 @@ public class AtomicDynamicMpMc<E> implements DynamicMpMc<E> {
 	private final ObjectPool<List<MutableLong>> listPool;
 	private final ObjectPool<MutableLong> mlPool;
 	
+	/**
+	 * Creates an <code>AtomicDynamicMpMc</code> with the default capacity (1024) and number of initial consumers and producers using the given class to populate it.
+	 * 
+	 * @param klass the class used to populate the <code>AtomicDynamicMpMc</code>
+	 * @param initialNumberOfProducers the initial number of producers that will use this <code>AtomicDynamicMpMc</code>
+	 * @param initialNumberOfConsumers the initial number of consumers that will use this <code>AtomicDynamicMpMc</code>
+	 */
 	public AtomicDynamicMpMc(Class<E> klass, int initialNumberOfProducers, int initialNumberOfConsumers) {
 		this(DEFAULT_CAPACITY, klass, initialNumberOfProducers, initialNumberOfConsumers);
 	}
 	
+	/**
+	 * Creates an <code>AtomicDynamicMpMc</code> with the given capacity and number of initial consumers and producers using the given class to populate it.
+	 * 
+	 * @param capacity the capacity of the <code>AtomicDynamicMpMc</code>
+	 * @param klass the class used to populate the <code>AtomicDynamicMpMc</code>
+	 * @param initialNumberOfProducers the initial number of producers that will use this <code>AtomicDynamicMpMc</code>
+	 * @param initialNumberOfConsumers the initial number of consumers that will use this <code>AtomicDynamicMpMc</code>
+	 */
 	public AtomicDynamicMpMc(int capacity, Class<E> klass, int initialNumberOfProducers, int initialNumberOfConsumers) {
 		this(capacity, Builder.createBuilder(klass), initialNumberOfProducers, initialNumberOfConsumers);
 	}
 	
+	/**
+	 * Creates an <code>AtomicDynamicMpMc</code> with the default capacity (1024) and number of initial consumers and producers using the given {@link Builder} to populate it.
+	 * 
+	 * @param builder the {@link Builder} used to populate the <code>AtomicDynamicMpMc</code>
+	 * @param initialNumberOfProducers the initial number of producers that will use this <code>AtomicDynamicMpMc</code>
+	 * @param initialNumberOfConsumers the initial number of consumers that will use this <code>AtomicDynamicMpMc</code>
+	 */	
 	public AtomicDynamicMpMc(Builder<E> builder, int initialNumberOfProducers, int initialNumberOfConsumers) {
 		this(DEFAULT_CAPACITY, builder, initialNumberOfProducers, initialNumberOfConsumers);
 	}
 	
+	/**
+	 * Creates an <code>AtomicDynamicMpMc</code> with the given capacity and number of initial consumers and producers using the given {@link Builder} to populate it.
+	 * 
+	 * @param capacity the capacity of the <code>AtomicDynamicMpMc</code>
+	 * @param builder the {@link Builder} used to populate the <code>AtomicDynamicMpMc</code>
+	 * @param initialNumberOfProducers the initial number of producers that will use this <code>AtomicDynamicMpMc</code>
+	 * @param initialNumberOfConsumers the initial number of consumers that will use this <code>AtomicDynamicMpMc</code>
+	 */
     public AtomicDynamicMpMc(int capacity, Builder<E> builder, int initialNumberOfProducers, int initialNumberOfConsumers) {
 
 		Builder<DynamicDemultiplexer<E>> demuxBuilder = new Builder<DynamicDemultiplexer<E>>() {

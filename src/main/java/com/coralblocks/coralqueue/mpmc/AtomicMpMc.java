@@ -19,6 +19,12 @@ import com.coralblocks.coralqueue.demultiplexer.AtomicDemultiplexer;
 import com.coralblocks.coralqueue.demultiplexer.Demultiplexer;
 import com.coralblocks.coralqueue.util.Builder;
 
+/**
+ * An implementation of {@link MpMc} that uses <i>memory barriers</i> to synchronize producers and consumers sequences.
+ * Two different consumers will never poll the same message.
+ *
+ * @param <E> The mutable transfer object to be used by this mpmc
+ */
 public class AtomicMpMc<E> implements MpMc<E> {
 	
 	private final static int DEFAULT_CAPACITY = 1024;
@@ -29,18 +35,48 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	private int currProducerIndex = 0;
 	private int currConsumerIndex = 0;
 	
+	/**
+	 * Creates an <code>AtomicMpMc</code> with the default capacity (1024) and number of consumers and producers using the given class to populate it.
+	 * 
+	 * @param klass the class used to populate the <code>AtomicMpMc</code>
+	 * @param numberOfProducers the number of producers that will use this <code>AtomicMpMc</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicMpMc</code>
+	 */
 	public AtomicMpMc(Class<E> klass, int numberOfProducers, int numberOfConsumers) {
 		this(DEFAULT_CAPACITY, klass, numberOfProducers, numberOfConsumers);
 	}
 	
+	/**
+	 * Creates an <code>AtomicMpMc</code> with the given capacity and number of consumers and producers using the given class to populate it.
+	 * 
+	 * @param capacity the capacity of the <code>AtomicMpMc</code>
+	 * @param klass the class used to populate the <code>AtomicMpMc</code>
+	 * @param numberOfProducers the number of producers that will use this <code>AtomicMpMc</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicMpMc</code>
+	 */
 	public AtomicMpMc(int capacity, Class<E> klass, int numberOfProducers, int numberOfConsumers) {
 		this(capacity, Builder.createBuilder(klass), numberOfProducers, numberOfConsumers);
 	}
 	
+	/**
+	 * Creates an <code>AtomicMpMc</code> with the default capacity (1024) and number of consumers and producers using the given {@link Builder} to populate it.
+	 * 
+	 * @param builder the {@link Builder} used to populate the <code>AtomicMpMc</code>
+	 * @param numberOfProducers the number of producers that will use this <code>AtomicMpMc</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicMpMc</code>
+	 */
 	public AtomicMpMc(Builder<E> builder, int numberOfProducers, int numberOfConsumers) {
 		this(DEFAULT_CAPACITY, builder, numberOfProducers, numberOfConsumers);
 	}
 	
+	/**
+	 * Creates an <code>AtomicMpMc</code> with the given capacity and number of consumers and producers using the given {@link Builder} to populate it.
+	 * 
+	 * @param capacity the capacity of the <code>AtomicMpMc</code>
+	 * @param builder the {@link Builder} used to populate the <code>AtomicMpMc</code>
+	 * @param numberOfProducers the number of producers that will use this <code>AtomicMpMc</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicMpMc</code>
+	 */
 	@SuppressWarnings("unchecked")
     public AtomicMpMc(int capacity, Builder<E> builder, int numberOfProducers, int numberOfConsumers) {
 		this.demuxes = (Demultiplexer<E>[]) new Demultiplexer[numberOfProducers];
