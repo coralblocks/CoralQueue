@@ -1,7 +1,7 @@
 # CoralQueue
 CoralQueue is a ultra-low-latency, lock-free and garbage-free concurrent circular queue for inter-thread communication. It uses memory barriers instead of locks to allow Java Threads (producers and consumers) to exchange messages as fast as possible. For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
-It comes in many flavors for you to choose: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), Demultiplexer (one-producer-to-many-consumers), MpMc (many-producers-to-many-consumers), etc.
+It comes in many flavors for you to choose: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), etc.
 
 ## Queue
 
