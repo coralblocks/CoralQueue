@@ -21,14 +21,24 @@ import com.coralblocks.coralqueue.util.Builder;
 
 public class AtomicMpMc<E> implements MpMc<E> {
 	
+	private final static int DEFAULT_CAPACITY = 1024;
+	
 	private final Demultiplexer<E>[] demuxes;
 	private final Producer<E>[] producers;
 	private final Consumer<E>[] consumers;
 	private int currProducerIndex = 0;
 	private int currConsumerIndex = 0;
 	
+	public AtomicMpMc(Class<E> klass, int numberOfProducers, int numberOfConsumers) {
+		this(DEFAULT_CAPACITY, klass, numberOfProducers, numberOfConsumers);
+	}
+	
 	public AtomicMpMc(int capacity, Class<E> klass, int numberOfProducers, int numberOfConsumers) {
 		this(capacity, Builder.createBuilder(klass), numberOfProducers, numberOfConsumers);
+	}
+	
+	public AtomicMpMc(Builder<E> builder, int numberOfProducers, int numberOfConsumers) {
+		this(DEFAULT_CAPACITY, builder, numberOfProducers, numberOfConsumers);
 	}
 	
 	@SuppressWarnings("unchecked")
