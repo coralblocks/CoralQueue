@@ -64,6 +64,47 @@ public interface MpMc<E> {
 	public void flush(int producerIndex);
 	
 	/**
+	 * <p>Return the number of objects that can be safely polled from this mpmc consumer. The consumer thread calling this method must pass its consumer index.</p>
+	 * 
+	 * <p>If the mpmc is empty, this method returns 0.</p>
+	 * 
+	 * @param consumerIndex the index of the consumer thread calling this method
+	 * @return number of objects that can be polled
+	 */
+	public long availableToPoll(int consumerIndex);
+	
+	/**
+	 * <p>Poll an object from the mpmc. You can only call this method after calling {@link #availableToPoll(int)} so you
+	 * know for sure what is the maximum number of times you can call this method. The consumer thread calling this method must pass its consumer index.</p>
+	 * 
+	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
+	 * Read what you need to read from the object and release its reference.
+	 * The object returned should be treated as a <i>data transfer object</i> therefore you should read what you need from it and let it go.</p>
+	 * 
+	 * @param consumerIndex the index of the consumer thread calling this method
+	 * @return a data transfer object from the mpmc
+	 */
+	public E poll(int consumerIndex);
+	
+	/**
+	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
+	 * you poll what you can/want to poll and call this method to signal the producer threads that you are done.
+	 * The consumer thread calling this method must pass its consumer index.</p>
+	 * 
+	 * @param consumerIndex he index of the consumer thread calling this method
+	 * @param lazySet true to notify the producers in a lazy way or false to notify the producers <b>immediately</b>
+	 */
+	public void donePolling(int consumerIndex, boolean lazySet);
+	
+	/**
+	 * <p>That's the same as calling <code>donePolling(consumerIndex, false)</code>, in other words, the producers will be notified <b>immediately</b> that polling is done.
+	 * The consumer thread calling this method must pass its consumer index.</p>
+	 * 
+	 * @param consumerIndex the index of the consumer thread calling this method
+	 */
+	public void donePolling(int consumerIndex);
+	
+	/**
 	 * Return the next producer that can be used or null if all producers were already returned.
 	 * 
 	 * @return the next produced to be used or null

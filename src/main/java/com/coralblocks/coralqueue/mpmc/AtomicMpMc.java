@@ -77,6 +77,30 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	}
 	
 	@Override
+	public long availableToPoll(int consumerIndex) {
+		Consumer<E> consumer = getConsumer(consumerIndex);
+		return consumer.availableToPoll();
+	}
+	
+	@Override
+	public E poll(int consumerIndex) {
+		Consumer<E> consumer = getConsumer(consumerIndex);
+		return consumer.poll();
+	}
+	
+	@Override
+	public void donePolling(int consumerIndex, boolean lazySet) {
+		Consumer<E> consumer = getConsumer(consumerIndex);
+		consumer.donePolling(lazySet);
+	}
+	
+	@Override
+	public void donePolling(int consumerIndex) {
+		Consumer<E> consumer = getConsumer(consumerIndex);
+		consumer.donePolling();
+	}
+	
+	@Override
 	public Producer<E> nextProducer() {
 		synchronized(producers) {
 			if (currProducerIndex == producers.length) return null;
