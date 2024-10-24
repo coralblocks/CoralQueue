@@ -73,10 +73,12 @@ public class AtomicDynamicMultiplexer<E> implements DynamicMultiplexer<E> {
 			}
 		};
 		
-		this.queuePool = new LinkedObjectPool<Queue<E>>(initialNumberOfProducers, poolBuilder);
-		this.queues = new IdentityMap<Thread, Queue<E>>(initialNumberOfProducers * 2);
+		int extraFactor = 5;
+		
+		this.queuePool = new LinkedObjectPool<Queue<E>>(initialNumberOfProducers * 2, poolBuilder); // times 2 to avoid late allocation
+		this.queues = new IdentityMap<Thread, Queue<E>>(initialNumberOfProducers * extraFactor);
 		this.availHolderPool = new LinkedObjectPool<AvailHolder<E>>(initialNumberOfProducers, availBuilder);
-		this.availHolders = new ArrayList<AvailHolder<E>>(initialNumberOfProducers * 2);
+		this.availHolders = new ArrayList<AvailHolder<E>>(initialNumberOfProducers * extraFactor);
 	}
     
 	/**

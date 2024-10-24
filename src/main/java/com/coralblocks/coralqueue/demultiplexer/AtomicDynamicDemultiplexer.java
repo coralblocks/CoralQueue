@@ -69,7 +69,7 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicDemultiplexer<E> {
 			}
 		};
 		
-		this.queuePool = new LinkedObjectPool<AtomicQueue<E>>(initialNumberOfConsumers, poolBuilder);
+		this.queuePool = new LinkedObjectPool<AtomicQueue<E>>(initialNumberOfConsumers * 2, poolBuilder); // times 2 to avoid late allocation
 		
 		this.numberOfConsumers = 0; // consumers need to come along later to be counted
 	}
