@@ -149,17 +149,17 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicDemultiplexer<E> {
 	}
 	
 	@Override
-	public synchronized final E nextToDispatch(int consumerIndex) {
+	public synchronized final E nextToDispatch(int toConsumerIndex) {
 		
-		if (consumerIndex < 0) return nextToDispatch(); // fall back to regular implementation...
+		if (toConsumerIndex < 0) return nextToDispatch(); // fall back to regular implementation...
 		
-		if (consumerIndex >= numberOfConsumers) {
-			throw new RuntimeException("Bad consumerIndex: " + consumerIndex + " numberOfConsumers=" + numberOfConsumers);
+		if (toConsumerIndex >= numberOfConsumers) {
+			throw new RuntimeException("Bad toConsumerIndex: " + toConsumerIndex + " numberOfConsumers=" + numberOfConsumers);
 		}
 		
-		E e = queues.get(consumerIndex).nextToDispatch();
+		E e = queues.get(toConsumerIndex).nextToDispatch();
 		if (e != null) {
-			needsToFlush.set(consumerIndex, Boolean.TRUE);
+			needsToFlush.set(toConsumerIndex, Boolean.TRUE);
 			return e;
 		}
 		return null;

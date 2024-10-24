@@ -133,17 +133,17 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	}
 	
 	@Override
-	public final E nextToDispatch(int consumerIndex) {
+	public final E nextToDispatch(int toConsumerIndex) {
 		
-		if (consumerIndex < 0) return nextToDispatch(); // fall back to regular implementation...
+		if (toConsumerIndex < 0) return nextToDispatch(); // fall back to regular implementation...
 		
-		if (consumerIndex >= numberOfConsumers) {
-			throw new RuntimeException("Bad consumerIndex: " + consumerIndex + " numberOfConsumers=" + numberOfConsumers);
+		if (toConsumerIndex >= numberOfConsumers) {
+			throw new RuntimeException("Bad toConsumerIndex: " + toConsumerIndex + " numberOfConsumers=" + numberOfConsumers);
 		}
 		
-		E e = queues[consumerIndex].nextToDispatch();
+		E e = queues[toConsumerIndex].nextToDispatch();
 		if (e != null) {
-			needsToFlush[consumerIndex] = true;
+			needsToFlush[toConsumerIndex] = true;
 			return e;
 		}
 		return null;

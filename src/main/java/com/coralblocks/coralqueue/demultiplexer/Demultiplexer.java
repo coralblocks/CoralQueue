@@ -49,10 +49,10 @@ public interface Demultiplexer<E> {
 	 * 
 	 * <p>If no object is currently available (i.e. the demultiplexer is full) this method returns null.</p>
 	 * 
-	 * @param consumerIndex the consumer that you want to receive the message
+	 * @param toConsumerIndex the consumer that you want to receive the message
 	 * @return the next mutable object that can be used by the producer or null if the demultiplexer is full
 	 */
-	public E nextToDispatch(int consumerIndex);
+	public E nextToDispatch(int toConsumerIndex);
 
 	/**
 	 * <p>Dispatch/Flush all previously obtained objects through the {@link #nextToDispatch()} method to the consumer.</p>
