@@ -16,6 +16,7 @@
 package com.coralblocks.coralqueue.mpmc;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.coralblocks.coralqueue.demultiplexer.AtomicDynamicDemultiplexer;
@@ -35,6 +36,7 @@ public class AtomicDynamicMpMc<E> implements DynamicMpMc<E> {
 	private final IdentityMap<Thread, DynamicDemultiplexer<E>> producerToDemuxes;
 	private final IdentityMap<Thread, List<MutableLong>> consumerToLongs;
 	private final ObjectPool<List<MutableLong>> listPool;
+	private final ObjectPool<MutableLong> mlPool;
 	
 	public AtomicDynamicMpMc(Class<E> klass, int initialNumberOfProducers, int initialNumberOfConsumers) {
 		this(DEFAULT_CAPACITY, klass, initialNumberOfProducers, initialNumberOfConsumers);
@@ -69,6 +71,15 @@ public class AtomicDynamicMpMc<E> implements DynamicMpMc<E> {
 		};
 		
 		listPool = new LinkedObjectPool<List<MutableLong>>(initialNumberOfConsumers * extraFactor, listBuilder);
+		
+		Builder<MutableLong> mlBuilder = new Builder<MutableLong>() {
+			@Override
+			public MutableLong newInstance() {
+				return new MutableLong(-1L);
+			}
+		};
+		
+		mlPool = new LinkedObjectPool<MutableLong>(initialNumberOfProducers * extraFactor * initialNumberOfConsumers * extraFactor, mlBuilder);
 				
 		producerToDemuxes = new IdentityMap<Thread, DynamicDemultiplexer<E>>(initialNumberOfProducers * extraFactor);
 		consumerToLongs = new IdentityMap<Thread, List<MutableLong>>(initialNumberOfConsumers * extraFactor);
@@ -84,6 +95,30 @@ public class AtomicDynamicMpMc<E> implements DynamicMpMc<E> {
 			demuxes.add(demux);
 		}
 		return demux;
+	}
+	
+	@Override
+	public synchronized final void clear() {
+		
+		for(int i = 0; i < demuxes.size(); i++) {
+			demuxes.get(i).clear();
+			demuxPool.release(demuxes.get(i));
+		}
+		
+		demuxes.clear();
+		producerToDemuxes.clear();
+		
+		Iterator<List<MutableLong>> iter = consumerToLongs.iterator();
+		while(iter.hasNext()) {
+			List<MutableLong> list = iter.next();
+			for(int i = 0; i < list.size(); i++) {
+				mlPool.release(list.get(i));
+			}
+			list.clear();
+			listPool.release(list);
+		}
+		
+		consumerToLongs.clear();
 	}
 	
 	@Override
@@ -119,7 +154,9 @@ public class AtomicDynamicMpMc<E> implements DynamicMpMc<E> {
 		for(int i = 0; i < size; i++) {
 			long x = demuxes.get(i).availableToPoll();
 			if (avail.size() == i) {
-				avail.add(new MutableLong(x));
+				MutableLong ml = mlPool.get();
+				ml.set(x);
+				avail.add(ml);
 			} else {
 				avail.get(i).set(x == 0 ? -1 : x);
 			}

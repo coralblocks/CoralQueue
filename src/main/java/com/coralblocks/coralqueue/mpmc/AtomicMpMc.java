@@ -63,6 +63,15 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	}
 	
 	@Override
+	public void clear() {
+		for(int i = 0; i < demuxes.length; i++) {
+			demuxes[i].clear();
+		}
+		currProducerIndex = 0;
+		currConsumerIndex = 0;
+	}
+	
+	@Override
 	public E nextToDispatch(int producerIndex) {
 		Producer<E> producer = getProducer(producerIndex);
 		return producer.nextToDispatch();
@@ -140,5 +149,15 @@ public class AtomicMpMc<E> implements MpMc<E> {
 			throw new RuntimeException("Tried to get a consumer with a bad index: " + index);
 		}
 		return consumers[index];
+	}
+	
+	@Override
+	public int getNumberOfConsumers() {
+		return consumers.length;
+	}
+	
+	@Override
+	public int getNumberOfProducers() {
+		return producers.length;
 	}
 }

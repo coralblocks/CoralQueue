@@ -26,6 +26,15 @@ package com.coralblocks.coralqueue.mpmc;
 public interface DynamicMpMc<E> {
 	
 	/**
+	 * <p>Clear the mpmc, so that it can be re-used.</p>
+	 * 
+	 * <p>Make sure you only call this method when the mpmc is idle, in other words, when you are sure
+	 * there are currently no threads accessing the mpmc. Also note that all consumer threads must be dead or you
+	 * might run into visibility problems.</p>
+	 */
+	public void clear();
+	
+	/**
 	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc.</p>
 	 * 
 	 * <p>If no object is currently available (i.e. the mpmc is full) this method returns null.</p>

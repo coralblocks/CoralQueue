@@ -26,6 +26,15 @@ package com.coralblocks.coralqueue.mpmc;
 public interface MpMc<E> {
 	
 	/**
+	 * <p>Clear the mpmc, so that it can be re-used.</p>
+	 * 
+	 * <p>Make sure you only call this method when the mpmc is idle, in other words, when you are sure
+	 * there are currently no threads accessing the demultiplexer. Also note that all consumer threads must be dead or you
+	 * might run into visibility problems.</p>
+	 */
+	public void clear();
+	
+	/**
 	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc. The producer thread calling this method must pass its producer index.</p>
 	 * 
 	 * <p>If no object is currently available (i.e. the mpmc is full) this method returns null.</p>
@@ -133,4 +142,18 @@ public interface MpMc<E> {
 	 * @return the consumer for the given index
 	 */
 	public Consumer<E> getConsumer(int index);
+	
+	/**
+	 * Return the fixed number of consumers that this mpmc has.
+	 * 
+	 * @return the fixed number of consumers
+	 */
+	public int getNumberOfConsumers();
+	
+	/**
+	 * Return the fixed number of producers that this mpmc has.
+	 * 
+	 * @return the fixed number of producers
+	 */
+	public int getNumberOfProducers();
 }
