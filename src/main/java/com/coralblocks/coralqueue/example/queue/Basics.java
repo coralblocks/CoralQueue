@@ -18,16 +18,14 @@ public class Basics {
 		private final AtomicQueue<Message> queue;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
-		private int idToSend;
-		private long busySpinCount;
+		private int idToSend = 1;
+		private long busySpinCount = 0;
 		
 		public Producer(AtomicQueue<Message> queue, int messagesToSend, int batchSizeToSend) {
 			super(Producer.class.getSimpleName()); // name of the thread
 			this.queue = queue;
 			this.messagesToSend = messagesToSend;
 			this.batchSizeToSend = batchSizeToSend;
-			this.idToSend = 1;
-			this.busySpinCount = 0;
 		}
 		
 		public long getBusySpinCount() {
@@ -58,16 +56,13 @@ public class Basics {
 	public static class Consumer extends Thread {
 		
 		private final AtomicQueue<Message> queue;
-		private final List<Long> messagesReceived;
-		private final List<Long> batchesReceived;
-		private long busySpinCount;
+		private final List<Long> messagesReceived  = new ArrayList<Long>();
+		private final List<Long> batchesReceived = new ArrayList<Long>();
+		private long busySpinCount = 0;
 		
 		public Consumer(AtomicQueue<Message> queue) {
 			super(Consumer.class.getSimpleName()); // name of the thread
 			this.queue = queue;
-			this.messagesReceived = new ArrayList<Long>();
-			this.batchesReceived = new ArrayList<Long>();
-			this.busySpinCount = 0;
 		}
 		
 		public List<Long> getMessagesReceived() {
