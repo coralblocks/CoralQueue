@@ -73,7 +73,7 @@ public class AtomicDynamicMultiplexer<E> implements DynamicMultiplexer<E> {
 			}
 		};
 		
-		int extraFactor = 5;
+		int extraFactor = 4;
 		
 		this.queuePool = new LinkedObjectPool<Queue<E>>(initialNumberOfProducers * 2, poolBuilder); // times 2 to avoid late allocation
 		this.queues = new IdentityMap<Thread, Queue<E>>(initialNumberOfProducers * extraFactor);

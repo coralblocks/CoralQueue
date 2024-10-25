@@ -3,35 +3,35 @@ package com.coralblocks.coralqueue.example.multiplexer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.coralblocks.coralqueue.multiplexer.AtomicMultiplexer;
+import com.coralblocks.coralqueue.multiplexer.AtomicDynamicMultiplexer;
 
-public class Basics {
+public class DynamicBasics {
 	
 	public static class Message {
 		
 		private static final int PRIME = 31;
 		
-		int producerIndex;
+		String producerName;
 		long value;
 		boolean last;
 		
 		@Override
 		public int hashCode() {
-		    return PRIME * (PRIME + producerIndex) + (int) (value ^ (value >>> 32));
+		    return PRIME * (PRIME + producerName.hashCode()) + (int) (value ^ (value >>> 32));
 		}
 		
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof Message) {
 				Message m = (Message) obj;
-				return this.producerIndex == m.producerIndex && this.value == m.value;
+				return this.producerName.equals(m.producerName) && this.value == m.value;
 			}
 			return false;
 		}
 		
 		Message copy() {
 			Message m = new Message();
-			m.producerIndex = this.producerIndex;
+			m.producerName = this.producerName;
 			m.value = this.value;
 			m.last = this.last;
 			return m;
@@ -40,19 +40,22 @@ public class Basics {
 	
 	public static class Producer extends Thread {
 		
-		private final AtomicMultiplexer<Message> mux;
+		private static volatile int IDs = 0;
+		
+		private final AtomicDynamicMultiplexer<Message> mux;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
 		private int idToSend = 1;
 		private long busySpinCount = 0;
-		private final int producerIndex;
+		private final Producer[] extraProducers;
+		private boolean extraProducersStarted = false;
 		
-		public Producer(AtomicMultiplexer<Message> mux, int producerIndex, int messagesToSend, int batchSizeToSend) {
-			super(Producer.class.getSimpleName() + "-" + producerIndex); // name of the thread
+		public Producer(AtomicDynamicMultiplexer<Message> mux, int messagesToSend, int batchSizeToSend, Producer[] extraProducers) {
+			super(Producer.class.getSimpleName() + "-" + IDs++); // name of the thread
 			this.mux = mux;
-			this.producerIndex = producerIndex;
 			this.messagesToSend = messagesToSend;
 			this.batchSizeToSend = batchSizeToSend;
+			this.extraProducers = extraProducers;
 		}
 		
 		public long getBusySpinCount() {
@@ -64,18 +67,26 @@ public class Basics {
 			int messagesSent = 0;
 			int remaining = messagesToSend - messagesSent;
 			while(remaining > 0) {
+				
+				if (extraProducers != null && remaining < messagesToSend * 0.66 && !extraProducersStarted) {
+					extraProducersStarted = true;
+					for(int i = 0; i < extraProducers.length; i++) {
+						extraProducers[i].start();
+					}
+				}
+				
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
-					while((m = mux.nextToDispatch(producerIndex)) == null) { // <=========
+					while((m = mux.nextToDispatch()) == null) { // <=========
 						// busy spin (default and fastest wait strategy)
 						busySpinCount++;
 					}
-					m.producerIndex = producerIndex;
+					m.producerName = getName();
 					m.value = idToSend++;
 					m.last = m.value == messagesToSend; // is it the last message I'll be sending?
 				}
-				mux.flush(producerIndex); // <=========
+				mux.flush(); // <=========
 				remaining -= batchToSend;
 			}
 		}
@@ -83,15 +94,22 @@ public class Basics {
 	
 	public static class Consumer extends Thread {
 		
-		private final AtomicMultiplexer<Message> mux;
+		private final AtomicDynamicMultiplexer<Message> mux;
 		private final List<Message> messagesReceived  = new ArrayList<Message>();
 		private final List<Long> batchesReceived = new ArrayList<Long>();
 		private long busySpinCount = 0;
 		private int lastCount = 0;
+		private final int finalNumberOfProducers;
+		private final int totalMessagesToReceive;
+		private final Producer[] extraProducers;
+		private boolean extraProducersStarted = false;
 		
-		public Consumer(AtomicMultiplexer<Message> mux) {
+		public Consumer(AtomicDynamicMultiplexer<Message> mux, int finalNumberOfProducers, int totalMessagesToReceive, Producer[] extraProducers) {
 			super(Consumer.class.getSimpleName()); // name of the thread
 			this.mux = mux;
+			this.finalNumberOfProducers = finalNumberOfProducers;
+			this.totalMessagesToReceive = totalMessagesToReceive;
+			this.extraProducers = extraProducers;
 		}
 		
 		public List<Message> getMessagesReceived() {
@@ -112,10 +130,18 @@ public class Basics {
 			while(isRunning) {
 				long avail = mux.availableToPoll(); // <=========
 				if (avail > 0) {
+					
+					if (messagesReceived.size() > totalMessagesToReceive * 0.33 && !extraProducersStarted) {
+						extraProducersStarted = true;
+						for(int i = 0; i < extraProducers.length; i++) {
+							extraProducers[i].start();
+						}
+					}
+					
 					for(long i = 0; i < avail; i++) {
 						Message m = mux.poll(); // <=========
 						messagesReceived.add(m.copy());
-						if (m.last && ++lastCount == mux.getNumberOfProducers()) isRunning = false; 
+						if (m.last && ++lastCount == finalNumberOfProducers) isRunning = false; 
 					}
 					mux.donePolling(); // <=========
 					batchesReceived.add(avail);
@@ -131,33 +157,59 @@ public class Basics {
 		
 		final int messagesToSend = args.length > 0 ? Integer.parseInt(args[0]) : 10000;
 		final int batchSizeToSend = args.length > 1 ? Integer.parseInt(args[1]) : 100;
-		final int numberOfProducers = args.length > 2 ? Integer.parseInt(args[2]) : 4;
+		final int initialNumberOfProducers = args.length > 2 ? Integer.parseInt(args[2]) : 4;
+		final int extraProducersCreatedByProducer = args.length > 3 ? Integer.parseInt(args[3]) : 2;
+		final int extraProducersCreatedByConsumer = args.length > 4 ? Integer.parseInt(args[4]) : 2;
 		
-		final int totalMessagesToSend = messagesToSend * numberOfProducers;
+		final int finalNumberOfProducers = initialNumberOfProducers + extraProducersCreatedByProducer + extraProducersCreatedByConsumer;
 		
-		AtomicMultiplexer<Message> mux = new AtomicMultiplexer<Message>(Message.class, numberOfProducers);
+		final int totalMessagesToSend = messagesToSend * finalNumberOfProducers;
 		
-		Producer[] producers = new Producer[numberOfProducers];
-		for(int i = 0; i < producers.length; i++) {
-			producers[i] = new Producer(mux, i, messagesToSend, batchSizeToSend);
+		AtomicDynamicMultiplexer<Message> mux = new AtomicDynamicMultiplexer<Message>(Message.class, initialNumberOfProducers);
+		
+		Producer[] extraProdProducer = new Producer[extraProducersCreatedByProducer];
+		Producer[] extraProdConsumer = new Producer[extraProducersCreatedByConsumer];
+
+		for(int i = 0; i < extraProdProducer.length; i++) {
+			extraProdProducer[i] = new Producer(mux, messagesToSend, batchSizeToSend, null);
 		}
 		
-		Consumer consumer = new Consumer(mux);
+		for(int i = 0; i < extraProdConsumer.length; i++) {
+			extraProdConsumer[i] = new Producer(mux, messagesToSend, batchSizeToSend, null);
+		}
 		
-		System.out.println("Each of the " + numberOfProducers + " producers will send "
+		Producer[] producers = new Producer[initialNumberOfProducers];
+		
+		for(int i = 0; i < producers.length; i++) {
+			producers[i] = new Producer(mux, messagesToSend, batchSizeToSend, i == 0 ? extraProdProducer : null);
+		}
+		
+		Consumer consumer = new Consumer(mux, finalNumberOfProducers, totalMessagesToSend, extraProdConsumer);
+		
+		System.out.println("Each of the " + finalNumberOfProducers + " producers will send "
 							+ messagesToSend + " messages in batches of " + batchSizeToSend + " messages for a total of "
 							+ totalMessagesToSend + " messages... \n");
 		
 		consumer.start();
 		for(int i = 0; i < producers.length; i++) producers[i].start();
 			
-		consumer.join();
-		System.out.println("Thread " + consumer.getName() + " done and exited...");
+		for(int i = 0; i < extraProdProducer.length; i++) {
+			extraProdProducer[i].join();
+			System.out.println("Thread " + extraProdProducer[i].getName() + " done and exited...");
+		}
+		
+		for(int i = 0; i < extraProdConsumer.length; i++) {
+			extraProdConsumer[i].join();
+			System.out.println("Thread " + extraProdConsumer[i].getName() + " done and exited...");
+		}
 		
 		for(int i = 0; i < producers.length; i++) {
 			producers[i].join();
 			System.out.println("Thread " + producers[i].getName() + " done and exited...");
 		}
+		
+		consumer.join();
+		System.out.println("\nThread " + consumer.getName() + " done and exited...");
 		
 		System.out.println();
 		
@@ -179,10 +231,14 @@ public class Basics {
 		
 		System.out.println("\nMore info:\n");
 		
-		System.out.println("Number of batches received: " + batchesReceived.size());
-		System.out.println("Batches received: " + batchesReceived.toString());
-		for(int i = 0; i < numberOfProducers; i++) {
-			System.out.println("Producer " + i + " busy-spin count: " + producers[i].getBusySpinCount());
+		for(int i = 0; i < extraProdProducer.length; i++) {
+			System.out.println(extraProdProducer[i].getName() + " busy-spin count: " + extraProdProducer[i].getBusySpinCount());
+		}
+		for(int i = 0; i < extraProdConsumer.length; i++) {
+			System.out.println(extraProdConsumer[i].getName() + " busy-spin count: " + extraProdConsumer[i].getBusySpinCount());
+		}
+		for(int i = 0; i < producers.length; i++) {
+			System.out.println(producers[i].getName() + " busy-spin count: " + producers[i].getBusySpinCount());
 		}
 		System.out.println("Consumer busy-spin count: " + consumer.getBusySpinCount());
 	}
