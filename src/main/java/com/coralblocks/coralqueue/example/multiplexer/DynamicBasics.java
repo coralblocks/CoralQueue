@@ -11,7 +11,7 @@ public class DynamicBasics {
 		
 		private static final int PRIME = 31;
 		
-		String producerName;
+		String producerName; // messages will be sent from different producers
 		long value;
 		boolean last;
 		
@@ -67,7 +67,7 @@ public class DynamicBasics {
 			int messagesSent = 0;
 			int remaining = messagesToSend - messagesSent;
 			while(remaining > 0) {
-				
+				// For testing we start extra producers from this producer (dynamic producers being started and added)
 				if (extraProducers != null && remaining < messagesToSend * 0.66 && !extraProducersStarted) {
 					extraProducersStarted = true;
 					for(int i = 0; i < extraProducers.length; i++) {
@@ -80,10 +80,10 @@ public class DynamicBasics {
 					Message m;
 					while((m = mux.nextToDispatch()) == null) { // <=========
 						// busy spin (default and fastest wait strategy)
-						busySpinCount++;
+						busySpinCount++; // save the number of busy-spins, just for extra info later
 					}
-					m.producerName = getName();
-					m.value = idToSend++;
+					m.producerName = getName(); // thread name
+					m.value = idToSend++; // sending an unique value so the messages sent are unique
 					m.last = m.value == messagesToSend; // is it the last message I'll be sending?
 				}
 				mux.flush(); // <=========
@@ -130,7 +130,7 @@ public class DynamicBasics {
 			while(isRunning) {
 				long avail = mux.availableToPoll(); // <=========
 				if (avail > 0) {
-					
+					// For testing we start extra producers from the consumer (dynamic producers being started and added)
 					if (messagesReceived.size() > totalMessagesToReceive * 0.33 && !extraProducersStarted) {
 						extraProducersStarted = true;
 						for(int i = 0; i < extraProducers.length; i++) {
@@ -140,14 +140,14 @@ public class DynamicBasics {
 					
 					for(long i = 0; i < avail; i++) {
 						Message m = mux.poll(); // <=========
-						messagesReceived.add(m.copy());
+						messagesReceived.add(m.copy()); // save all messages received (don't forget to copy!!!) so we can later check them
 						if (m.last && ++lastCount == finalNumberOfProducers) isRunning = false; 
 					}
 					mux.donePolling(); // <=========
-					batchesReceived.add(avail);
+					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin (default and fastest wait strategy)
-					busySpinCount++;
+					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}
 		}

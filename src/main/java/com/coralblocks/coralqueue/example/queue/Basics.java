@@ -18,7 +18,7 @@ public class Basics {
 		private final AtomicQueue<Message> queue;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
-		private int idToSend = 1;
+		private int idToSend = 1; // each message from this producer will contain an unique value (id)
 		private long busySpinCount = 0;
 		
 		public Producer(AtomicQueue<Message> queue, int messagesToSend, int batchSizeToSend) {
@@ -44,7 +44,7 @@ public class Basics {
 						// busy spin (default and fastest wait strategy)
 						busySpinCount++;
 					}
-					m.value = idToSend++;
+					m.value = idToSend++; // sending an unique value so the messages sent are unique
 					m.last = m.value == messagesToSend; // is it the last message I'll be sending?
 				}
 				queue.flush(); // <=========
@@ -85,14 +85,14 @@ public class Basics {
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {
 						Message m = queue.poll(); // <=========
-						messagesReceived.add(m.value);
-						if (m.last) isRunning = false; 
+						messagesReceived.add(m.value); // save just the long value from this message
+						if (m.last) isRunning = false; // I'm done!
 					}
 					queue.donePolling(); // <=========
-					batchesReceived.add(avail);
+					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin (default and fastest wait strategy)
-					busySpinCount++;
+					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}
 		}
@@ -140,8 +140,8 @@ public class Basics {
 		
 		// If we sum all batches do we get the correct number of messages?
 		long sumOfAllBatches = batchesReceived.stream().mapToLong(Long::longValue).sum();
-		if (sumOfAllBatches == messagesToSend) System.out.println("SUCCESS: The sum of message from the batches received is correct! => " + sumOfAllBatches);
-		else System.out.println("ERROR: The sum of message from the batches received is incorrect! => " + sumOfAllBatches);
+		if (sumOfAllBatches == messagesToSend) System.out.println("SUCCESS: The sum of messages from the batches received is correct! => " + sumOfAllBatches);
+		else System.out.println("ERROR: The sum of messages from the batches received is incorrect! => " + sumOfAllBatches);
 		
 		System.out.println("\nMore info:\n");
 		

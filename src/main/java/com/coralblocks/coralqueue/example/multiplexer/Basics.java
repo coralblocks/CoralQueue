@@ -11,7 +11,7 @@ public class Basics {
 		
 		private static final int PRIME = 31;
 		
-		int producerIndex;
+		int producerIndex; // messages will be sent from different producers
 		long value;
 		boolean last;
 		
@@ -69,10 +69,10 @@ public class Basics {
 					Message m;
 					while((m = mux.nextToDispatch(producerIndex)) == null) { // <=========
 						// busy spin (default and fastest wait strategy)
-						busySpinCount++;
+						busySpinCount++; // save the number of busy-spins, just for extra info later
 					}
 					m.producerIndex = producerIndex;
-					m.value = idToSend++;
+					m.value = idToSend++; // sending an unique value so the messages sent are unique
 					m.last = m.value == messagesToSend; // is it the last message I'll be sending?
 				}
 				mux.flush(producerIndex); // <=========
@@ -114,14 +114,14 @@ public class Basics {
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {
 						Message m = mux.poll(); // <=========
-						messagesReceived.add(m.copy());
-						if (m.last && ++lastCount == mux.getNumberOfProducers()) isRunning = false; 
+						messagesReceived.add(m.copy()); // save all messages received (don't forget to copy!!!) so we can later check them
+						if (m.last && ++lastCount == mux.getNumberOfProducers()) isRunning = false; // wait to receive the done signal from ALL producers
 					}
 					mux.donePolling(); // <=========
-					batchesReceived.add(avail);
+					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin (default and fastest wait strategy)
-					busySpinCount++;
+					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}
 		}
@@ -151,13 +151,13 @@ public class Basics {
 		consumer.start();
 		for(int i = 0; i < producers.length; i++) producers[i].start();
 			
-		consumer.join();
-		System.out.println("Thread " + consumer.getName() + " done and exited...");
-		
 		for(int i = 0; i < producers.length; i++) {
 			producers[i].join();
 			System.out.println("Thread " + producers[i].getName() + " done and exited...");
 		}
+		
+		consumer.join();
+		System.out.println("\nThread " + consumer.getName() + " done and exited...");
 		
 		System.out.println();
 		
