@@ -7,7 +7,7 @@ It comes in many flavors for you to choose: [Queue](#queue) (one-producer-to-one
 
 <img src="images/Queue.png" alt="Queue" width="50%" height="50%" />
 
-The Queue allows a single producer thread sending messages to the queue and a single consumer thread receiving messages from the queue, both running inside the same JVM.
+The Queue allows a single producer thread sending messages to the queue and a single consumer thread receiving messages from the queue, both running inside the same JVM. The consumer reads the messages in the same order that they were sent by the producer.
 
 ## Multiplexer
 
