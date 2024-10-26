@@ -53,7 +53,7 @@ public class Basics {
 			// Now send one last message to each consumer (notice nextToDispatch below takes the consumerIndex)
 			for(int i = 0; i < numberOfConsumers; i++) {
 				Message m;
-				while((m = demux.nextToDispatch(i)) == null) { // <=========
+				while((m = demux.nextToDispatch(i)) == null) { // <========= here we direct the message to a specific consumer
 					// busy spin (default and fastest wait strategy)
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
@@ -72,9 +72,9 @@ public class Basics {
 		private long busySpinCount = 0;
 		private final int consumerIndex;
 		
-		public Consumer(AtomicDemultiplexer<Message> mux, int consumerIndex) {
+		public Consumer(AtomicDemultiplexer<Message> demux, int consumerIndex) {
 			super(Consumer.class.getSimpleName() + "-" + consumerIndex); // name of the thread
-			this.demux = mux;
+			this.demux = demux;
 			this.consumerIndex = consumerIndex;
 		}
 		
