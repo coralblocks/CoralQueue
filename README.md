@@ -1,5 +1,5 @@
 # CoralQueue
-CoralQueue is a ultra-low-latency, lock-free, garbage-free and concurrent collection of circular data structures for inter-thread communication. It uses memory barriers instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
+CoralQueue is a ultra-low-latency, lock-free, garbage-free, batching and concurrent collection of circular data structures for inter-thread communication. It uses memory barriers instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
 The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), etc.
 
