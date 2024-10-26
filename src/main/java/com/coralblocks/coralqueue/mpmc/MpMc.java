@@ -114,26 +114,12 @@ public interface MpMc<E> {
 	public void donePolling(int consumerIndex);
 	
 	/**
-	 * Return the next producer that can be used or null if all producers were already returned.
-	 * 
-	 * @return the next produced to be used or null
-	 */
-	public Producer<E> nextProducer();
-	
-	/**
 	 * Return the producer corresponding to the given index. If a bad index is given this method throws a <code>RuntimeException</code>.
 	 * 
 	 * @param index the producer index
 	 * @return the producer for the given index
 	 */
 	public Producer<E> getProducer(int index);
-	
-	/**
-	 * Return the next consumer that can be used or null if all consumers were already returned.
-	 * 
-	 * @return the next consumer to be used or null
-	 */
-	public Consumer<E> nextConsumer();
 	
 	/**
 	 * Return the consumer corresponding to the given index. If a bad index is given this method throws a <code>RuntimeException</code>.

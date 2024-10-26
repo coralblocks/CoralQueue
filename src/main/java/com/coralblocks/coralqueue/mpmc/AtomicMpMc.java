@@ -32,8 +32,6 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	private final Demultiplexer<E>[] demuxes;
 	private final Producer<E>[] producers;
 	private final Consumer<E>[] consumers;
-	private int currProducerIndex = 0;
-	private int currConsumerIndex = 0;
 	
 	/**
 	 * Creates an <code>AtomicMpMc</code> with the default capacity (1024) and number of consumers and producers using the given class to populate it.
@@ -91,8 +89,8 @@ public class AtomicMpMc<E> implements MpMc<E> {
 		for(int i = 0; i < numberOfConsumers; i++) {
 			com.coralblocks.coralqueue.demultiplexer.Consumer<E>[] c = (com.coralblocks.coralqueue.demultiplexer.Consumer<E>[]) new com.coralblocks.coralqueue.demultiplexer.Consumer[numberOfProducers];
 			int index = 0;
-			for(Demultiplexer<E> demux : this.demuxes) {
-				c[index++] = demux.nextConsumer();
+			for(int j = 0; j < this.demuxes.length; j++) {
+				c[index++] = this.demuxes[j].getConsumer(i);
 			}
 			this.consumers[i] = new Consumer<E>(c, i);
 		}
@@ -103,8 +101,6 @@ public class AtomicMpMc<E> implements MpMc<E> {
 		for(int i = 0; i < demuxes.length; i++) {
 			demuxes[i].clear();
 		}
-		currProducerIndex = 0;
-		currConsumerIndex = 0;
 	}
 	
 	@Override
@@ -156,27 +152,11 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	}
 	
 	@Override
-	public Producer<E> nextProducer() {
-		synchronized(producers) {
-			if (currProducerIndex == producers.length) return null;
-			return producers[currProducerIndex++];
-		}
-	}
-	
-	@Override
 	public Producer<E> getProducer(int index) {
 		if (index >= producers.length) {
 			throw new RuntimeException("Tried to get a producer with a bad index: " + index);
 		}
 		return producers[index];
-	}
-	
-	@Override
-	public Consumer<E> nextConsumer() {
-		synchronized(consumers) {
-			if (currConsumerIndex == consumers.length) return null;
-			return consumers[currConsumerIndex++];
-		}
 	}
 	
 	@Override
