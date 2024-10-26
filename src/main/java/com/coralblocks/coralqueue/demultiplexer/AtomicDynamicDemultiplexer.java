@@ -54,7 +54,7 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicDemultiplexer<E> {
 	 */
 	public AtomicDynamicDemultiplexer(int capacity, Builder<E> builder, int initialNumberOfConsumers) {
 		MathUtils.ensurePowerOfTwo(capacity);
-		final int safeFactor = 5; // if you grow the number of consumers pass this factor, ArrayList will produce garbage...
+		final int safeFactor = 4; // if you grow the number of consumers pass this factor, ArrayList will produce garbage...
 		this.queues = new ArrayList<AtomicQueue<E>>(initialNumberOfConsumers * safeFactor);
 		this.needsToFlush = new ArrayList<Boolean>(initialNumberOfConsumers * safeFactor);
 		this.threadToQueues = new IdentityMap<Thread, AtomicQueue<E>>(initialNumberOfConsumers * safeFactor);
