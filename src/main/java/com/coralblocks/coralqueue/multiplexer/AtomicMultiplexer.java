@@ -32,7 +32,6 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	private final Queue<E>[] queues;
 	private final long[] avail;
 	private int producerIndex = 0;
-	private int currProducerIndex = 0;
 	private final Producer<E>[] producers;
 	
 	/**
@@ -164,14 +163,6 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
     public final int getNumberOfProducers() {
 	    return numberOfProducers;
     }
-	
-	@Override
-	public final Producer<E> nextProducer() {
-		synchronized(producers) {
-			if (currProducerIndex == numberOfProducers) return null;
-			return producers[currProducerIndex++];
-		}
-	}
 	
 	@Override
 	public final Producer<E> getProducer(int index) {

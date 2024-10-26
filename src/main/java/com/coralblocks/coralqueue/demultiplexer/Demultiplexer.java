@@ -124,13 +124,6 @@ public interface Demultiplexer<E> {
 	public int getNumberOfConsumers();
 	
 	/**
-	 * Convenient method to get the consumers. It returns <code>null</code> when all consumers have been returned.
-	 * 
-	 * @return the next consumer from the list of all consumers of this demultiplexer
-	 */
-	public Consumer<E> nextConsumer();
-	
-	/**
 	 * Return a consumer by its index. This method throws a <code>RuntimeException</code> if the index is invalid.
 	 * 
 	 * @param index the zero-based index of the consumer to be used

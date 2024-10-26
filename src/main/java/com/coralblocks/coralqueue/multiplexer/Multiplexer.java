@@ -110,13 +110,6 @@ public interface Multiplexer<E> {
 	public int getNumberOfProducers();
 	
 	/**
-	 * Convenient method to get the producers. It returns <code>null</code> when all producers have been returned.
-	 * 
-	 * @return the next producer from the list of all producers of this multiplexer
-	 */
-	public Producer<E> nextProducer();
-	
-	/**
 	 * Return a producer by its index. This method throws a <code>RuntimeException</code> if the index is invalid.
 	 * 
 	 * @param index the zero-based index of the producer to be used

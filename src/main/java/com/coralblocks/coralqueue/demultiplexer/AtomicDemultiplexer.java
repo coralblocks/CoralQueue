@@ -33,7 +33,6 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	private final int numberOfConsumers;
 	private int currQueueToDispatch = 0;
 	private boolean[] needsToFlush;
-	private int currConsumerIndex = 0;
 	private final Consumer<E>[] consumers;
 
 	/**
@@ -86,14 +85,6 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	 */
 	public AtomicDemultiplexer(Class<E> klass, int numberOfConsumers) {
 		this(Builder.createBuilder(klass), numberOfConsumers);
-	}
-	
-	@Override
-	public Consumer<E> nextConsumer() {
-		synchronized(consumers) {
-			if (currConsumerIndex == numberOfConsumers) return null;
-			return consumers[currConsumerIndex++];
-		}
 	}
 	
 	@Override
