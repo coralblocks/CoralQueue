@@ -61,8 +61,7 @@ public class Basics {
 		
 		@Override
 		public final void run() {
-			int messagesSent = 0;
-			int remaining = messagesToSend - messagesSent;
+			int remaining = messagesToSend ;
 			while(remaining > 0) {
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				for(int i = 0; i < batchToSend; i++) {

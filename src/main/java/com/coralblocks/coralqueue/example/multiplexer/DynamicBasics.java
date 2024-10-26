@@ -64,8 +64,7 @@ public class DynamicBasics {
 		
 		@Override
 		public final void run() {
-			int messagesSent = 0;
-			int remaining = messagesToSend - messagesSent;
+			int remaining = messagesToSend;
 			while(remaining > 0) {
 				// For testing we start extra producers from this producer (dynamic producers being started and added)
 				if (extraProducers != null && remaining < messagesToSend * 0.66 && !extraProducersStarted) {
