@@ -187,15 +187,19 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicDemultiplexer<E> {
 			queue = queuePool.get();
 			threadToQueues.put(t,  queue);
 			final int newNumberOfConsumers = this.numberOfConsumers + 1;
-			if (queues.size() < newNumberOfConsumers) {
+			if (queues.size() > newNumberOfConsumers) {
 				queues.set(newNumberOfConsumers, queue);
+				System.out.println("==== a: " + newNumberOfConsumers);
 			} else {
 				queues.add(queue);
+				System.out.println("==== b: " + newNumberOfConsumers);
 			}
-			if (needsToFlush.size() < newNumberOfConsumers) {
+			if (needsToFlush.size() > newNumberOfConsumers) {
 				needsToFlush.set(newNumberOfConsumers, Boolean.FALSE);
+				System.out.println("==== aa: " + newNumberOfConsumers);
 			} else {
 				needsToFlush.add(Boolean.FALSE);
+				System.out.println("==== bb: " + newNumberOfConsumers);
 			}
 			this.numberOfConsumers = newNumberOfConsumers;
 		}
