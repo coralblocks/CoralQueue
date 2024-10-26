@@ -78,10 +78,10 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicDemultiplexer<E> {
 	 * Creates an <code>AtomicDynamicDemultiplexer</code> with the default capacity (1024) and number of consumers using the given {@link Builder} to populate it.
 	 * 
 	 * @param builder the {@link Builder} used to populate the <code>AtomicDynamicDemultiplexer</code>
-	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicDynamicDemultiplexer</code>
+	 * @param initialNumberOfConsumers the initial number of consumers that will use this <code>AtomicDynamicDemultiplexer</code>
 	 */
-	public AtomicDynamicDemultiplexer(Builder<E> builder, int numberOfConsumers) {
-		this(DEFAULT_CAPACITY, builder, numberOfConsumers);
+	public AtomicDynamicDemultiplexer(Builder<E> builder, int initialNumberOfConsumers) {
+		this(DEFAULT_CAPACITY, builder, initialNumberOfConsumers);
 	}
 	
 	/**
@@ -89,20 +89,20 @@ public class AtomicDynamicDemultiplexer<E> implements DynamicDemultiplexer<E> {
 	 * 
 	 * @param capacity the capacity of the <code>AtomicDynamicDemultiplexer</code>
 	 * @param klass the class used to populate the <code>AtomicDynamicDemultiplexer</code>
-	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicDynamicDemultiplexer</code>
+	 * @param initialNumberOfConsumers the initial number of consumers that will use this <code>AtomicDynamicDemultiplexer</code>
 	 */
-	public AtomicDynamicDemultiplexer(int capacity, Class<E> klass, int numberOfConsumers) {
-		this(capacity, Builder.createBuilder(klass), numberOfConsumers);
+	public AtomicDynamicDemultiplexer(int capacity, Class<E> klass, int initialNumberOfConsumers) {
+		this(capacity, Builder.createBuilder(klass), initialNumberOfConsumers);
 	}
 	
 	/**
 	 * Creates an <code>AtomicDynamicDemultiplexer</code> with the default capacity (1024) and number of consumers using the given class to populate it.
 	 * 
 	 * @param klass the class used to populate the <code>AtomicDynamicDemultiplexer</code>
-	 * @param numberOfConsumers the number of consumers that will use this <code>AtomicDynamicDemultiplexer</code>
+	 * @param initialNumberOfConsumers the initial number of consumers that will use this <code>AtomicDynamicDemultiplexer</code>
 	 */
-	public AtomicDynamicDemultiplexer(Class<E> klass, int numberOfConsumers) {
-		this(Builder.createBuilder(klass), numberOfConsumers);
+	public AtomicDynamicDemultiplexer(Class<E> klass, int initialNumberOfConsumers) {
+		this(Builder.createBuilder(klass), initialNumberOfConsumers);
 	}
 	
 	@Override
