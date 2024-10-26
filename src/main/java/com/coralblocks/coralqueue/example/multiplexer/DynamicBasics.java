@@ -66,6 +66,7 @@ public class DynamicBasics {
 		public final void run() {
 			int remaining = messagesToSend;
 			while(remaining > 0) {
+				
 				// For testing we start extra producers from this producer (dynamic producers being started and added)
 				if (extraProducers != null && remaining < messagesToSend * 0.66 && !extraProducersStarted) {
 					extraProducersStarted = true;
@@ -129,6 +130,7 @@ public class DynamicBasics {
 			while(isRunning) {
 				long avail = mux.availableToPoll(); // <=========
 				if (avail > 0) {
+					
 					// For testing we start extra producers from the consumer (dynamic producers being started and added)
 					if (messagesReceived.size() > totalMessagesToReceive * 0.33 && !extraProducersStarted) {
 						extraProducersStarted = true;
