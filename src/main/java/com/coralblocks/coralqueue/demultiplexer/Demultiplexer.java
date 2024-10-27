@@ -55,14 +55,14 @@ public interface Demultiplexer<E> {
 	public E nextToDispatch(int toConsumerIndex);
 
 	/**
-	 * <p>Dispatch/Flush all previously obtained objects through the {@link #nextToDispatch()} method to the consumer.</p>
+	 * <p>Dispatch/Flush all previously obtained objects through the {@link #nextToDispatch()} method to the consumers.</p>
 	 * 
 	 * @param lazySet true to flush (i.e. notify the consumer) in a lazy way or false to flush <b>immediately</b>
 	 */
 	public void flush(boolean lazySet);
 	
 	/**
-	 * <p>Dispatch <b>immediately</b> all previously obtained objects through the {@link #nextToDispatch()} method to the consumer.
+	 * <p>Dispatch <b>immediately</b> all previously obtained objects through the {@link #nextToDispatch()} method to the consumers.
 	 * Note that this is the same as calling <code>flush(false)</code>.</p>
 	 */
 	public void flush();
@@ -126,7 +126,7 @@ public interface Demultiplexer<E> {
 	/**
 	 * Return a consumer by its index. This method throws a <code>RuntimeException</code> if the index is invalid.
 	 * 
-	 * @param index the zero-based index of the consumer to be used
+	 * @param index the zero-based index of the consumer to be returned
 	 * @return the consumer
 	 */
 	public Consumer<E> getConsumer(int index);

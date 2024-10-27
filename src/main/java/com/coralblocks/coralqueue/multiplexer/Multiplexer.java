@@ -112,7 +112,7 @@ public interface Multiplexer<E> {
 	/**
 	 * Return a producer by its index. This method throws a <code>RuntimeException</code> if the index is invalid.
 	 * 
-	 * @param index the zero-based index of the producer to be used
+	 * @param index the zero-based index of the producer to be returned
 	 * @return the producer
 	 */
 	public Producer<E> getProducer(int index);

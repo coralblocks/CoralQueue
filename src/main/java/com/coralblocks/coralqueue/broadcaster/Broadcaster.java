@@ -16,113 +16,135 @@
 package com.coralblocks.coralqueue.broadcaster;
 
 /**
- * A special demultiplexer that broadcasts (delivers) all messages to all consumers, in other words, all consumers will poll and receive all messages sent by the producer.
+ * <p>The Broadcaster API that is a special demultiplexer that broadcasts (delivers) all messages to all consumers, in other words, all consumers will poll and receive all messages sent by the producer.</p>
+ * 
+ * <p><b>NOTE:</b> A broadcaster must have a <b>fixed</b> number of consumers specified by its constructor.</p>
  *
- * @param <E>
+ * @param <E> The mutable transfer object to be used by this broadcaster
  */
 public interface Broadcaster<E> {
 	
+	/**
+	 * <p>Clear the broadcaster, so that it can be re-used.</p>
+	 * 
+	 * <p>Make sure you only call this method when the broadcaster is idle, in other words, when you are sure
+	 * there are currently no threads accessing the broadcaster. Also note that all consumer threads must be dead or you
+	 * might run into visibility problems.</p>
+	 */
 	public void clear();
 
 	/**
-	 * Return the next pooled mutable object that can be used by the producer to dispatch data to the splitter.
+	 * <p>Return the next mutable object that can be used by the producer to dispatch data to the broadcaster.</p>
 	 * 
-	 * @return the next mutable object that can be used by the producer.
+	 * <p>If no object is currently available (i.e. the broadcaster is full) this method returns null.</p>
+	 * 
+	 * @return the next mutable object that can be used by the producer or null if the broadcaster is full
 	 */
 	public E nextToDispatch();
 
 	/**
-	 * Dispatch all previously obtained objects through the <i>nextToDispatch()</i> method to the splitter.
+	 * <p>Dispatch/Flush all previously obtained objects through the {@link #nextToDispatch()} method to the consumers.</p>
 	 * 
-	 * @param lazySet flush (i.e. notify the consumers) in a lazy way or flush immediately
+	 * @param lazySet true to flush (i.e. notify the consumers) in a lazy way or false to flush <b>immediately</b>
 	 */
 	public void flush(boolean lazySet);
 	
 	/**
-	 * Dispatch *immediately* all previously obtained objects through the <i>nextToDispatch()</i> method to the splitter.
+	 * <p>Dispatch <b>immediately</b> all previously obtained objects through the {@link #nextToDispatch()} method to the consumers.
+	 * Note that this is the same as calling <code>flush(false)</code>.</p>
 	 */
 	public void flush();
 	
 	/**
-	 * Return the number of objects that can be safely polled from this splitter by this consumer. It can return zero.
+	 * <p>Return the number of objects that can be safely polled from this broadcaster. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * @param consumer the consumer index
+	 * <p>If the broadcaster is empty, this method returns 0.</p>
 	 * 
-	 * @return number of objects that can be polled.
+	 * @param consumerIndex the index of the consumer thread calling this method
+	 * @return number of objects that can be polled
 	 */
-	public long availableToPoll(int consumer);
+	public long availableToPoll(int consumerIndex);
 
 	/**
-	 * Poll a object from the splitter. You can only call this method after calling <i>availableToPoll()</i> so you
-	 * know what is the maximum times you can call it.
+	 * <p>Poll an object from the broadcaster. You can only call this method after calling {@link #availableToPoll(int)} so you
+	 * know for sure what is the maximum number of times you can call this method. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * NOTE: You should NOT keep your own reference for this mutable object. Read what you need to get from it and release its reference.
+	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
+	 * Read what you need to read from the object and release its reference.
+	 * The object returned should be treated as a <i>data transfer object</i> therefore you should read what you need from it and let it go.</p>
 	 * 
-	 * @param consumer the consumer index
-	 * 
-	 * @return an object from the splitter.
+	 * @param consumerIndex the index of the consumer thread calling this method
+	 * @return a data transfer object from the broadcaster
 	 */
-	public E poll(int consumer);
+	public E poll(int consumerIndex);
 
 	/**
-	 * Called to indicate that all polling have been concluded.
+	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
+	 * you poll what you can/want to poll and call this method to signal the producer thread that you are done.
+	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * @param consumer the consumer index
-	 * @param lazySet notify the producer in a lazy way or notify the producer immediately
+	 * @param consumerIndex he index of the consumer thread calling this method
+	 * @param lazySet true to notify the producer in a lazy way or false to notify the producer <b>immediately</b>
 	 */
-	public void donePolling(int consumer, boolean lazySet);
+	public void donePolling(int consumerIndex, boolean lazySet);
 	
 	/**
-	 * Called to indicate that all polling have been concluded.
+	 * <p>That's the same as calling <code>donePolling(consumerIndex, false)</code>, in other words, the producer will be notified <b>immediately</b> that polling is done.
+	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * @param consumer the consumer index
+	 * @param consumerIndex the index of the consumer thread calling this method
 	 */
-	public void donePolling(int consumer);
+	public void donePolling(int consumerIndex);
 	
 	/**
-	 * Pretend you never polled the last object you polled since the last time you called donePolling().
-	 * You can call this as many times as you want before you call donePolling() and rollback any poll() you have done.
-	 * This is unaffected by availableToPoll(). Only donePolling() reset the counter of the last polled objects.
-	 * Because rollback() reset the counter of the last polled objects, you can even call it twice in a row and the second
-	 * rollback() will have no effect since you have polled anything.
+	 * <p>Pretend you never polled any objects since you last called {@link #donePolling(int)}. This method cancels (i.e. rolls back) any polling operations you have done.
+	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * @param consumer the consumer index
+	 * <p>You can call this method as many times as you want before you call {@link #donePolling(int)} to roll back any polling operations (zero, one or more) you have done.</p>
 	 * 
+	 * @param consumerIndex the index of the consumer thread calling this method
 	 */
-	public void rollBack(int consumer);
+	public void rollBack(int consumerIndex);
 	
 	/**
-	 * Same as rollback but allows you to specify how many previous polls you want to rollback
+	 * <p>Same as {@link #rollBack(int)} but allows you to specify how many previous polls you want to roll back, instead of all of them (i.e. all previous ones).
+	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * @param consumer the consumer index
-	 * @param items how many polls to rollback
+	 * @param consumerIndex the index of the consumer thread calling this method
+	 * @param items how many polls to roll back
 	 */
-	public void rollBack(int consumer, long items);
+	public void rollBack(int consumerIndex, long items);
 	
 	/**
-	 * Return the element from the pool without removing it.
-	 * 
-	 * @param consumer the consumer index
-	 * 
-	 * @return the next available object to be polled from the queue.
+	 * <p>Return the next object to be polled without actually polling it.
+	 * The consumer thread calling this method must pass its consumer index.</p>
+
+	 * @param consumerIndex the index of the consumer thread calling this method
+	 * @return the next object to be polled from the broadcaster, without actually polling it
 	 */
-	public E peek(int consumer);
+	public E peek(int consumerIndex);
 	
 	/**
-	 * The number of consumers listening on this splitter.
+	 * <p>The (fixed) number of consumers listening on this broadcaster.</p>
 	 * 
 	 * @return the number of consumers
 	 */
 	public int getNumberOfConsumers();
 	
 	/**
-	 * This will disable a consumer and allow the splitter to continue to operate without getting full.
-	 * This is useful for when a consumer has a problem and stops polling the splitter. In that situation
-	 * the internal queue will get full unless you disable the consumer.
+	 * <p>This method disables a consumer and allows the broadcaster to continue to operate and make progress without getting full.
+	 * This is useful for when a consumer has a problem and stops polling the broadcaster. In that situation
+	 * the broadcaster will get full unless you disable the consumer.</p>
 	 * 
-	 * @param index
+	 * @param consumerIndex the index of the consumer that you want to disable
 	 */
-	public void disableConsumer(int index);
+	public void disableConsumer(int consumerIndex);
 	
-	public Consumer<E> getConsumer(int index);
+	/**
+	 * Return a consumer by its index. This method throws a <code>RuntimeException</code> if the index is invalid.
+	 * 
+	 * @param consumerIndex the zero-based index of the consumer to be returned
+	 * @return the consumer
+	 */
+	public Consumer<E> getConsumer(int consumerIndex);
 }

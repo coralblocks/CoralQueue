@@ -125,6 +125,7 @@ public interface Queue<E> {
 	
 	/**
 	 * <p>Pretend you never polled any objects since you last called {@link #donePolling()}. This method cancels (i.e. rolls back) any polling operations you have done.</p>
+	 * 
 	 * <p>You can call this method as many times as you want before you call {@link #donePolling()} to roll back any polling operations (zero, one or more) you have done.</p>
 	 */
 	public void rollBack();
