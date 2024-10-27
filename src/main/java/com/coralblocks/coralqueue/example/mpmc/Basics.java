@@ -69,7 +69,7 @@ public class Basics {
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
 					while((m = mpmc.nextToDispatch(producerIndex)) == null) { // <=========
-						// busy spin (default and fastest wait strategy)
+						// busy spin while blocking (default and fastest wait strategy)
 						busySpinCount++; // save the number of busy-spins, just for extra info later
 					}
 					m.producerIndex = producerIndex;
@@ -84,7 +84,7 @@ public class Basics {
 			for(int i = 0; i < numberOfConsumers; i++) {
 				Message m;
 				while((m = mpmc.nextToDispatch(producerIndex, i)) == null) { // <========= directed to a specific consumer
-					// busy spin (default and fastest wait strategy)
+					// busy spin while blocking (default and fastest wait strategy)
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 				m.producerIndex = producerIndex;
@@ -136,7 +136,7 @@ public class Basics {
 					mpmc.donePolling(consumerIndex); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
-					// busy spin (default and fastest wait strategy)
+					// busy spin while blocking (default and fastest wait strategy)
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}
