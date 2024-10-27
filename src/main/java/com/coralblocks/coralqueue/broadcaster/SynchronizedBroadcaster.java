@@ -21,7 +21,6 @@ public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 	private long offerSequence = -1;
 	private final Cursor[] cursors;
 	private final Random random = new Random();
-	private int currConsumerIndex = 0;
 	private final Consumer<E>[] consumers;
 
 	@SuppressWarnings("unchecked")
@@ -83,14 +82,6 @@ public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 			throw new RuntimeException("Tried to get a consumer with a bad index: " + index);
 		}
 		return consumers[index];
-	}
-	
-	@Override
-	public final Consumer<E> nextConsumer() {
-		synchronized(consumers) {
-			if (currConsumerIndex == consumers.length) return null;
-			return consumers[currConsumerIndex++];
-		}
 	}
 	
 	@Override
@@ -175,14 +166,5 @@ public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 	@Override
 	public final int getNumberOfConsumers() {
 		return cursors.length;
-	}
-	
-	static {
-		
-		try {
-			Class.forName("com.coralblocks.coralqueue.AtomicQueue");
-		} catch(Exception e) {
-			// NOOP
-		}
 	}
 }

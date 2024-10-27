@@ -5,7 +5,7 @@ package com.coralblocks.coralqueue.broadcaster;
 
 
 /**
- * A queue that delivers all message to all consumers, in other words, all consumers will poll all messages.
+ * A special demultiplexer that broadcasts (delivers) all messages to all consumers, in other words, all consumers will poll and receive all messages sent by the producer.
  *
  * @param <E>
  */
@@ -114,6 +114,4 @@ public interface Broadcaster<E> {
 	public void disableConsumer(int index);
 	
 	public Consumer<E> getConsumer(int index);
-	
-	public Consumer<E> nextConsumer();
 }
