@@ -21,9 +21,15 @@ import java.util.concurrent.locks.LockSupport;
 import com.coralblocks.coralqueue.util.Builder;
 import com.coralblocks.coralqueue.util.MathUtils;
 
+/**
+ * An implementation of a {@link Broadcaster} that uses <i>locks</i> to synchronize producer and consumers sequences.
+ * All messages are delivered to all consumers in the exact same order that they are sent by the producer.
+ *
+ * @param <E> The mutable transfer object to be used by this broadcaster
+ */
 public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 
-	private final static int DEFAULT_CAPACITY = 1024 * 16;
+	private final static int DEFAULT_CAPACITY = 1024;
 
 	private final int capacity;
 	private final int capacityMinusOne;
@@ -35,6 +41,13 @@ public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 	private final Random random = new Random();
 	private final Consumer<E>[] consumers;
 
+	/**
+	 * Creates an <code>SynchronizedBroadcaster</code> with the given capacity and number of consumers using the given {@link Builder} to populate it.
+	 * 
+	 * @param capacity the capacity of the <code>SynchronizedBroadcaster</code>
+	 * @param builder the {@link Builder} used to populate the <code>SynchronizedBroadcaster</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>SynchronizedBroadcaster</code>
+	 */
 	@SuppressWarnings("unchecked")
 	public SynchronizedBroadcaster(int capacity, Builder<E> builder, int numberOfConsumers) {
 		MathUtils.ensurePowerOfTwo(capacity);
@@ -57,6 +70,37 @@ public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 		this.maxSeqBeforeWrapping = calcMaxSeqBeforeWrapping();
 	}
 	
+	/**
+	 * Creates an <code>SynchronizedBroadcaster</code> with the default capacity (1024) and number of consumers using the given {@link Builder} to populate it.
+	 * 
+	 * @param builder the {@link Builder} used to populate the <code>SynchronizedBroadcaster</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>SynchronizedBroadcaster</code>
+	 */
+	public SynchronizedBroadcaster(Builder<E> builder, int numberOfConsumers) {
+		this(DEFAULT_CAPACITY, builder, numberOfConsumers);
+	}
+	
+	/**
+	 * Creates an <code>SynchronizedBroadcaster</code> with the default capacity (1024) and number of consumers using the given class to populate it.
+	 * 
+	 * @param klass the class used to populate the <code>SynchronizedBroadcaster</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>SynchronizedBroadcaster</code>
+	 */
+	public SynchronizedBroadcaster(Class<E> klass, int numberOfConsumers) {
+		this(Builder.createBuilder(klass), numberOfConsumers);
+	}
+	
+	/**
+	 * Creates an <code>SynchronizedBroadcaster</code> with the given capacity and number of consumers using the given class to populate it.
+	 * 
+	 * @param capacity the capacity of the <code>SynchronizedBroadcaster</code>
+	 * @param klass the class used to populate the <code>SynchronizedBroadcaster</code>
+	 * @param numberOfConsumers the number of consumers that will use this <code>SynchronizedBroadcaster</code>
+	 */
+	public SynchronizedBroadcaster(int capacity, Class<E> klass, int numberOfConsumers) {
+		this(capacity, Builder.createBuilder(klass), numberOfConsumers);
+	}
+	
 	@Override
 	public final void clear() {
 		lastOfferedSeq = -1;
@@ -66,18 +110,6 @@ public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 			cursors[i].clear();
 		}
 		maxSeqBeforeWrapping = calcMaxSeqBeforeWrapping();
-	}
-
-	public SynchronizedBroadcaster(Builder<E> builder, int numberOfConsumers) {
-		this(DEFAULT_CAPACITY, builder, numberOfConsumers);
-	}
-	
-	public SynchronizedBroadcaster(Class<E> klass, int numberOfConsumers) {
-		this(Builder.createBuilder(klass), numberOfConsumers);
-	}
-	
-	public SynchronizedBroadcaster(int capacity, Class<E> klass, int numberOfConsumers) {
-		this(capacity, Builder.createBuilder(klass), numberOfConsumers);
 	}
 	
 	private final long minCursorPollSeq() {
