@@ -144,12 +144,12 @@ public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 	}
 	
 	@Override
-	public synchronized final void rollback(int consumer) {
-		rollback(consumer, cursors[consumer].getPollCount());
+	public synchronized final void rollBack(int consumer) {
+		rollBack(consumer, cursors[consumer].getPollCount());
 	}
 	
 	@Override
-	public synchronized final void rollback(int consumer, long count) {
+	public synchronized final void rollBack(int consumer, long count) {
 		Cursor cursor = cursors[consumer];
 		if (count < 0 || count > cursor.getPollCount()) {
 			throw new RuntimeException("Invalid rollback request! polled=" + cursor.getPollCount() + " requested=" + count);

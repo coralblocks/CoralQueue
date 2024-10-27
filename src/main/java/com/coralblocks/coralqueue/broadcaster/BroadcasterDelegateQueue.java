@@ -67,12 +67,12 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 
 	@Override
     public void rollBack() {
-		broadcaster.rollback(index);
+		broadcaster.rollBack(index);
     }
 
 	@Override
     public void rollBack(long items) {
-		broadcaster.rollback(index, items);
+		broadcaster.rollBack(index, items);
     }
 
 	@Override

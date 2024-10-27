@@ -141,12 +141,12 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	}
 	
 	@Override
-	public final void rollback(int consumer) {
-		rollback(consumer, cursors[consumer].getPollCount());
+	public final void rollBack(int consumer) {
+		rollBack(consumer, cursors[consumer].getPollCount());
 	}
 	
 	@Override
-	public final void rollback(int consumer, long count) {
+	public final void rollBack(int consumer, long count) {
 		Cursor cursor = cursors[consumer];
 		if (count < 0 || count > cursor.getPollCount()) {
 			throw new RuntimeException("Invalid rollback request! polled=" + cursor.getPollCount() + " requested=" + count);

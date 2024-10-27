@@ -78,7 +78,7 @@ public interface Broadcaster<E> {
 	 * @param consumer the consumer index
 	 * 
 	 */
-	public void rollback(int consumer);
+	public void rollBack(int consumer);
 	
 	/**
 	 * Same as rollback but allows you to specify how many previous polls you want to rollback
@@ -86,7 +86,7 @@ public interface Broadcaster<E> {
 	 * @param consumer the consumer index
 	 * @param items how many polls to rollback
 	 */
-	public void rollback(int consumer, long items);
+	public void rollBack(int consumer, long items);
 	
 	/**
 	 * Return the element from the pool without removing it.
