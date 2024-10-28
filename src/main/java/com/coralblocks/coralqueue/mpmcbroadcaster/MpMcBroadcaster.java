@@ -102,6 +102,15 @@ public interface MpMcBroadcaster<E> {
 	public void donePolling(int consumerIndex);
 	
 	/**
+	 * <p>This method disables a consumer and allows the mpmc broadcaster to continue to operate and make progress without getting full.
+	 * This is useful for when a consumer has a problem and stops polling the mpmc broadcaster. In that situation
+	 * the mpmc broadcaster will get full unless you disable the consumer.</p>
+	 * 
+	 * @param consumerIndex the index of the consumer that you want to disable
+	 */
+	public void disableConsumer(int consumerIndex);
+	
+	/**
 	 * Return the producer corresponding to the given index. If a bad index is given this method throws a <code>RuntimeException</code>.
 	 * 
 	 * @param index the producer index

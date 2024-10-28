@@ -146,6 +146,13 @@ public class AtomicMpMcBroadcaster<E> implements MpMcBroadcaster<E> {
 	}
 	
 	@Override
+	public void disableConsumer(int consumerIndex) {
+		for(int i = 0; i < broadcasters.length; i++) {
+			broadcasters[i].disableConsumer(consumerIndex);
+		}
+	}
+	
+	@Override
 	public Producer<E> getProducer(int index) {
 		if (index >= producers.length) {
 			throw new RuntimeException("Tried to get a producer with a bad index: " + index);
