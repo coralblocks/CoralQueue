@@ -220,10 +220,10 @@ public class Basics {
 		if (messagesReceived.stream().distinct().count() == messagesReceived.size()) System.out.println("SUCCESS: No duplicate messages were received!");
 		else System.out.println("ERROR: Found duplicate messages!");
 		
-		// If we sum all batches do we get the correct number of messages?
+		// If we sum all batches received do we get the correct number of messages?
 		long sumOfAllBatches = batchesReceived.stream().mapToLong(Long::longValue).sum();
-		if (sumOfAllBatches == totalMessagesToSend) System.out.println("SUCCESS: The sum of message from the batches received is correct! => " + totalMessagesToSend);
-		else System.out.println("ERROR: The sum of message from the batches received is incorrect! => " + sumOfAllBatches);
+		if (sumOfAllBatches == totalMessagesToSend) System.out.println("SUCCESS: The sum of messages from the batches received is correct! => " + totalMessagesToSend);
+		else System.out.println("ERROR: The sum of messages from the batches received is incorrect! => " + sumOfAllBatches);
 		
 		System.out.println("\nMore info:\n");
 		

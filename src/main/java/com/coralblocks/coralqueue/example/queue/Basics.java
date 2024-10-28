@@ -152,7 +152,7 @@ public class Basics {
 		if (sortedList.equals(messagesReceived)) System.out.println("SUCCESS: Messages were received in order!");
 		else System.out.println("ERROR: Messages were received out of order!");
 		
-		// If we sum all batches do we get the correct number of messages?
+		// If we sum all batches received do we get the correct number of messages?
 		long sumOfAllBatches = batchesReceived.stream().mapToLong(Long::longValue).sum();
 		if (sumOfAllBatches == messagesToSend) System.out.println("SUCCESS: The sum of messages from the batches received is correct! => " + sumOfAllBatches);
 		else System.out.println("ERROR: The sum of messages from the batches received is incorrect! => " + sumOfAllBatches);
