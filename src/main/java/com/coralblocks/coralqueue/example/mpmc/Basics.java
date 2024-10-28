@@ -216,7 +216,7 @@ public class Basics {
 		if (messagesReceived.size() == totalMessagesToSend) System.out.println("SUCCESS: All messages received! => " + totalMessagesToSend);
 		else System.out.println("ERROR: Wrong number of messages received! => " + messagesReceived.size());
 		
-		// Where there any duplicates?
+		// Were there any duplicates?
 		if (messagesReceived.stream().distinct().count() == messagesReceived.size()) System.out.println("SUCCESS: No duplicate messages were received!");
 		else System.out.println("ERROR: Found duplicate messages!");
 		

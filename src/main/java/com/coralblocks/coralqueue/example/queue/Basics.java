@@ -146,7 +146,7 @@ public class Basics {
 		if (messagesReceived.stream().distinct().count() == messagesReceived.size()) System.out.println("SUCCESS: No duplicate messages were received!");
 		else System.out.println("ERROR: Found duplicate messages!");
 		
-		// Where the messages received in order?
+		// Were the messages received in order?
 		List<Long> sortedList = new ArrayList<Long>(messagesReceived);
 		Collections.sort(sortedList);
 		if (sortedList.equals(messagesReceived)) System.out.println("SUCCESS: Messages were received in order!");

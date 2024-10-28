@@ -57,7 +57,7 @@ public class AtomicBroadcasterTest {
 			Assert.assertEquals(consumers[i].getMessagesReceived().size(),  messagesToSend);
 		}
 		
-		// Where there any duplicates?
+		// Were there any duplicates?
 		for(int i = 0; i < consumers.length; i++) {
 			Assert.assertEquals(consumers[i].getMessagesReceived().stream().distinct().count(), consumers[i].getMessagesReceived().size());
 		}

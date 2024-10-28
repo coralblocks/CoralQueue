@@ -73,7 +73,7 @@ public class AtomicMpMcTest {
 		// Did we receive all messages?
 		Assert.assertEquals(messagesReceived.size(), totalMessagesToSend);
 		
-		// Where there any duplicates?
+		// Were there any duplicates?
 		Assert.assertEquals(messagesReceived.stream().distinct().count(), messagesReceived.size());
 		
 		// If we sum all batches do we get the correct number of messages?

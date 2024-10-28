@@ -155,7 +155,7 @@ public class Basics {
 		
 		System.out.println();
 		
-		// Where there any duplicates?
+		// Were there any duplicates?
 		for(int i = 0; i < consumers.length; i++) {
 			if (consumers[i].getMessagesReceived().stream().distinct().count() == consumers[i].getMessagesReceived().size()) System.out.println("SUCCESS: " + consumers[i].getName() + " received no duplicate messages!");
 			else System.out.println("ERROR: Found duplicate messages!");

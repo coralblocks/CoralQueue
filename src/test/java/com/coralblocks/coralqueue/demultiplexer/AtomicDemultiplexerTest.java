@@ -67,7 +67,7 @@ public class AtomicDemultiplexerTest {
 		// Did we receive all messages?
 		Assert.assertEquals(totalMessagesReceived.size(), messagesToSend);
 		
-		// Where there any duplicates?
+		// Were there any duplicates?
 		Assert.assertEquals(totalMessagesReceived.stream().distinct().count(), totalMessagesReceived.size());
 		
 		// If we sum all batches do we get the correct number of messages?

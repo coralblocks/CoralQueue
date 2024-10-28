@@ -54,7 +54,7 @@ public class AtomicQueueTest {
 		// Where there any duplicates?
 		Assert.assertEquals(messagesReceived.stream().distinct().count(), messagesReceived.size());
 		
-		// Where the messages received in order?
+		// Were the messages received in order?
 		List<Long> sortedList = new ArrayList<Long>(messagesReceived);
 		Collections.sort(sortedList);
 		Assert.assertEquals(sortedList, messagesReceived);
