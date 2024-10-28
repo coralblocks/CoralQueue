@@ -13,49 +13,37 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package com.coralblocks.coralqueue.mpmc;
+package com.coralblocks.coralqueue.mpmcbroadcaster;
 
 /**
- * <p>The MpMc (Multiple Producers / Multiple Consumers) API that allows multiple consumer threads receiving messages from the mpmc and multiple producer threads sending messages to the mpmc.
- * Two different consumers will never poll the same message.</p>
+ * <p>The MpMcBroadcaster (Multiple Producers / Multiple Consumers) API that allows multiple consumer threads receiving messages from the mpmc and multiple producer threads sending messages to the mpmc.
+ * All consumers receive all messages sent by the producers.</p>
  * 
- * <p><b>NOTE:</b> A mpmc must have a <b>fixed</b> number of consumers and a fixed number of producers specified by its constructor.</p>
+ * <p><b>NOTE:</b> A mpmc broadcaster must have a <b>fixed</b> number of consumers and a fixed number of producers specified by its constructor.</p>
  *
- * @param <E> The mutable transfer object to be used by this mpmc
+ * @param <E> The mutable transfer object to be used by this mpmc broadcaster
  */
-public interface MpMc<E> {
+public interface MpMcBroadcaster<E> {
 	
 	/**
-	 * <p>Clear the mpmc, so that it can be re-used.</p>
+	 * <p>Clear the mpmc broadcaster, so that it can be re-used.</p>
 	 * 
-	 * <p>Make sure you only call this method when the mpmc is idle, in other words, when you are sure
-	 * there are currently no threads accessing the mpmc. Also note that all consumer threads must be dead or you
+	 * <p>Make sure you only call this method when the mpmc broadcaster is idle, in other words, when you are sure
+	 * there are currently no threads accessing the mpmc broadcaster. Also note that all consumer threads must be dead or you
 	 * might run into visibility problems.</p>
 	 */
 	public void clear();
 	
 	/**
-	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc. The producer thread calling this method must pass its producer index.</p>
+	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc broadcaster. The producer thread calling this method must pass its producer index.</p>
 	 * 
-	 * <p>If no object is currently available (i.e. the mpmc is full) this method returns null.</p>
+	 * <p>If no object is currently available (i.e. the mpmc broadcaster is full) this method returns null.</p>
 	 * 
 	 * @param producerIndex the index of the producer to use
-	 * @return the next mutable object that can be used by the given producer or null if the mpmc is full
+	 * @return the next mutable object that can be used by the given producer or null if the mpmc broadcaster is full
 	 */
 	public E nextToDispatch(int producerIndex);
 	
-	/**
-	 * <p>Return the next mutable object that can be used by the given producer to dispatch data to the mpmc. The producer thread calling this method must pass its producer index.
-	 * This method allows you to specify the consumer that you want to receive the message.</p>
-	 * 
-	 * <p>If no object is currently available (i.e. the mpmc is full) this method returns null.</p>
-	 * 
-	 * @param producerIndex the index of the producer to use
-	 * @param toConsumerIndex the consumer that you want to receive the message
-	 * @return the next mutable object that can be used by the given producer or null if the mpmc is full
-	 */
-	public E nextToDispatch(int producerIndex, int toConsumerIndex);
-
 	/**
 	 * <p>Dispatch/Flush all previously obtained objects through the {@link #nextToDispatch(int)} method to the consumers. The producer thread calling this method must pass its producer index.</p>
 	 * 
@@ -73,9 +61,9 @@ public interface MpMc<E> {
 	public void flush(int producerIndex);
 	
 	/**
-	 * <p>Return the number of objects that can be safely polled from this mpmc consumer. The consumer thread calling this method must pass its consumer index.</p>
+	 * <p>Return the number of objects that can be safely polled from this mpmc broadcaster consumer. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * <p>If the mpmc is empty, this method returns 0.</p>
+	 * <p>If the mpmc broadcaster is empty, this method returns 0.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 * @return number of objects that can be polled
@@ -83,7 +71,7 @@ public interface MpMc<E> {
 	public long availableToPoll(int consumerIndex);
 	
 	/**
-	 * <p>Poll an object from the mpmc. You can only call this method after calling {@link #availableToPoll(int)} so you
+	 * <p>Poll an object from the mpmc broadcaster. You can only call this method after calling {@link #availableToPoll(int)} so you
 	 * know for sure what is the maximum number of times you can call this method. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
@@ -91,7 +79,7 @@ public interface MpMc<E> {
 	 * The object returned should be treated as a <i>data transfer object</i> therefore you should read what you need from it and let it go.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @return a data transfer object from the mpmc
+	 * @return a data transfer object from the mpmc broadcaster
 	 */
 	public E poll(int consumerIndex);
 	
@@ -130,14 +118,14 @@ public interface MpMc<E> {
 	public Consumer<E> getConsumer(int index);
 	
 	/**
-	 * Return the fixed number of consumers that this mpmc has.
+	 * Return the fixed number of consumers that this mpmc broadcaster has.
 	 * 
 	 * @return the fixed number of consumers
 	 */
 	public int getNumberOfConsumers();
 	
 	/**
-	 * Return the fixed number of producers that this mpmc has.
+	 * Return the fixed number of producers that this mpmc broadcaster has.
 	 * 
 	 * @return the fixed number of producers
 	 */

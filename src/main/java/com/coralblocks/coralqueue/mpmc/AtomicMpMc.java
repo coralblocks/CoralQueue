@@ -20,7 +20,7 @@ import com.coralblocks.coralqueue.demultiplexer.Demultiplexer;
 import com.coralblocks.coralqueue.util.Builder;
 
 /**
- * An implementation of {@link MpMc} that uses <i>memory barriers</i> to synchronize producers and consumers sequences.
+ * An implementation of {@link MpMc} that uses <i>memory barriers</i> to synchronize producers and consumers threads.
  * Two different consumers will never poll the same message.
  *
  * @param <E> The mutable transfer object to be used by this mpmc
