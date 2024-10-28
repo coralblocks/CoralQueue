@@ -28,3 +28,16 @@ The Demultiplexer allows a single producer thread sending messages to the demult
 <img src="images/MpMc.png" alt="MpMc" width="50%" height="50%" />
 
 The MpMc (i.e. Multiple Producers / Multiple Consumers) allows multiple producer threads sending messages to the mpmc and multiple consumer threads receiving messages from the mpmc, all running inside the same JVM. `Note that messages are not duplicated by the mpmc.` They are distributed among the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is of course undetermined.`
+
+## Broadcaster
+
+<img src="images/Broadcaster.png" alt="Broadcaster" width="50%" height="50%" />
+
+The Broadcaster allows a single producer thread sending messages to the broadcaster and multiple consumer threads receiving messages from the broadcaster, all running inside the same JVM. `Note that all consumers receive all messages.` `The consumer threads read the messages in the same order that they were sent by the single producer.`
+
+## MpMcBraodcaster
+
+<img src="images/MpMcBroadcaster.png" alt="MpMcBroadcaster" width="50%" height="50%" />
+
+The MpMcBroadcaster (i.e. Multiple Producers / Multiple Consumers) allows multiple producer threads sending messages to the mpmc broadcaster and multiple consumer threads receiving messages from the mpmc broadcaster, all running inside the same JVM. `Note that all consumers receive all messages.` `Also note that the order that the consumers will process the messages is of course undetermined due to the simulaneous producers.`
+
