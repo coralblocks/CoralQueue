@@ -23,9 +23,34 @@ import com.coralblocks.coralqueue.mpmcbroadcaster.AtomicMpMcBroadcaster;
 public class Basics {
 	
 	public static class Message {
-
+		
+		private static final int PRIME = 31;
+		
+		int producerIndex; // messages will be sent from different producers
 		long value;
 		boolean last;
+		
+		@Override
+		public int hashCode() {
+		    return PRIME * (PRIME + producerIndex) + (int) (value ^ (value >>> 32));
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof Message) {
+				Message m = (Message) obj;
+				return this.producerIndex == m.producerIndex && this.value == m.value;
+			}
+			return false;
+		}
+		
+		Message copy() {
+			Message m = new Message();
+			m.producerIndex = this.producerIndex;
+			m.value = this.value;
+			m.last = this.last;
+			return m;
+		}
 	}
 	
 	public static class Producer extends Thread {
@@ -60,6 +85,7 @@ public class Basics {
 						// busy spin while blocking (default and fastest wait strategy)
 						busySpinCount++; // save the number of busy-spins, just for extra info later
 					}
+					m.producerIndex = producerIndex;
 					m.value = idToSend++; // sending an unique value so the messages sent are unique
 					m.last = m.value == messagesToSend; // is it the last message I'll be sending?
 				}
@@ -71,19 +97,20 @@ public class Basics {
 	
 	public static class Consumer extends Thread {
 		
-		private final AtomicMpMcBroadcaster<Message> mpmc;
-		private final List<Long> messagesReceived  = new ArrayList<Long>();
+		private final AtomicMpMcBroadcaster<Message> mpmcBroadcaster;
+		private final List<Message> messagesReceived  = new ArrayList<Message>();
 		private final List<Long> batchesReceived = new ArrayList<Long>();
 		private long busySpinCount = 0;
 		private final int consumerIndex;
+		private int lastCount = 0;
 		
-		public Consumer(AtomicMpMcBroadcaster<Message> mpmc, int consumerIndex) {
+		public Consumer(AtomicMpMcBroadcaster<Message> mpmcBroadcaster, int consumerIndex) {
 			super(Consumer.class.getSimpleName() + "-" + consumerIndex); // name of the thread
-			this.mpmc = mpmc;
+			this.mpmcBroadcaster = mpmcBroadcaster;
 			this.consumerIndex = consumerIndex;
 		}
 		
-		public List<Long> getMessagesReceived() {
+		public List<Message> getMessagesReceived() {
 			return messagesReceived;
 		}
 		
@@ -99,14 +126,14 @@ public class Basics {
 		public final void run() {
 			boolean isRunning = true;
 			while(isRunning) {
-				long avail = mpmc.availableToPoll(consumerIndex); // <=========
+				long avail = mpmcBroadcaster.availableToPoll(consumerIndex); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {
-						Message m = mpmc.poll(consumerIndex); // <=========
-						messagesReceived.add(m.value); // save all messages received so we can later check them
-						if (m.last) isRunning = false; // wait to receive the done signal
+						Message m = mpmcBroadcaster.poll(consumerIndex); // <=========
+						messagesReceived.add(m.copy()); // save all messages received so we can later check them
+						if (m.last && ++lastCount == mpmcBroadcaster.getNumberOfProducers()) isRunning = false; // wait to receive the done signal
 					}
-					mpmc.donePolling(consumerIndex); // <=========
+					mpmcBroadcaster.donePolling(consumerIndex); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin while blocking (default and fastest wait strategy)
@@ -166,11 +193,15 @@ public class Basics {
 			else System.out.println("ERROR: " + consumers[i].getName() + " => Wrong number of messages received! => " + consumers[i].getMessagesReceived().size());
 		}
 		
+		System.out.println();
+		
 		// Were there any duplicates?
 		for(int i = 0; i < consumers.length; i++) {
 			if (consumers[i].getMessagesReceived().stream().distinct().count() == consumers[i].getMessagesReceived().size()) System.out.println("SUCCESS: " + consumers[i].getName() + " => No duplicate messages were received!");
 			else System.out.println("ERROR: " + consumers[i].getName() + " => Found duplicate messages!");
 		}
+		
+		System.out.println();
 		
 		// If we sum all batches received do we get the correct number of messages?
 		for(int i = 0; i < consumers.length; i++) {
