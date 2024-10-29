@@ -3,7 +3,7 @@ CoralQueue is a ultra-low-latency, lock-free, garbage-free, batching and concurr
 
 For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
-The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), [Broadcaster](#broadcaster) (one-producer-to-many-consumers) and [MpMcBraodcaster](#mpmcbroadcaster) (many-producers-to-many-consumers).
+The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), [Broadcaster](#broadcaster) (one-producer-to-many-consumers) and [MpMcBroaddcaster](#mpmcbroadcaster) (many-producers-to-many-consumers).
 
 ## Queue
 
@@ -35,7 +35,7 @@ The MpMc (i.e. Multiple Producers / Multiple Consumers) allows multiple producer
 
 The Broadcaster allows a single producer thread sending messages to the broadcaster and multiple consumer threads receiving messages from the broadcaster, all running inside the same JVM. `Note that all consumers receive all messages.` `The consumer threads read the messages in the same order that they were sent by the single producer.`
 
-## MpMcBraodcaster
+## MpMcBroadcaster
 
 <img src="images/MpMcBroadcaster.png" alt="MpMcBroadcaster" width="50%" height="50%" />
 
