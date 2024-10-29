@@ -1,5 +1,5 @@
 # CoralQueue
-CoralQueue is a ultra-low-latency, lock-free, garbage-free, batching and concurrent collection of circular data structures for inter-thread communication in Java. It uses memory barriers instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. All data structures are circular and bounded requiring producer/consumer blocking through a wait strategy when they are full/empty.
+CoralQueue is a ultra-low-latency, lock-free, garbage-free, batching and concurrent collection of circular data structures for inter-thread communication in Java. It uses memory barriers instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. All data structures are circular and bounded requiring producer/consumer blocking (but not locking) through a wait strategy when they are full/empty.
 
 For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
@@ -11,6 +11,7 @@ The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multip
 
 The Queue allows a single producer thread sending messages to the queue and a single consumer thread receiving messages from the queue, both running inside the same JVM. The consumer reads the messages in the same order that they were sent by the producer.
 
+- Click [here](src/main/java/com/coralblocks/coralqueue/example/queue/Minimal.java) for a minimal example of using the Queue
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/queue/Basics.java) for a basic example of using the Queue
 
 ## Multiplexer
@@ -19,6 +20,7 @@ The Queue allows a single producer thread sending messages to the queue and a si
 
 The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM.
 
+- Click [here](src/main/java/com/coralblocks/coralqueue/example/multiplexer/Minimal.java) for a minimal example of using the Multiplexer
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/multiplexer/Basics.java) for a basic example of using the Multiplexer
 
 ## Demultiplexer
@@ -27,6 +29,7 @@ The Multiplexer allows multiple producer threads sending messages to the multipl
 
 The Demultiplexer allows a single producer thread sending messages to the demultiplexer and multiple consumer threads receiving messages from the demultiplexer, all running inside the same JVM. `Note that messages are not duplicated by the demultiplexer.` They are distributed among the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is undetermined.`
 
+- Click [here](src/main/java/com/coralblocks/coralqueue/example/demultiplexer/Minimal.java) for a minimal example of using the Demultiplexer
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/demultiplexer/Basics.java) for a basic example of using the Demultiplexer
 
 ## MpMc
@@ -35,6 +38,7 @@ The Demultiplexer allows a single producer thread sending messages to the demult
 
 The MpMc (i.e. Multiple Producers / Multiple Consumers) allows multiple producer threads sending messages to the mpmc and multiple consumer threads receiving messages from the mpmc, all running inside the same JVM. `Note that messages are not duplicated by the mpmc.` They are distributed among the consumer threads, in other words, a message is processed only once by one of the consumers. `Also note that the order that the consumers will process the messages is of course undetermined.`
 
+- Click [here](src/main/java/com/coralblocks/coralqueue/example/mpmc/Minimal.java) for a minimal example of using the MpMc
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/mpmc/Basics.java) for a basic example of using the MpMc
 
 ## Broadcaster
@@ -43,6 +47,7 @@ The MpMc (i.e. Multiple Producers / Multiple Consumers) allows multiple producer
 
 The Broadcaster allows a single producer thread sending messages to the broadcaster and multiple consumer threads receiving messages from the broadcaster, all running inside the same JVM. `Note that all consumers receive all messages.` `The consumer threads read the messages in the same order that they were sent by the single producer.`
 
+- Click [here](src/main/java/com/coralblocks/coralqueue/example/broadcaster/Minimal.java) for a minimal example of using the Broadcaster
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/broadcaster/Basics.java) for a basic example of using the Broadcaster
 
 ## MpMcBroadcaster
@@ -51,5 +56,6 @@ The Broadcaster allows a single producer thread sending messages to the broadcas
 
 The MpMcBroadcaster (i.e. Multiple Producers / Multiple Consumers) allows multiple producer threads sending messages to the mpmc broadcaster and multiple consumer threads receiving messages from the mpmc broadcaster, all running inside the same JVM. `Note that all consumers receive all messages.` `Also note that the order that the consumers will process the messages is of course undetermined due to the simultaneous producers.`
 
+- Click [here](src/main/java/com/coralblocks/coralqueue/example/mpmcbroadcaster/Minimal.java) for a minimal example of using the MpMcBroadcaster
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/mpmcbroadcaster/Basics.java) for a basic example of using the MpMcBroadcaster
 
