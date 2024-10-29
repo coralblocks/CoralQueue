@@ -28,7 +28,7 @@ public class Minimal {
 					while((ml = demux.nextToDispatch()) == null); // busy spin
 					ml.set(i + 1);
 					
-					demux.flush(); // don't forget to notify consumer
+					demux.flush(); // don't forget to notify consumers
 				}
 				
 				for(int consumerIndex = 0; consumerIndex < numberOfConsumers; consumerIndex++) { // send a final message (-1) to each consumer
