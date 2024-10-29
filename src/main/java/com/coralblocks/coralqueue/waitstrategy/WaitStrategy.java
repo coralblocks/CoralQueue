@@ -52,7 +52,7 @@ public interface WaitStrategy {
 	/**
 	 * A factory static method to get a new <code>WaitStrategy</code> instance.
 	 * 
-	 * @param type the type of wait strategy we want
+	 * @param type the type of wait strategy to create and return
 	 * @return a new instance of the <code>WaitStrategy</code>
 	 */
 	public static WaitStrategy getWaitStrategy(String type) {
