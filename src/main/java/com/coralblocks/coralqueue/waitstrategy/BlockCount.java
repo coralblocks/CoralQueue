@@ -22,12 +22,9 @@ final class BlockCount {
 	private final boolean isActive;
 	private final int addValue;
 	
-	public BlockCount() {
-		this(false);
-	}
-	
-	public BlockCount(boolean isActive) {
-		this.isActive = isActive;
+	BlockCount() {
+		String s = System.getProperty("coralQueueBlockCount");
+		this.isActive = s != null && s.equalsIgnoreCase("true");
 		this.addValue = isActive ? 1 : 0;
 	}
 	
@@ -47,7 +44,7 @@ final class BlockCount {
 	}
 	
 	final void resetTotalBlockCount() {
-		if (isActive) {
+		if (isActive) { // avoid hitting the volatile variable unless you really have to
 			totalBlockCount = 0;
 		}
 	}

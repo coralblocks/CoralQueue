@@ -36,14 +36,14 @@ public interface WaitStrategy {
 	/**
 	 * Optional method to return the number of times this wait strategy has blocked, if supported
 	 * 
-	 * @return the number of times this wait strategy has blocked or -1 if blocking is not supported
+	 * @return the number of times this wait strategy has blocked or -1 if block counting is not supported
 	 */
 	default public long getTotalBlockCount() {
 		return -1;
 	}
 	
 	/**
-	 * Optional method to reset the total block count number to zero. If not supported, this method will do nothing.
+	 * Optional method to reset the total block count number to zero. If block counting is not supported, this method does nothing.
 	 */
 	default public void resetTotalBlockCount() {
 		

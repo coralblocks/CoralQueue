@@ -15,6 +15,13 @@
  */
 package com.coralblocks.coralqueue.waitstrategy;
 
+/**
+ * <p>A wait strategy that busy spins for some cycles, then sleeps 1 millisecond by calling <code>Thread.sleep(1)</code>.
+ * It can also back off by incrementing its sleep time by 1 millisecond until it reaches a maximum sleep time.
+ * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "spinSleep".</p>
+ * 
+ * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ */
 public class SpinSleepWaitStrategy implements WaitStrategy {
 
 	private final static int DEFAULT_SPIN_COUNT = 1000000;
@@ -30,24 +37,50 @@ public class SpinSleepWaitStrategy implements WaitStrategy {
 	
 	private final BlockCount blockCount = new BlockCount();
 
+	/**
+	 * Creates a <code>SpinSleepWaitStrategy</code>.
+	 * 
+	 * @param spinCount the number of cycles to busy spin before starting to sleep
+	 * @param sleepBackOff true to support backing off
+	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
+	 */
 	public SpinSleepWaitStrategy(final int spinCount, final boolean sleepBackOff, final long maxSleepTime) {
 		this.spinCount = spinCount;
 		this.sleepBackOff = sleepBackOff;
 		this.maxSleepTime = maxSleepTime;
 	}
 
+	/**
+	 * Creates a <code>SpinSleepWaitStrategy</code> with a default spin count of 1_000_000 and a default max sleep time (for backing off) of 5 milliseconds.
+	 * 
+	 * @param sleepBackOff true to use backing off
+	 */
 	public SpinSleepWaitStrategy(final boolean sleepBackOff) {
 		this(DEFAULT_SPIN_COUNT, sleepBackOff, DEFAULT_MAX_SLEEP_TIME);
 	}
 	
+	/**
+	 * Creates a <code>SpinSleepWaitStrategy</code> with a default spin count of 1_000_000.
+	 * 
+	 * @param sleepBackOff true to support backing off
+	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
+	 */
 	public SpinSleepWaitStrategy(final boolean sleepBackOff, final long maxSleepTime) {
 		this(DEFAULT_SPIN_COUNT, sleepBackOff, maxSleepTime);
 	}
 
+	/**
+	 * Creates a <code>SpinSleepWaitStrategy</code> without backing off (will keep sleeping 1 millisecond after the spin count).
+	 * 
+	 * @param spinCount the number of cycles to busy spin before starting to sleep
+	 */
 	public SpinSleepWaitStrategy(final int spinCount) {
 		this(spinCount, DEFAULT_BACK_OFF, DEFAULT_MAX_SLEEP_TIME);
 	}
 
+	/**
+	 * Creates a <code>SpinSleepWaitStrategy</code> with a default spin count of 1_000_000 and without backing off (will keep sleeping 1 millisecond after the spin count).
+	 */
 	public SpinSleepWaitStrategy() {
 		this(DEFAULT_SPIN_COUNT);
 	}
@@ -70,7 +103,7 @@ public class SpinSleepWaitStrategy implements WaitStrategy {
 				try {
 					Thread.sleep(sleepTime);
 				} catch(InterruptedException e) {
-					// NOOP
+					throw new RuntimeException(e);
 				}
 				
 			} else {
@@ -78,7 +111,7 @@ public class SpinSleepWaitStrategy implements WaitStrategy {
 				try {
 					Thread.sleep(1);
 				} catch(InterruptedException e) {
-					// NOOP
+					throw new RuntimeException(e);
 				}
 			}
 		}
@@ -93,14 +126,11 @@ public class SpinSleepWaitStrategy implements WaitStrategy {
 	
 	@Override
 	public final long getTotalBlockCount() {
-		
 		return blockCount.getTotalBlockCount();
 	}
 	
 	@Override
 	public final void resetTotalBlockCount() {
-		
 		blockCount.resetTotalBlockCount();
 	}
-
 }
