@@ -15,6 +15,13 @@
  */
 package com.coralblocks.coralqueue.waitstrategy;
 
+/**
+ * <p>A wait strategy that busy spins for some cycles, then yields for some cycles, then sleeps 1 millisecond by calling <code>Thread.sleep(1)</code>.
+ * It can also back off by incrementing its sleep time by 1 millisecond until it reaches a maximum sleep time.
+ * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "spinYieldSleep".</p>
+ * 
+ * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ */
 public class SpinYieldSleepWaitStrategy implements WaitStrategy {
 
 	private final static int DEFAULT_SPIN_COUNT = 1000000;
@@ -32,6 +39,14 @@ public class SpinYieldSleepWaitStrategy implements WaitStrategy {
 	
 	private final BlockCount blockCount = new BlockCount();
 
+	/**
+	 * Creates a <code>SpinYieldSleepWaitStrategy</code>.
+	 * 
+	 * @param spinCount the number of cycles to busy spin before starting to yield
+	 * @param yieldCount the number of cycles to yield before starting to sleep
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
+	 */
 	public SpinYieldSleepWaitStrategy(final int spinCount, final int yieldCount, final boolean sleepBackOff, final long maxSleepTime) {
 		this.spinCount = spinCount;
 		this.yieldCount = yieldCount + spinCount;
@@ -39,22 +54,49 @@ public class SpinYieldSleepWaitStrategy implements WaitStrategy {
 		this.maxSleepTime = maxSleepTime;
 	}
 	
+	/**
+	 * Creates a <code>SpinYieldSleepWaitStrategy</code> with the default max sleep time of 5 milliseconds (if backing off is enabled).
+	 * 
+	 * @param spinCount the number of cycles to busy spin before starting to yield
+	 * @param yieldCount the number of cycles to yield before starting to sleep
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 */
 	public SpinYieldSleepWaitStrategy(final int spinCount, final int yieldCount, final boolean sleepBackOff) {
 		this(spinCount, yieldCount, sleepBackOff, DEFAULT_MAX_SLEEP_TIME);
 	}
 	
+	/**
+	 * Creates a <code>SpinYieldSleepWaitStrategy</code> with the default spin count of 1_000_000 and the default yield count of 1_000.
+	 * 
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
+	 */
 	public SpinYieldSleepWaitStrategy(final boolean sleepBackOff, final long maxSleepTime) {
 		this(DEFAULT_SPIN_COUNT, DEFAULT_YIELD_COUNT, sleepBackOff, maxSleepTime);
 	}
 
+	/**
+	 * Creates a <code>SpinYieldSleepWaitStrategy</code> with the default spin count of 1_000_000, the default yield count of 1_000 and the default max sleep time of 5 milliseconds.
+	 * 
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 */
 	public SpinYieldSleepWaitStrategy(final boolean sleepBackOff) {
 		this(DEFAULT_SPIN_COUNT, DEFAULT_YIELD_COUNT, sleepBackOff, DEFAULT_MAX_SLEEP_TIME);
 	}
 
+	/**
+	 * Creates a <code>SpinYieldSleepWaitStrategy</code> without any backing off from sleep.
+	 * 
+	 * @param spinCount the number of cycles to busy spin before starting to yield
+	 * @param yieldCount the number of cycles to yield before starting to sleep
+	 */
 	public SpinYieldSleepWaitStrategy(final int spinCount, final int yieldCount) {
 		this(spinCount, yieldCount, DEFAULT_BACK_OFF, DEFAULT_MAX_SLEEP_TIME);
 	}
 
+	/**
+	 * Creates a <code>SpinYieldSleepWaitStrategy</code> with the default spin count of 1_000_000, the default yield count of 1_000 and without any backing off from sleep.
+	 */
 	public SpinYieldSleepWaitStrategy() {
 		this(DEFAULT_SPIN_COUNT, DEFAULT_YIELD_COUNT, DEFAULT_BACK_OFF, DEFAULT_MAX_SLEEP_TIME);
 	}

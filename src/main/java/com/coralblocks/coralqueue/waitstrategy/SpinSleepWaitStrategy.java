@@ -41,7 +41,7 @@ public class SpinSleepWaitStrategy implements WaitStrategy {
 	 * Creates a <code>SpinSleepWaitStrategy</code>.
 	 * 
 	 * @param spinCount the number of cycles to busy spin before starting to sleep
-	 * @param sleepBackOff true to support backing off
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
 	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
 	 */
 	public SpinSleepWaitStrategy(final int spinCount, final boolean sleepBackOff, final long maxSleepTime) {
