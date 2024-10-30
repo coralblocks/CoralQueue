@@ -92,7 +92,7 @@ for(int i = 0; i < avail; i++) {
     // do whatever you want with the StringBuilder
     // just do not create garbage
     // copy char by char if needed
-    // or copy it to an external StringBuilder
+    // or copy the contents to an external StringBuilder
 }
 queue.donePolling();
 ```
@@ -101,6 +101,50 @@ Again we busy spin if the queue is empty. Later we will see how we can also use 
 Note that we poll in batches, reducing the number of times we have to check for an empty queue through <code>availableToPoll()</code>.
 
 </details> 
+
+<details>
+  <summary>Click here for all the details of how to use WaitStrategies</summary>
+
+### All about using WaitStragies
+
+By default, you should busy-spin when the queue is full or empty. That’s usually the fastest approach but not always the best as you might want to allow other threads to use the CPU core. CoralQueue comes with a variety of wait strategies that you can use instead of busy spinning, and you can also create your owns by implementing the <code>WaitStrategy</code> interface. Below are some examples of wait strategies that come with CoralQueue:
+
+- <code>ParkWaitStrategy</code>: park (i.e. sleep) for 1 nanosecond with the option to back off up to a maximum of N nanoseconds. N defaults to 1 million nanoseconds if not specified (1 millisecond).
+- <code>SpinParkWaitStrategy</code>: first busy spins for C cycles (default to 1 million cycles) then it starts to park (i.e. sleep) for 1 nanosecond with the option to back off up to a maximum of N nanoseconds (default 1 million nanoseconds).
+- <code>SpinYieldParkWaitStrategy</code>: busy spins for some cycles, yield for some cycles then starts to sleep for 1 nanosecond with the option to back off up to a maximum of N nanoseconds (defaults to 1 million nanoseconds).
+
+To use a wait strategy, all you have to do is call its <code>block()</code> and <code>reset()</code> methods instead of busy spinning:
+
+#### Producer using a WaitStrategy
+```Java
+WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
+StringBuilder sb;
+while((sb = queue.nextToDispatch()) == null) {
+    producerWaitStrategy.block(); // <=====
+}
+sb.setLength(0);
+sb.append("Hello there!");
+queue.flush();
+producerWaitStrategy.reset(); // <=====
+```
+
+#### Consumer usinga WaitStrategy
+```Java
+WaitStrategy consumerWaitStrategy = new SpinParkWaitStrategy();
+long avail;
+while((avail = queue.availableToPoll()) == 0) {
+    consumerWaitStrategy.block(); // <=====
+}
+for(int i = 0; i < avail; i++) {
+    StringBuilder sb = queue.poll();
+    // do whatever you want with the StringBuilder
+    // just do not create garbage
+    // copy char-by-char instead
+}
+queue.donePolling();
+consumerWaitStrategy.reset(); // <=====
+```
+</details>
 
 ## Multiplexer
 
