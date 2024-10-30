@@ -40,7 +40,10 @@ final class BlockCount {
 	}
 	
 	final long getTotalBlockCount() {
-		return isActive ? totalBlockCount : -1;
+		if (isActive) {
+			return totalBlockCount;
+		}
+		return -1;
 	}
 	
 	final void resetTotalBlockCount() {
