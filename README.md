@@ -11,6 +11,7 @@ The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multip
 
 The Queue allows a single producer thread sending messages to the queue and a single consumer thread receiving messages from the queue, both running inside the same JVM. The consumer reads the messages in the same order that they were sent by the producer.
 
+- Click [here](QUEUE.md) for all the details of how to use the Queue
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/queue/Minimal.java) for a minimal example of using the Queue
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/queue/Basics.java) for a basic example of using the Queue
 
