@@ -18,7 +18,7 @@ package com.coralblocks.coralqueue.demultiplexer;
 /**
  * A holder for a demultiplexer consumer. It contains a reference to the demultiplexer and the consumer index.
  * 
- * @param <E> The mutable transfer object to be used by this demultiplexer
+ * @param <E> The data transfer mutable object to be used by this demultiplexer
  */
 public class Consumer<E> {
 	

@@ -20,7 +20,7 @@ public class Minimal {
 
 				for(int i = 0; i < messagesToSend; i += 2) { // note we are looping 2 by 2 (we are sending a batch of 2 messages)
 					
-					MutableLong ml; // our mutable transfer object
+					MutableLong ml; // our data transfer mutable object
 					
 					while((ml = demux.nextToDispatch()) == null); // busy spin
 					ml.set(i);

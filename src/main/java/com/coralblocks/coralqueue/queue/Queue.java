@@ -17,7 +17,7 @@ package com.coralblocks.coralqueue.queue;
 
 /**
  * <p>A Queue API that allows offering and polling objects to and from the queue. Implementations should naturally/natively support batching (for speed) and pooling (for zero garbage).
- * The objects must be mutable to act like <i>transfer objects</i>.
+ * The objects must be mutable to act like <i>data transfer objects</i>.
  * The circular queue is fully populated with these objects at startup.</p>
  * 
  *  <p>So to offer to the queue, you first get a mutable object from the queue by calling {@link #nextToDispatch()}, modify this object and then call {@link #flush(boolean)} or {@link #flush()}.
@@ -28,7 +28,7 @@ package com.coralblocks.coralqueue.queue;
  *  
  *  <p><b>NOTE:</b> This queue is intended to be used by only one producer thread and by only one consumer thread (i.e one-to-one). For other thread scenarios you should check Demux, Mux, Mpmc, etc.</p>
  *
- * @param <E> The mutable transfer object to be used by this queue
+ * @param <E> The data transfer mutable object to be used by this queue
  */
 public interface Queue<E> {
 	
@@ -87,9 +87,9 @@ public interface Queue<E> {
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
 	 * Read what you need to read from the object and release its reference.
-	 * The object returned should be treated as a <i>data transfer object</i> therefore you should read what you need from it and let it go.</p>
+	 * The object returned should be treated as a <i>data transfer mutable object</i> therefore you should read what you need from it and let it go.</p>
 	 * 
-	 * @return a data transfer object from the queue
+	 * @return a data transfer mutable object from the queue
 	 */
 	public E poll();
 	

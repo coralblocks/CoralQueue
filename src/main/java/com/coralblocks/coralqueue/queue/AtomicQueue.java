@@ -22,7 +22,7 @@ import com.coralblocks.coralqueue.util.PaddedAtomicLong;
 /**
  * An implementation of {@link Queue} that uses <i>memory barriers</i> to synchronize producer and consumer sequences.
  *
- * @param <E> The mutable transfer object to be used by this queue
+ * @param <E> The data transfer mutable object to be used by this queue
  */
 public class AtomicQueue<E> implements Queue<E> {
 	

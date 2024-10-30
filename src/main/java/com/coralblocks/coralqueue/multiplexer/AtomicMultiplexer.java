@@ -22,7 +22,7 @@ import com.coralblocks.coralqueue.util.Builder;
 /**
  * An implementation of {@link Multiplexer} that uses <i>memory barriers</i> to synchronize producers and consumer sequences.
  *
- * @param <E> The mutable transfer object to be used by this multiplexer
+ * @param <E> The data transfer mutable object to be used by this multiplexer
  */
 public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	

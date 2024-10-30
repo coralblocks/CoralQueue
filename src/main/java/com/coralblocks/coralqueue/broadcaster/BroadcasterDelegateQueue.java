@@ -20,7 +20,7 @@ import com.coralblocks.coralqueue.queue.Queue;
 /**
  * A delegate so that a {@link Broadcaster} can be used as a {@link Queue}.
  *
- * @param <E> The mutable transfer object to be used by this broadcaster
+ * @param <E> The data transfer mutable object to be used by this broadcaster
  */
 public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	

@@ -23,7 +23,7 @@ import com.coralblocks.coralqueue.util.Builder;
  * An implementation of {@link MpMcBroadcaster} that uses <i>memory barriers</i> to synchronize producer and consumer threads.
  * All consumers receive all messages.
  *
- * @param <E> The mutable transfer object to be used by this mpmc broadcaster
+ * @param <E> The data transfer mutable object to be used by this mpmc broadcaster
  */
 public class AtomicMpMcBroadcaster<E> implements MpMcBroadcaster<E> {
 	

@@ -23,7 +23,7 @@ import com.coralblocks.coralqueue.util.MathUtils;
  * An implementation of {@link Demultiplexer} that uses <i>memory barriers</i> to synchronize producer and consumers sequences.
  * Two different consumers will never poll the same message.
  *
- * @param <E> The mutable transfer object to be used by this demultiplexer
+ * @param <E> The data transfer mutable object to be used by this demultiplexer
  */
 public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	

@@ -20,7 +20,7 @@ package com.coralblocks.coralqueue.multiplexer;
  * 
  * <p><b>NOTE:</b> A multiplexer must have a <b>fixed</b> number of producers specified by its constructor.</p>
  *
- * @param <E> The mutable transfer object to be used by this multiplexer
+ * @param <E> The data transfer mutable object to be used by this multiplexer
  */
 public interface Multiplexer<E> {
 	
@@ -83,9 +83,9 @@ public interface Multiplexer<E> {
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
 	 * Read what you need to read from the object and release its reference.
-	 * The object returned should be treated as a <i>data transfer object</i> therefore you should read what you need from it and let it go.</p>
+	 * The object returned should be treated as a <i>data transfer mutable object</i> therefore you should read what you need from it and let it go.</p>
 	 * 
-	 * @return a data transfer object from the multiplexer
+	 * @return a data transfer mutable object from the multiplexer
 	 */
 	public E poll();
 

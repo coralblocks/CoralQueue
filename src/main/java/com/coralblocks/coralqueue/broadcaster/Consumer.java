@@ -18,7 +18,7 @@ package com.coralblocks.coralqueue.broadcaster;
 /**
  * A consumer to receive messages from this broadcaster. 
  *
- * @param <E> The mutable transfer object to be used by this broadcaster
+ * @param <E> The data transfer mutable object to be used by this broadcaster
  */
 public class Consumer<E> {
 	

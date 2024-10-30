@@ -20,7 +20,7 @@ import com.coralblocks.coralqueue.broadcaster.Broadcaster;
 /**
  * A producer holder for the {@link MpMcBroadcaster}. It contains a {@link Broadcaster} and the producer index. 
  *
- * @param <E> The mutable transfer object to be used by this mpmc broadcaster
+ * @param <E> The data transfer mutable object to be used by this mpmc broadcaster
  */
 public class Producer<E> {
 	

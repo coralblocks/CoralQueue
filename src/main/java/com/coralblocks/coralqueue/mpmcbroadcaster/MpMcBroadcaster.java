@@ -21,7 +21,7 @@ package com.coralblocks.coralqueue.mpmcbroadcaster;
  * 
  * <p><b>NOTE:</b> A mpmc broadcaster must have a <b>fixed</b> number of consumers and a fixed number of producers specified by its constructor.</p>
  *
- * @param <E> The mutable transfer object to be used by this mpmc broadcaster
+ * @param <E> The data transfer mutable object to be used by this mpmc broadcaster
  */
 public interface MpMcBroadcaster<E> {
 	
@@ -76,10 +76,10 @@ public interface MpMcBroadcaster<E> {
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
 	 * Read what you need to read from the object and release its reference.
-	 * The object returned should be treated as a <i>data transfer object</i> therefore you should read what you need from it and let it go.</p>
+	 * The object returned should be treated as a <i>data transfer mutable object</i> therefore you should read what you need from it and let it go.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @return a data transfer object from the mpmc broadcaster
+	 * @return a data transfer mutable object from the mpmc broadcaster
 	 */
 	public E poll(int consumerIndex);
 	

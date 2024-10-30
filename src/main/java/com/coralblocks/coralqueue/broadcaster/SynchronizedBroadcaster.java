@@ -25,7 +25,7 @@ import com.coralblocks.coralqueue.util.MathUtils;
  * An implementation of a {@link Broadcaster} that uses <i>locks</i> to synchronize producer and consumers sequences.
  * All messages are delivered to all consumers in the exact same order that they are sent by the producer.
  *
- * @param <E> The mutable transfer object to be used by this broadcaster
+ * @param <E> The data transfer mutable object to be used by this broadcaster
  */
 public class SynchronizedBroadcaster<E> implements Broadcaster<E> {
 

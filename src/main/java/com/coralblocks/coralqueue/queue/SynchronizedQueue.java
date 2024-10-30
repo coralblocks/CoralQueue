@@ -24,7 +24,7 @@ import com.coralblocks.coralqueue.util.MathUtils;
  * This synchronized implementation of {@link Queue} is provided for illustrative purposes and for performance comparison. It uses two locks instead of <i>memory barriers</i>,
  * one for the consumer and one for the producer, to maintain the sequence numbers.
  * 
- * @param <E> The mutable transfer object to be used by this queue
+ * @param <E> The data transfer mutable object to be used by this queue
  */
 public class SynchronizedQueue<E> implements Queue<E> {
 	

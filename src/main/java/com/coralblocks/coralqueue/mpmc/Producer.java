@@ -20,7 +20,7 @@ import com.coralblocks.coralqueue.demultiplexer.Demultiplexer;
 /**
  * A producer holder for the {@link MpMc}. It contains a {@link Demultiplexer} and the producer index. 
  *
- * @param <E> The mutable transfer object to be used by this mpmc
+ * @param <E> The data transfer mutable object to be used by this mpmc
  */
 public class Producer<E> {
 	

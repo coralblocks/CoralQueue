@@ -20,7 +20,7 @@ package com.coralblocks.coralqueue.mpmc;
  * 
  * Its API is the same as a regular {@link com.coralblocks.coralqueue.queue.Queue}.
  * 
- * @param <E> The mutable transfer object to be used by this mpmc
+ * @param <E> The data transfer mutable object to be used by this mpmc
  */
 public class Consumer<E> {
 	
@@ -59,7 +59,7 @@ public class Consumer<E> {
 	/**
 	 * See {@link com.coralblocks.coralqueue.queue.Queue#poll()} for more details.
 	 * 
-	 * @return a data transfer object from the queue
+	 * @return a data transfer mutable object from the queue
 	 */
 	public final E poll() {
 		while(true) {
