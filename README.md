@@ -11,9 +11,24 @@ The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multip
 
 The Queue allows a single producer thread sending messages to the queue and a single consumer thread receiving messages from the queue, both running inside the same JVM. The consumer reads the messages in the same order that they were sent by the producer.
 
-- Click [here](QUEUE.md) for all the details of how to use the Queue
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/queue/Minimal.java) for a minimal example of using the Queue
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/queue/Basics.java) for a basic example of using the Queue
+
+<details>
+  <summary>Click here for all the details of how to use the Queue</summary>
+  
+### All about using the Queue
+
+The queue is a circular data structure with pre-allocated <i> data transfer mutable objects</i>. You should see these data transfer mutable objects as <i>carriers of data</i>, in other words, they are there to allow
+you to transfer data (and not object references) from producers to consumers. The steps are:
+
+- A producer fetches an available data transfer mutable object from the queue
+- The producer populates the mutable object with the data it wants to transfer (i.e. send) to the consumer(s)
+- The producer flushes to notify the consumer(s)
+- A consumer fetches an available data transfer mutable object from the queue
+- The consumer reads the data from the mutable object
+- The consumer calls <code>donePolling()</code> to notify the producer(s)
+</details> 
 
 ## Multiplexer
 
