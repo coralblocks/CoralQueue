@@ -20,7 +20,7 @@ The Queue allows a single producer thread sending messages to the queue and a si
 ### All about using the Queue
 
 The queue is a circular data structure with pre-allocated <i> data transfer mutable objects</i>. You should see these data transfer mutable objects as <i>carriers of data</i>, in other words, they are there to allow
-you to transfer data (and not object references) from producers to consumers. The steps are:
+you to transfer <i>data</i> (and not object references) from producers to consumers. The steps are:
 
 - A producer fetches an available data transfer mutable object from the queue
 - The producer populates the mutable object with the data it wants to transfer (i.e. send) to the consumer(s)
@@ -28,6 +28,59 @@ you to transfer data (and not object references) from producers to consumers. Th
 - A consumer fetches an available data transfer mutable object from the queue
 - The consumer reads the data from the mutable object
 - The consumer calls <code>donePolling()</code> to notify the producer(s)
+
+Below we use a <code>StringBuilder</code> as our data transfer mutable object to create an <code>AtomicQueue</code>:
+```Java
+final Queue<StringBuilder> queue = new AtomicQueue<StringBuilder>(StringBuilder.class); // default queue capacity is 1024
+```
+
+You can also specify the capacity of the queue, which must be a power of two:
+```Java
+final Queue<StringBuilder> queue = new AtomicQueue<StringBuilder>(512, StringBuilder.class); // specifying the queue capacity
+```
+The code above creates a queue with 512 pre-allocated StringBuilders. Note that it uses the default constructor of StringBuilder which by default creates a StringBuilder with size 16. That may be too small for our data transfer objects as we don’t want the StringBuilder resizing itself during runtime and creating garbage. So to create a bigger StringBuilder we can use a <code>com.coralblocks.coralqueue.util.Builder</code> like below:
+```Java
+Builder<StringBuilder> builder = new Builder<StringBuilder>() {
+    @Override
+    public StringBuilder newInstance() {
+        return new StringBuilder(1024);
+    }
+};
+```
+
+And pass this builder to the constructor of our <code>AtomicQueue</code>:
+```Java
+final Queue<StringBuilder> queue = new AtomicQueue<StringBuilder>(512, builder); // using a builder instead of the class
+```
+
+#### Sending messages to the queue
+
+To send a message to the queue, you grab a data transfer mutable object from the queue, fill it with your data and call <code>flush()</code> as the code below illustrates:
+```Java
+StringBuilder sb;
+while((sb = queue.nextToDispatch()) == null); // busy spin...
+sb.setLength(0);
+sb.append("Hello there!");
+queue.flush();
+```
+
+Note that if the queue is full we just <i>busy spin</i> until a data transfer object becomes available. Later we will see how we can also use a <code>WaitStrategy</code> instead of busy spinning.
+
+You can also send messages in batches:
+```Java
+StringBuilder sb;
+ 
+while((sb = queue.nextToDispatch()) == null); // busy spin...
+sb.setLength(0);
+sb.append("Hello there!");
+ 
+while((sb = queue.nextToDispatch()) == null); // busy spin...
+sb.setLength(0);
+sb.append("Hello again!");
+ 
+queue.flush();
+```
+
 </details> 
 
 ## Multiplexer
