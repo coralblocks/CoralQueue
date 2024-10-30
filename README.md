@@ -81,6 +81,25 @@ sb.append("Hello again!");
 queue.flush();
 ```
 
+#### Reading messages from the queue
+
+To read messages from the queue you poll them from a consumer thread, as the code below shows:
+```Java
+long avail;
+while((avail = queue.availableToPoll()) == 0); // busy spin
+for(int i = 0; i < avail; i++) {
+    StringBuilder sb = queue.poll();
+    // do whatever you want with the StringBuilder
+    // just do not create garbage
+    // copy char by char if needed
+    // or copy it to an external StringBuilder
+}
+queue.donePolling();
+```
+Again we busy spin if the queue is empty. Later we will see how we can also use a <code>WaitStrategy</code> instead of busy spinning.
+
+Note that we poll in batches, reducing the number of times we have to check for an empty queue through <code>availableToPoll()</code>.
+
 </details> 
 
 ## Multiplexer
