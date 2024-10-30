@@ -105,13 +105,13 @@ Note that we poll in batches, reducing the number of times we have to check for 
 <details>
   <summary>Click here for all the details of how to use WaitStrategies</summary>
 
-### All about using WaitStragies
+### All about using WaitStrategies
 
 By default, you should busy-spin when the queue is full or empty. That’s usually the fastest approach but not always the best as you might want to allow other threads to use the CPU core. CoralQueue comes with a variety of wait strategies that you can use instead of busy spinning, and you can also create your owns by implementing the <code>WaitStrategy</code> interface. Below are some examples of wait strategies that come with CoralQueue:
 
 - <code>ParkWaitStrategy</code>: park (i.e. sleep) for 1 nanosecond with the option to back off up to a maximum of N nanoseconds. N defaults to 1 million nanoseconds if not specified (1 millisecond).
 - <code>SpinParkWaitStrategy</code>: first busy spins for C cycles (default to 1 million cycles) then it starts to park (i.e. sleep) for 1 nanosecond with the option to back off up to a maximum of N nanoseconds (default 1 million nanoseconds).
-- <code>SpinYieldParkWaitStrategy</code>: busy spins for some cycles, yield for some cycles then starts to sleep for 1 nanosecond with the option to back off up to a maximum of N nanoseconds (defaults to 1 million nanoseconds).
+- <code>SpinYieldParkWaitStrategy</code>: busy spins for some cycles, yields for some cycles then starts to sleep for 1 nanosecond with the option to back off up to a maximum of N nanoseconds (defaults to 1 million nanoseconds).
 
 To use a wait strategy, all you have to do is call its <code>block()</code> and <code>reset()</code> methods instead of busy spinning:
 
