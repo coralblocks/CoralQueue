@@ -128,7 +128,7 @@ queue.flush();
 producerWaitStrategy.reset(); // <=====
 ```
 
-#### Consumer usinga WaitStrategy
+#### Consumer using a WaitStrategy
 ```Java
 WaitStrategy consumerWaitStrategy = new SpinParkWaitStrategy();
 long avail;
@@ -139,7 +139,8 @@ for(int i = 0; i < avail; i++) {
     StringBuilder sb = queue.poll();
     // do whatever you want with the StringBuilder
     // just do not create garbage
-    // copy char-by-char instead
+    // copy char by char if needed
+    // or copy the contents to an external StringBuilder
 }
 queue.donePolling();
 consumerWaitStrategy.reset(); // <=====
