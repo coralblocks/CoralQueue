@@ -18,11 +18,11 @@ package com.coralblocks.coralqueue.waitstrategy;
 import java.util.concurrent.locks.LockSupport;
 
 /**
- * No busy spinning, just yield and sleep. You can configure how many iteration to yield before sleeping. Supporing backing-off
- * functionality, in other words, if turned on, the sleeping time will increase by one nanosecond gradually until reset is called.
- * It also supports a maximum park time (default is 1 millisecond).
+ * <p>A wait strategy that yields for some cycles, then parks 1 nanosecond by calling <code>LockSupport.parkNanos(1L)</code>.
+ * It can also back off by incrementing its park time by 1 nanosecond until it reaches a maximum park time.
+ * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "yieldPark".</p>
  * 
-* 
+ * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
  */
 public class YieldParkWaitStrategy implements WaitStrategy {
 
@@ -39,28 +39,60 @@ public class YieldParkWaitStrategy implements WaitStrategy {
 	
 	private final BlockCount blockCount = new BlockCount();
 
+	/**
+	 * Creates a <code>YieldParkWaitStrategy</code>.
+	 * 
+	 * @param yieldCount the number of cycles to yield before starting to park
+	 * @param parkBackOff true to support backing off by increasing the park time
+	 * @param maxParkTime the max park time in nanoseconds if park backing off is enabled
+	 */
 	public YieldParkWaitStrategy(final int yieldCount, final boolean parkBackOff, final long maxParkTime) {
 		this.yieldCount = yieldCount;
 		this.parkBackOff = parkBackOff;
 		this.maxParkTime = maxParkTime;
 	}
 
+	/**
+	 * Creates a <code>YieldParkWaitStrategy</code> without any backing off from park.
+	 * 
+	 * @param yieldCount the number of cycles to yield before starting to park
+	 */
 	public YieldParkWaitStrategy(final int yieldCount) {
 		this(yieldCount, DEFAULT_BACK_OFF, DEFAULT_MAX_PARK_TIME);
 	}
 	
+	/**
+	 * Creates a <code>YieldParkWaitStrategy</code> with the default max park time of 1_000_000 nanoseconds (if backing off is enabled).
+	 * 
+	 * @param yieldCount the number of cycles to yield before starting to park
+	 * @param parkBackOff true to support backing off by increasing the park time
+	 */
 	public YieldParkWaitStrategy(final int yieldCount, final boolean parkBackOff) {
 		this(yieldCount, parkBackOff, DEFAULT_MAX_PARK_TIME);
 	}
 	
+	/**
+	 * Creates a <code>YieldParkWaitStrategy</code> with the default yield count of 1_000.
+	 * 
+	 * @param parkBackOff true to support backing off by increasing the park time
+	 * @param maxParkTime the max park time in nanoseconds if park backing off is enabled
+	 */
 	public YieldParkWaitStrategy(final boolean parkBackOff, final long maxParkTime) {
 		this(DEFAULT_YIELD_COUNT, parkBackOff, maxParkTime);
 	}
 
+	/**
+	 * Creates a <code>YieldParkWaitStrategy</code> with the default yield count of 1_000 and the default max park time of 1_000_000 nanoseconds.
+	 * 
+	 * @param parkBackOff true to support backing off by increasing the park time
+	 */
 	public YieldParkWaitStrategy(final boolean parkBackOff) {
 		this(DEFAULT_YIELD_COUNT, parkBackOff, DEFAULT_MAX_PARK_TIME);
 	}
 
+	/**
+	 * Creates a <code>YieldParkWaitStrategy</code> with the default yield count of 1_000 and without any backing off from park.
+	 */
 	public YieldParkWaitStrategy() {
 		this(DEFAULT_YIELD_COUNT);
 	}
@@ -80,7 +112,7 @@ public class YieldParkWaitStrategy implements WaitStrategy {
 				
 				LockSupport.parkNanos(parkTime);
 			} else {
-				LockSupport.parkNanos(1);
+				LockSupport.parkNanos(1L);
 			}
 		}
 	}

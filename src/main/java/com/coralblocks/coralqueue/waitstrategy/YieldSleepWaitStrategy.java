@@ -15,6 +15,13 @@
  */
 package com.coralblocks.coralqueue.waitstrategy;
 
+/**
+ * <p>A wait strategy that yields for some cycles, then sleeps 1 millisecond by calling <code>Thread.sleep(1)</code>.
+ * It can also back off by incrementing its sleep time by 1 millisecond until it reaches a maximum sleep time.
+ * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "yieldSleep".</p>
+ * 
+ * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ */
 public class YieldSleepWaitStrategy implements WaitStrategy {
 
 	private final static int DEFAULT_YIELD_COUNT = 1000;
@@ -30,28 +37,60 @@ public class YieldSleepWaitStrategy implements WaitStrategy {
 	
 	private final BlockCount blockCount = new BlockCount();
 
+	/**
+	 * Creates a <code>YieldSleepWaitStrategy</code>.
+	 * 
+	 * @param yieldCount the number of cycles to yield before starting to sleep
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
+	 */
 	public YieldSleepWaitStrategy(final int yieldCount, final boolean sleepBackOff, final long maxSleepTime) {
 		this.yieldCount = yieldCount;
 		this.sleepBackOff = sleepBackOff;
 		this.maxSleepTime = maxSleepTime;
 	}
 
+	/**
+	 * Creates a <code>YieldSleepWaitStrategy</code> without any backing off from sleep.
+	 * 
+	 * @param yieldCount the number of cycles to yield before starting to sleep
+	 */
 	public YieldSleepWaitStrategy(final int yieldCount) {
 		this(yieldCount, DEFAULT_BACK_OFF, DEFAULT_MAX_SLEEP_TIME);
 	}
 	
+	/**
+	 * Creates a <code>YieldSleepWaitStrategy</code> with the default max sleep time of 5 milliseconds (if backing off is enabled).
+	 * 
+	 * @param yieldCount the number of cycles to yield before starting to sleep
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 */
 	public YieldSleepWaitStrategy(final int yieldCount, final boolean sleepBackOff) {
 		this(yieldCount, sleepBackOff, DEFAULT_MAX_SLEEP_TIME);
 	}
 	
+	/**
+	 * Creates a <code>YieldSleepWaitStrategy</code> with the default yield count of 1_000.
+	 * 
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
+	 */
 	public YieldSleepWaitStrategy(final boolean sleepBackOff, final long maxSleepTime) {
 		this(DEFAULT_YIELD_COUNT, sleepBackOff, maxSleepTime);
 	}
-
+	
+	/**
+	 * Creates a <code>YieldSleepWaitStrategy</code> with the default yield count of 1_000 and the default max sleep time of 5 milliseconds.
+	 * 
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 */
 	public YieldSleepWaitStrategy(final boolean sleepBackOff) {
 		this(DEFAULT_YIELD_COUNT, sleepBackOff, DEFAULT_MAX_SLEEP_TIME);
 	}
 
+	/**
+	 * Creates a <code>YieldSleepWaitStrategy</code> with the default yield count of 1_000 and without any backing off from sleep.
+	 */
 	public YieldSleepWaitStrategy() {
 		this(DEFAULT_YIELD_COUNT);
 	}
