@@ -18,10 +18,11 @@ package com.coralblocks.coralqueue.waitstrategy;
 import java.util.concurrent.locks.LockSupport;
 
 /**
- * A wait strategy that uses the LockSupport.parkNanos method with some optional backing-off functionality. If backing-off is turned on, the sleepTime will gradually increase
- * by one nanosecond until the strategy is reset. You can also specify the max park (i.e. sleep) time in nanoseconds (default is 1 millisecond).
+ * <p>A wait strategy that parks 1 nanosecond by calling <code>LockSupport.parkNanos(1L)</code>.
+ * It can also back off by incrementing its park time by 1 microsecond until it reaches a maximum park time.
+ * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "park".</p>
  * 
-* 
+ * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
  */
 public class ParkWaitStrategy implements WaitStrategy {
 	
@@ -35,16 +36,30 @@ public class ParkWaitStrategy implements WaitStrategy {
 	
 	private final BlockCount blockCount = new BlockCount();
 	
+	/**
+	 * Creates a <code>ParkWaitStrategy</code>.
+	 * 
+	 * @param parkBackOff true to support backing off by increasing the park time
+	 * @param maxParkTime the max park time in nanoseconds if park backing off is enabled
+	 */
 	public ParkWaitStrategy(boolean parkBackOff, long maxParkTime) {
 		this.parkBackOff = parkBackOff;
 		this.maxParkTime = maxParkTime;
 		
 	}
 	
+	/**
+	 * Creates a <code>ParkWaitStrategy</code>. The default backing off max park time is used (1_000_000 nanoseconds).
+	 * 
+	 * @param parkBackOff true to support backing off by increasing the park time
+	 */
 	public ParkWaitStrategy(boolean parkBackOff) {
 		this(parkBackOff, DEFAULT_MAX_PARK_TIME);
 	}
 	
+	/**
+	 * Creates a <code>ParkWaitStrategy</code> without backing off.
+	 */
 	public ParkWaitStrategy() {
 		this(DEFAULT_BACK_OFF, DEFAULT_MAX_PARK_TIME);
 	}
@@ -58,7 +73,7 @@ public class ParkWaitStrategy implements WaitStrategy {
 			if (parkTime != maxParkTime) parkTime++;
 			LockSupport.parkNanos(parkTime);
 		} else {
-			LockSupport.parkNanos(1);
+			LockSupport.parkNanos(1L);
 		}
     }
 

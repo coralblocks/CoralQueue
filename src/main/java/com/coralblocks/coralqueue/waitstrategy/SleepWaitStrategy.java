@@ -15,6 +15,13 @@
  */
 package com.coralblocks.coralqueue.waitstrategy;
 
+/**
+ * <p>A wait strategy that sleeps 1 millisecond by calling <code>Thread.sleep(1)</code>.
+ * It can also back off by incrementing its sleep time by 1 millisecond until it reaches a maximum sleep time.
+ * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "sleep".</p>
+ * 
+ * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ */
 public class SleepWaitStrategy implements WaitStrategy {
 	
 	private final static boolean DEFAULT_BACK_OFF = false;
@@ -27,16 +34,30 @@ public class SleepWaitStrategy implements WaitStrategy {
 	
 	private final BlockCount blockCount = new BlockCount();
 	
+	/**
+	 * Creates a <code>SleepWaitStrategy</code>.
+	 * 
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
+	 */
 	public SleepWaitStrategy(boolean sleepBackOff, long maxSleepTime) {
 		this.sleepBackOff = sleepBackOff;
 		this.maxSleepTime = maxSleepTime;
 		
 	}
 	
+	/**
+	 * Creates a <code>SleepWaitStrategy</code>. The default backing off max sleep time is used (5 milliseconds).
+	 * 
+	 * @param sleepBackOff true to support backing off by increasing the sleep time
+	 */
 	public SleepWaitStrategy(boolean sleepBackOff) {
 		this(sleepBackOff, DEFAULT_MAX_SLEEP_TIME);
 	}
 	
+	/**
+	 * Creates a <code>SleepWaitStrategy</code> without backing off.
+	 */
 	public SleepWaitStrategy() {
 		this(DEFAULT_BACK_OFF, DEFAULT_MAX_SLEEP_TIME);
 	}
