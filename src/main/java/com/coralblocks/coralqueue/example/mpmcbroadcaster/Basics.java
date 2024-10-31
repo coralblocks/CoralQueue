@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coralblocks.coralqueue.mpmcbroadcaster.AtomicMpMcBroadcaster;
+import com.coralblocks.coralqueue.mpmcbroadcaster.MpMcBroadcaster;
 
 public class Basics {
 	
@@ -55,14 +56,14 @@ public class Basics {
 	
 	public static class Producer extends Thread {
 		
-		private final AtomicMpMcBroadcaster<Message> mpmcBroadcaster;
+		private final MpMcBroadcaster<Message> mpmcBroadcaster;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
 		private int idToSend = 1;
 		private long busySpinCount = 0;
 		private final int producerIndex;
 		
-		public Producer(AtomicMpMcBroadcaster<Message> mpmcBroadcaster, int producerIndex, int messagesToSend, int batchSizeToSend) {
+		public Producer(MpMcBroadcaster<Message> mpmcBroadcaster, int producerIndex, int messagesToSend, int batchSizeToSend) {
 			super(Producer.class.getSimpleName() + "-" + producerIndex); // name of the thread
 			this.mpmcBroadcaster = mpmcBroadcaster;
 			this.producerIndex = producerIndex;
@@ -97,14 +98,14 @@ public class Basics {
 	
 	public static class Consumer extends Thread {
 		
-		private final AtomicMpMcBroadcaster<Message> mpmcBroadcaster;
+		private final MpMcBroadcaster<Message> mpmcBroadcaster;
 		private final List<Message> messagesReceived  = new ArrayList<Message>();
 		private final List<Long> batchesReceived = new ArrayList<Long>();
 		private long busySpinCount = 0;
 		private final int consumerIndex;
 		private int lastCount = 0;
 		
-		public Consumer(AtomicMpMcBroadcaster<Message> mpmcBroadcaster, int consumerIndex) {
+		public Consumer(MpMcBroadcaster<Message> mpmcBroadcaster, int consumerIndex) {
 			super(Consumer.class.getSimpleName() + "-" + consumerIndex); // name of the thread
 			this.mpmcBroadcaster = mpmcBroadcaster;
 			this.consumerIndex = consumerIndex;
@@ -152,7 +153,7 @@ public class Basics {
 		
 		final int totalMessagesToSend = messagesToSend * numberOfProducers;
 		
-		AtomicMpMcBroadcaster<Message> mpmcBroadcaster = new AtomicMpMcBroadcaster<Message>(Message.class, numberOfProducers, numberOfConsumers);
+		MpMcBroadcaster<Message> mpmcBroadcaster = new AtomicMpMcBroadcaster<Message>(Message.class, numberOfProducers, numberOfConsumers);
 		
 		Producer[] producers = new Producer[numberOfProducers];
 		for(int i = 0; i < producers.length; i++) {

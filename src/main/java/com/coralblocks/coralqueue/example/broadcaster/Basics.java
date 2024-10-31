@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coralblocks.coralqueue.broadcaster.AtomicBroadcaster;
+import com.coralblocks.coralqueue.broadcaster.Broadcaster;
 
 public class Basics {
 	
@@ -30,13 +31,13 @@ public class Basics {
 	
 	public static class Producer extends Thread {
 		
-		private final AtomicBroadcaster<Message> broadcaster;
+		private final Broadcaster<Message> broadcaster;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
 		private int idToSend = 1;
 		private long busySpinCount = 0;
 		
-		public Producer(AtomicBroadcaster<Message> broadcaster, int messagesToSend, int batchSizeToSend) {
+		public Producer(Broadcaster<Message> broadcaster, int messagesToSend, int batchSizeToSend) {
 			super(Producer.class.getSimpleName()); // name of the thread
 			this.broadcaster = broadcaster;
 			this.messagesToSend = messagesToSend;
@@ -69,13 +70,13 @@ public class Basics {
 	
 	public static class Consumer extends Thread {
 		
-		private final AtomicBroadcaster<Message> broadcaster;
+		private final Broadcaster<Message> broadcaster;
 		private final List<Long> messagesReceived  = new ArrayList<Long>();
 		private final List<Long> batchesReceived = new ArrayList<Long>();
 		private long busySpinCount = 0;
 		private final int consumerIndex;
 		
-		public Consumer(AtomicBroadcaster<Message> broadcaster, int consumerIndex) {
+		public Consumer(Broadcaster<Message> broadcaster, int consumerIndex) {
 			super(Consumer.class.getSimpleName() + "-" + consumerIndex); // name of the thread
 			this.broadcaster = broadcaster;
 			this.consumerIndex = consumerIndex;
@@ -120,7 +121,7 @@ public class Basics {
 		final int batchSizeToSend = args.length > 1 ? Integer.parseInt(args[1]) : 100;
 		final int numberOfConsumers = args.length > 2 ? Integer.parseInt(args[2]) : 4;
 		
-		AtomicBroadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(Message.class, numberOfConsumers);
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(Message.class, numberOfConsumers);
 		
 		Producer producer = new Producer(broadcaster, messagesToSend, batchSizeToSend);
 		

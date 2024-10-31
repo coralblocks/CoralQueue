@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coralblocks.coralqueue.multiplexer.AtomicMultiplexer;
+import com.coralblocks.coralqueue.multiplexer.Multiplexer;
 
 public class Basics {
 	
@@ -55,14 +56,14 @@ public class Basics {
 	
 	public static class Producer extends Thread {
 		
-		private final AtomicMultiplexer<Message> mux;
+		private final Multiplexer<Message> mux;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
 		private int idToSend = 1;
 		private long busySpinCount = 0;
 		private final int producerIndex;
 		
-		public Producer(AtomicMultiplexer<Message> mux, int producerIndex, int messagesToSend, int batchSizeToSend) {
+		public Producer(Multiplexer<Message> mux, int producerIndex, int messagesToSend, int batchSizeToSend) {
 			super(Producer.class.getSimpleName() + "-" + producerIndex); // name of the thread
 			this.mux = mux;
 			this.producerIndex = producerIndex;
@@ -97,13 +98,13 @@ public class Basics {
 	
 	public static class Consumer extends Thread {
 		
-		private final AtomicMultiplexer<Message> mux;
+		private final Multiplexer<Message> mux;
 		private final List<Message> messagesReceived  = new ArrayList<Message>();
 		private final List<Long> batchesReceived = new ArrayList<Long>();
 		private long busySpinCount = 0;
 		private int lastCount = 0;
 		
-		public Consumer(AtomicMultiplexer<Message> mux) {
+		public Consumer(Multiplexer<Message> mux) {
 			super(Consumer.class.getSimpleName()); // name of the thread
 			this.mux = mux;
 		}
@@ -149,7 +150,7 @@ public class Basics {
 		
 		final int totalMessagesToSend = messagesToSend * numberOfProducers;
 		
-		AtomicMultiplexer<Message> mux = new AtomicMultiplexer<Message>(Message.class, numberOfProducers);
+		Multiplexer<Message> mux = new AtomicMultiplexer<Message>(Message.class, numberOfProducers);
 		
 		Producer[] producers = new Producer[numberOfProducers];
 		for(int i = 0; i < producers.length; i++) {

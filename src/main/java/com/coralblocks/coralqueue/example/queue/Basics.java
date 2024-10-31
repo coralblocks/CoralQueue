@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.coralblocks.coralqueue.queue.AtomicQueue;
+import com.coralblocks.coralqueue.queue.Queue;
 
 public class Basics {
 	
@@ -30,13 +31,13 @@ public class Basics {
 	
 	public static class Producer extends Thread {
 		
-		private final AtomicQueue<Message> queue;
+		private final Queue<Message> queue;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
 		private int idToSend = 1; // each message from this producer will contain an unique value (id)
 		private long busySpinCount = 0;
 		
-		public Producer(AtomicQueue<Message> queue, int messagesToSend, int batchSizeToSend) {
+		public Producer(Queue<Message> queue, int messagesToSend, int batchSizeToSend) {
 			super(Producer.class.getSimpleName()); // name of the thread
 			this.queue = queue;
 			this.messagesToSend = messagesToSend;
@@ -69,12 +70,12 @@ public class Basics {
 	
 	public static class Consumer extends Thread {
 		
-		private final AtomicQueue<Message> queue;
+		private final Queue<Message> queue;
 		private final List<Long> messagesReceived  = new ArrayList<Long>();
 		private final List<Long> batchesReceived = new ArrayList<Long>();
 		private long busySpinCount = 0;
 		
-		public Consumer(AtomicQueue<Message> queue) {
+		public Consumer(Queue<Message> queue) {
 			super(Consumer.class.getSimpleName()); // name of the thread
 			this.queue = queue;
 		}
@@ -117,7 +118,7 @@ public class Basics {
 		final int messagesToSend = args.length > 0 ? Integer.parseInt(args[0]) : 10000;
 		final int batchSizeToSend = args.length > 1 ? Integer.parseInt(args[1]) : 100;
 		
-		AtomicQueue<Message> queue = new AtomicQueue<Message>(Message.class);
+		Queue<Message> queue = new AtomicQueue<Message>(Message.class);
 		
 		Producer producer = new Producer(queue, messagesToSend, batchSizeToSend);
 		Consumer consumer = new Consumer(queue);

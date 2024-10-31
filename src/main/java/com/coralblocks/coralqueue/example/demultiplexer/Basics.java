@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coralblocks.coralqueue.demultiplexer.AtomicDemultiplexer;
+import com.coralblocks.coralqueue.demultiplexer.Demultiplexer;
 
 public class Basics {
 	
@@ -30,13 +31,13 @@ public class Basics {
 	
 	public static class Producer extends Thread {
 		
-		private final AtomicDemultiplexer<Message> demux;
+		private final Demultiplexer<Message> demux;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
 		private int idToSend = 1;
 		private long busySpinCount = 0;
 		
-		public Producer(AtomicDemultiplexer<Message> demux, int messagesToSend, int batchSizeToSend) {
+		public Producer(Demultiplexer<Message> demux, int messagesToSend, int batchSizeToSend) {
 			super(Producer.class.getSimpleName()); // name of the thread
 			this.demux = demux;
 			this.messagesToSend = messagesToSend;
@@ -81,13 +82,13 @@ public class Basics {
 	
 	public static class Consumer extends Thread {
 		
-		private final AtomicDemultiplexer<Message> demux;
+		private final Demultiplexer<Message> demux;
 		private final List<Long> messagesReceived  = new ArrayList<Long>();
 		private final List<Long> batchesReceived = new ArrayList<Long>();
 		private long busySpinCount = 0;
 		private final int consumerIndex;
 		
-		public Consumer(AtomicDemultiplexer<Message> demux, int consumerIndex) {
+		public Consumer(Demultiplexer<Message> demux, int consumerIndex) {
 			super(Consumer.class.getSimpleName() + "-" + consumerIndex); // name of the thread
 			this.demux = demux;
 			this.consumerIndex = consumerIndex;
@@ -132,7 +133,7 @@ public class Basics {
 		final int batchSizeToSend = args.length > 1 ? Integer.parseInt(args[1]) : 100;
 		final int numberOfConsumers = args.length > 2 ? Integer.parseInt(args[2]) : 4;
 		
-		AtomicDemultiplexer<Message> demux = new AtomicDemultiplexer<Message>(Message.class, numberOfConsumers);
+		Demultiplexer<Message> demux = new AtomicDemultiplexer<Message>(Message.class, numberOfConsumers);
 		
 		Producer producer = new Producer(demux, messagesToSend, batchSizeToSend);
 		

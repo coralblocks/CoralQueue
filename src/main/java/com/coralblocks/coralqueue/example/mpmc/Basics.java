@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coralblocks.coralqueue.mpmc.AtomicMpMc;
+import com.coralblocks.coralqueue.mpmc.MpMc;
 
 public class Basics {
 	
@@ -55,7 +56,7 @@ public class Basics {
 	
 	public static class Producer extends Thread {
 		
-		private final AtomicMpMc<Message> mpmc;
+		private final MpMc<Message> mpmc;
 		private final int messagesToSend;
 		private final int batchSizeToSend;
 		private int idToSend = 1;
@@ -63,7 +64,7 @@ public class Basics {
 		private final int producerIndex;
 		private final int numberOfConsumers;
 		
-		public Producer(AtomicMpMc<Message> mpmc, int producerIndex, int messagesToSend, int batchSizeToSend, int numberOfConsumers) {
+		public Producer(MpMc<Message> mpmc, int producerIndex, int messagesToSend, int batchSizeToSend, int numberOfConsumers) {
 			super(Producer.class.getSimpleName() + "-" + producerIndex); // name of the thread
 			this.mpmc = mpmc;
 			this.producerIndex = producerIndex;
@@ -112,14 +113,14 @@ public class Basics {
 	
 	public static class Consumer extends Thread {
 		
-		private final AtomicMpMc<Message> mpmc;
+		private final MpMc<Message> mpmc;
 		private final List<Message> messagesReceived  = new ArrayList<Message>();
 		private final List<Long> batchesReceived = new ArrayList<Long>();
 		private long busySpinCount = 0;
 		private int lastCount = 0;
 		private final int consumerIndex;
 		
-		public Consumer(AtomicMpMc<Message> mpmc, int consumerIndex) {
+		public Consumer(MpMc<Message> mpmc, int consumerIndex) {
 			super(Consumer.class.getSimpleName() + "-" + consumerIndex); // name of the thread
 			this.mpmc = mpmc;
 			this.consumerIndex = consumerIndex;
@@ -167,7 +168,7 @@ public class Basics {
 		
 		final int totalMessagesToSend = messagesToSend * numberOfProducers;
 		
-		AtomicMpMc<Message> mpmc = new AtomicMpMc<Message>(Message.class, numberOfProducers, numberOfConsumers);
+		MpMc<Message> mpmc = new AtomicMpMc<Message>(Message.class, numberOfProducers, numberOfConsumers);
 		
 		Producer[] producers = new Producer[numberOfProducers];
 		for(int i = 0; i < producers.length; i++) {
