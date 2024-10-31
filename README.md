@@ -105,7 +105,7 @@ Note that we poll in batches, reducing the number of times we have to check for 
 <details>
   <summary>Click here for all the details of how to use Wait Strategies</summary>
 
-### All about using WaitStrategies
+### All about using Wait Strategies
 
 By default, you should busy-spin when the queue is full or empty. That’s usually the fastest approach but not always the best as you might want to allow other threads to use the CPU core. CoralQueue comes with a variety of wait strategies that you can use instead of busy spinning, and you can also create your owns by implementing the <code>WaitStrategy</code> interface. Below are some examples of wait strategies that come with CoralQueue:
 
