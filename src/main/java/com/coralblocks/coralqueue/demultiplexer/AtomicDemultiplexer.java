@@ -16,6 +16,7 @@
 package com.coralblocks.coralqueue.demultiplexer;
 
 import com.coralblocks.coralqueue.queue.AtomicQueue;
+import com.coralblocks.coralqueue.queue.Queue;
 import com.coralblocks.coralqueue.util.Builder;
 import com.coralblocks.coralqueue.util.MathUtils;
 
@@ -29,7 +30,7 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	
 	private final static int DEFAULT_CAPACITY = 1024;
 
-	private final AtomicQueue<E>[] queues;
+	private final Queue<E>[] queues;
 	private final int numberOfConsumers;
 	private int currQueueToDispatch = 0;
 	private boolean[] needsToFlush;
@@ -46,7 +47,7 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	public AtomicDemultiplexer(int capacity, Builder<E> builder, int numberOfConsumers) {
 		MathUtils.ensurePowerOfTwo(capacity);
 		this.numberOfConsumers = numberOfConsumers;
-		this.queues = new AtomicQueue[numberOfConsumers];
+		this.queues = new Queue[numberOfConsumers];
 		this.needsToFlush = new boolean[numberOfConsumers];
 		this.consumers = (Consumer<E>[]) new Consumer[numberOfConsumers];
 		for(int i = 0; i < queues.length; i++) {
