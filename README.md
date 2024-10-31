@@ -147,6 +147,25 @@ consumerWaitStrategy.reset(); // <=====
 ```
 </details>
 
+<details>
+  <summary>Click here for all the details of how to use Semi-Volatile Writes</summary>
+
+### All about using Semi-volatile Writes (lazySet)
+
+To squeeze every bit of performance out of CoralQueue, you can use <i>semi-volatile writes</i> when sending and receiving messages. Basically, a semi-volatile write is done through the <code>lazySet</code> method from <code>java.util.concurrent.AtomicLong</code>. It is a faster operation for the thread that’s modifying the variable at the expense of the thread that’s interested in knowing about updates in the variable. For example, if you want to minimize the latency in the producer, you should use lazySet. On other hand, if you want to minimize the message transit time, you should not use lazySet so the consumer is notified as soon as possible about a new message in the queue.
+
+By default, CoralQueue does not use <code>lazySet</code>, in other words the other thread is notified immediatelly (or as soon as possible). But you can easily take control of that by using the methods below:
+```Java
+// producer notifying consumer(s)
+queue.flush(); // no lazySet by default
+queue.flush(true); // use lazySet
+```
+```Java
+// consumer notifying producer(s)
+queue.donePolling(); // no lazySet by default
+queue.donePolling(true); // use lazySet
+```
+
 ## Multiplexer
 
 <img src="images/Mux.png" alt="Multiplexer" width="50%" height="50%" />
