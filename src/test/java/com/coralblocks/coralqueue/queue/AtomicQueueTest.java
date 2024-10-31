@@ -34,7 +34,7 @@ public class AtomicQueueTest {
 		final int messagesToSend = 100000;
 		final int batchSizeToSend =100;
 		
-		AtomicQueue<Message> queue = new AtomicQueue<Message>(Message.class);
+		Queue<Message> queue = new AtomicQueue<Message>(Message.class);
 		
 		Producer producer = new Producer(queue, messagesToSend, batchSizeToSend);
 		Consumer consumer = new Consumer(queue);

@@ -37,7 +37,7 @@ public class AtomicMpMcTest {
 		
 		final int totalMessagesToSend = messagesToSend * numberOfProducers;
 		
-		AtomicMpMc<Message> mpmc = new AtomicMpMc<Message>(Message.class, numberOfProducers, numberOfConsumers);
+		MpMc<Message> mpmc = new AtomicMpMc<Message>(Message.class, numberOfProducers, numberOfConsumers);
 		
 		Producer[] producers = new Producer[numberOfProducers];
 		for(int i = 0; i < producers.length; i++) {

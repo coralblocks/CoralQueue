@@ -32,7 +32,7 @@ public class AtomicBroadcasterTest {
 		final int batchSizeToSend = 100;
 		final int numberOfConsumers = 4;
 		
-		AtomicBroadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(Message.class, numberOfConsumers);
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(Message.class, numberOfConsumers);
 		
 		Producer producer = new Producer(broadcaster, messagesToSend, batchSizeToSend);
 		

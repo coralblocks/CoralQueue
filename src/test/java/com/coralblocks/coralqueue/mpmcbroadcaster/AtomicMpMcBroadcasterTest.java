@@ -35,7 +35,7 @@ public class AtomicMpMcBroadcasterTest {
 		
 		final int totalMessagesToSend = messagesToSend * numberOfProducers;
 		
-		AtomicMpMcBroadcaster<Message> mpmcBroadcaster = new AtomicMpMcBroadcaster<Message>(Message.class, numberOfProducers, numberOfConsumers);
+		MpMcBroadcaster<Message> mpmcBroadcaster = new AtomicMpMcBroadcaster<Message>(Message.class, numberOfProducers, numberOfConsumers);
 		
 		Producer[] producers = new Producer[numberOfProducers];
 		for(int i = 0; i < producers.length; i++) {

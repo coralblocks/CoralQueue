@@ -34,7 +34,7 @@ public class AtomicDemultiplexerTest {
 		final int batchSizeToSend = 100;
 		final int numberOfConsumers = 4;
 		
-		AtomicDemultiplexer<Message> mux = new AtomicDemultiplexer<Message>(Message.class, numberOfConsumers);
+		Demultiplexer<Message> mux = new AtomicDemultiplexer<Message>(Message.class, numberOfConsumers);
 		
 		Producer producer = new Producer(mux, messagesToSend, batchSizeToSend);
 		

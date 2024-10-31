@@ -35,7 +35,7 @@ public class AtomicMultiplexerTest {
 		
 		final int totalMessagesToSend = messagesToSend * numberOfProducers;
 		
-		AtomicMultiplexer<Message> mux = new AtomicMultiplexer<Message>(Message.class, numberOfProducers);
+		Multiplexer<Message> mux = new AtomicMultiplexer<Message>(Message.class, numberOfProducers);
 		
 		Producer[] producers = new Producer[numberOfProducers];
 		for(int i = 0; i < producers.length; i++) {
