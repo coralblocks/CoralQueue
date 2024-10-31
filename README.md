@@ -165,7 +165,8 @@ queue.flush(true); // use lazySet
 queue.donePolling(); // no lazySet by default
 queue.donePolling(true); // use lazySet
 ```
-
+</details>
+  
 ## Multiplexer
 
 <img src="images/Mux.png" alt="Multiplexer" width="50%" height="50%" />
