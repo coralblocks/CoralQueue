@@ -103,7 +103,7 @@ Note that we poll in batches, reducing the number of times we have to check for 
 </details> 
 
 <details>
-  <summary>Click here for all the details of how to use WaitStrategies</summary>
+  <summary>Click here for all the details of how to use Wait Strategies</summary>
 
 ### All about using WaitStrategies
 
@@ -115,7 +115,7 @@ By default, you should busy-spin when the queue is full or empty. That’s usual
 
 To use a wait strategy, all you have to do is call its <code>block()</code> and <code>reset()</code> methods instead of busy spinning:
 
-#### Producer using a WaitStrategy
+#### Producer using a Wait Strategy
 ```Java
 WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
 StringBuilder sb;
@@ -128,7 +128,7 @@ queue.flush();
 producerWaitStrategy.reset(); // <=====
 ```
 
-#### Consumer using a WaitStrategy
+#### Consumer using a Wait Strategy
 ```Java
 WaitStrategy consumerWaitStrategy = new SpinParkWaitStrategy();
 long avail;
