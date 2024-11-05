@@ -89,7 +89,7 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	}
 	
 	@Override
-	public Consumer<E> getConsumer(int index) {
+	public final Consumer<E> getConsumer(int index) {
 		if (index >= numberOfConsumers) {
 			throw new RuntimeException("Tried to get a consumer with a bad index: " + index);
 		}
@@ -182,7 +182,7 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	}
 
 	@Override
-    public int getNumberOfConsumers() {
+    public final int getNumberOfConsumers() {
 	    return numberOfConsumers;
     }
 }

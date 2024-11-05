@@ -97,63 +97,63 @@ public class AtomicMpMcBroadcaster<E> implements MpMcBroadcaster<E> {
 	}
 	
 	@Override
-	public void clear() {
+	public final void clear() {
 		for(int i = 0; i < broadcasters.length; i++) {
 			broadcasters[i].clear();
 		}
 	}
 	
 	@Override
-	public E nextToDispatch(int producerIndex) {
+	public final E nextToDispatch(int producerIndex) {
 		Producer<E> producer = getProducer(producerIndex);
 		return producer.nextToDispatch();
 	}
 	
 	@Override
-	public void flush(int producerIndex, boolean lazySet) {
+	public final void flush(int producerIndex, boolean lazySet) {
 		Producer<E> producer = getProducer(producerIndex);
 		producer.flush(lazySet);
 	}
 	
 	@Override
-	public void flush(int producerIndex) {
+	public final void flush(int producerIndex) {
 		Producer<E> producer = getProducer(producerIndex);
 		producer.flush();
 	}
 	
 	@Override
-	public long availableToPoll(int consumerIndex) {
+	public final long availableToPoll(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
 		return consumer.availableToPoll();
 	}
 	
 	@Override
-	public E poll(int consumerIndex) {
+	public final E poll(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
 		return consumer.poll();
 	}
 	
 	@Override
-	public void donePolling(int consumerIndex, boolean lazySet) {
+	public final void donePolling(int consumerIndex, boolean lazySet) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
 		consumer.donePolling(lazySet);
 	}
 	
 	@Override
-	public void donePolling(int consumerIndex) {
+	public final void donePolling(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
 		consumer.donePolling();
 	}
 	
 	@Override
-	public void disableConsumer(int consumerIndex) {
+	public final void disableConsumer(int consumerIndex) {
 		for(int i = 0; i < broadcasters.length; i++) {
 			broadcasters[i].disableConsumer(consumerIndex);
 		}
 	}
 	
 	@Override
-	public Producer<E> getProducer(int index) {
+	public final Producer<E> getProducer(int index) {
 		if (index >= producers.length) {
 			throw new RuntimeException("Tried to get a producer with a bad index: " + index);
 		}
@@ -161,7 +161,7 @@ public class AtomicMpMcBroadcaster<E> implements MpMcBroadcaster<E> {
 	}
 	
 	@Override
-	public Consumer<E> getConsumer(int index) {
+	public final Consumer<E> getConsumer(int index) {
 		if (index >= consumers.length) {
 			throw new RuntimeException("Tried to get a consumer with a bad index: " + index);
 		}
@@ -169,12 +169,12 @@ public class AtomicMpMcBroadcaster<E> implements MpMcBroadcaster<E> {
 	}
 	
 	@Override
-	public int getNumberOfConsumers() {
+	public final int getNumberOfConsumers() {
 		return consumers.length;
 	}
 	
 	@Override
-	public int getNumberOfProducers() {
+	public final int getNumberOfProducers() {
 		return producers.length;
 	}
 }

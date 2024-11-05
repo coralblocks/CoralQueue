@@ -62,7 +62,7 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	}
 
 	@Override
-    public E nextToDispatch() {
+    public final E nextToDispatch() {
 	    return broadcaster.nextToDispatch();
     }
 	
@@ -72,22 +72,22 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	}
 
 	@Override
-    public void flush(boolean lazySet) {
+    public final void flush(boolean lazySet) {
 		broadcaster.flush(lazySet);
     }
 
 	@Override
-    public void flush() {
+    public final void flush() {
 		broadcaster.flush();
     }
 
 	@Override
-    public long availableToPoll() {
+    public final long availableToPoll() {
 	    return broadcaster.availableToPoll(consumerIndex);
     }
 
 	@Override
-    public E poll() {
+    public final E poll() {
 		return broadcaster.poll(consumerIndex);
     }
 	
@@ -97,22 +97,22 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	}
 
 	@Override
-    public void donePolling(boolean lazySet) {
+    public final void donePolling(boolean lazySet) {
 		broadcaster.donePolling(consumerIndex, lazySet);
     }
 
 	@Override
-    public void donePolling() {
+    public final void donePolling() {
 		broadcaster.donePolling(consumerIndex);
     }
 
 	@Override
-    public void rollBack() {
+    public final void rollBack() {
 		broadcaster.rollBack(consumerIndex);
     }
 
 	@Override
-    public void rollBack(long items) {
+    public final void rollBack(long items) {
 		broadcaster.rollBack(consumerIndex, items);
     }
 
