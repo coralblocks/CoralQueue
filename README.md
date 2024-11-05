@@ -218,5 +218,5 @@ The MpMcBroadcaster (i.e. Multiple Producers / Multiple Consumers) allows multip
 
 There is also the case for inter-process communication (IPC) by using a shared memory mapped file to hold our queue so that two threads running on the same physical machine but on different JVMs can exchange messages.
 
-- For a preview you can click [here](https://www.coralblocks.com/index.php/inter-process-communication-with-coralqueue/) for an article about IPC with CoralQueue
+- For a preview you can click [here](https://www.coralblocks.com/index.php/inter-process-communication-with-coralqueue/) to read an article about IPC with CoralQueue
 
