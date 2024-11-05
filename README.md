@@ -212,3 +212,11 @@ The MpMcBroadcaster (i.e. Multiple Producers / Multiple Consumers) allows multip
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/mpmcbroadcaster/Minimal.java) for a minimal example of using the MpMcBroadcaster
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/mpmcbroadcaster/Basics.java) for a basic example of using the MpMcBroadcaster
 
+## OffHeapQueue (<i>Stay Tuned!</i>)
+
+<img src="images/OffHeapQueue.png" alt="OffHeapQueue" width="50%" height="50%" />
+
+There is also the case for inter-process communication (IPC) through a shared memory mapped file so that two threads running on the same physical machine but on different JVMs can exchange messages. This is much faster than the other communication option which would be network access through loopback.
+
+- For a preview you can click [here](https://www.coralblocks.com/index.php/inter-process-communication-with-coralqueue/) for an article about IPC with CoralQueue
+
