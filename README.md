@@ -1,5 +1,5 @@
 # CoralQueue
-CoralQueue is a ultra-low-latency, lock-free, garbage-free, batching and concurrent collection of circular data structures for inter-thread communication in Java. It uses memory barriers instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. All data structures are circular and bounded requiring producer/consumer blocking (but not locking) when they are full/empty through a wait strategy or busy spinning.
+CoralQueue is a ultra-low-latency, lock-free, garbage-free, batching and concurrent collection of circular data structures for inter-thread communication in Java. It uses memory barriers through <i>volatile</i> variables instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. All data structures are circular and bounded requiring producer/consumer blocking (but not locking) when they are full/empty through a wait strategy or busy spinning.
 
 For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
@@ -212,6 +212,7 @@ The MpMcBroadcaster (i.e. Multiple Producers / Multiple Consumers) allows multip
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/mpmcbroadcaster/Minimal.java) for a minimal example of using the MpMcBroadcaster
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/mpmcbroadcaster/Basics.java) for a basic example of using the MpMcBroadcaster
 
+<!-- 
 ## OffHeapQueue (<i>Stay Tuned!</i>)
 
 <img src="images/OffHeapQueue.png" alt="OffHeapQueue" width="50%" height="50%" />
@@ -219,4 +220,4 @@ The MpMcBroadcaster (i.e. Multiple Producers / Multiple Consumers) allows multip
 There is also the case for inter-process communication (IPC) by using a shared memory mapped file to hold our queue so that two threads running on the same physical machine but on different JVMs can exchange messages.
 
 - For a preview you can click [here](https://www.coralblocks.com/index.php/inter-process-communication-with-coralqueue/) to read an article about IPC with CoralQueue
-
+-->
