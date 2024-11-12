@@ -32,7 +32,7 @@ public class AtomicQueueTest {
 	public void testAll() throws InterruptedException {
 		
 		final int messagesToSend = 100000;
-		final int batchSizeToSend =100;
+		final int batchSizeToSend = 100;
 		
 		Queue<Message> queue = new AtomicQueue<Message>(Message.class);
 		
