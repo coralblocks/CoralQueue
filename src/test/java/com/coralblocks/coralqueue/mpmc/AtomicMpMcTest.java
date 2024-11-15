@@ -71,13 +71,13 @@ public class AtomicMpMcTest {
 		}
 		
 		// Did we receive all messages?
-		Assert.assertEquals(messagesReceived.size(), totalMessagesToSend);
+		Assert.assertEquals(totalMessagesToSend, messagesReceived.size());
 		
 		// Were there any duplicates?
-		Assert.assertEquals(messagesReceived.stream().distinct().count(), messagesReceived.size());
+		Assert.assertEquals(messagesReceived.size(), messagesReceived.stream().distinct().count());
 		
 		// If we sum all batches do we get the correct number of messages?
 		long sumOfAllBatches = batchesReceived.stream().mapToLong(Long::longValue).sum();
-		Assert.assertEquals(sumOfAllBatches, totalMessagesToSend);
+		Assert.assertEquals(totalMessagesToSend, sumOfAllBatches);
 	}
 }

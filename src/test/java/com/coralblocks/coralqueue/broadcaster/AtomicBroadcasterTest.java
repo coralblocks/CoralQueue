@@ -54,18 +54,18 @@ public class AtomicBroadcasterTest {
 		
 		// Did all consumers receive all messages?
 		for(int i = 0; i < consumers.length; i++) {
-			Assert.assertEquals(consumers[i].getMessagesReceived().size(),  messagesToSend);
+			Assert.assertEquals(messagesToSend, consumers[i].getMessagesReceived().size());
 		}
 		
 		// Were there any duplicates?
 		for(int i = 0; i < consumers.length; i++) {
-			Assert.assertEquals(consumers[i].getMessagesReceived().stream().distinct().count(), consumers[i].getMessagesReceived().size());
+			Assert.assertEquals(consumers[i].getMessagesReceived().size(), consumers[i].getMessagesReceived().stream().distinct().count());
 		}
 		
 		// If we sum all batches received do we get the correct number of messages?
 		for(int i = 0; i < consumers.length; i++) {
 			long sumOfAllBatches = consumers[i].getBatchesReceived().stream().mapToLong(Long::longValue).sum();
-			Assert.assertEquals(sumOfAllBatches, messagesToSend);
+			Assert.assertEquals(messagesToSend, sumOfAllBatches);
 		}
 	}
 }

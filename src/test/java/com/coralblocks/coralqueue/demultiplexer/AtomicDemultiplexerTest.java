@@ -65,13 +65,13 @@ public class AtomicDemultiplexerTest {
 		}
 		
 		// Did we receive all messages?
-		Assert.assertEquals(totalMessagesReceived.size(), messagesToSend);
+		Assert.assertEquals(messagesToSend, totalMessagesReceived.size());
 		
 		// Were there any duplicates?
-		Assert.assertEquals(totalMessagesReceived.stream().distinct().count(), totalMessagesReceived.size());
+		Assert.assertEquals(totalMessagesReceived.size(), totalMessagesReceived.stream().distinct().count());
 		
 		// If we sum all batches do we get the correct number of messages?
 		long sumOfAllBatches = totalBatchesReceived.stream().mapToLong(Long::longValue).sum();
-		Assert.assertEquals(sumOfAllBatches, messagesToSend);
+		Assert.assertEquals(messagesToSend, sumOfAllBatches);
 	}
 }
