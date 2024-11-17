@@ -20,19 +20,19 @@ final class BlockingCounter {
 	private volatile long totalBlockCount = 0;
 	private long currBlockCount = 0;
 	private final boolean isActive;
-	private final int addValue;
 	
 	BlockingCounter() {
 		String s = System.getProperty("coralQueueCountBlocking");
 		this.isActive = s != null && s.equalsIgnoreCase("true");
-		this.addValue = isActive ? 1 : 0;
 	}
 	
 	final void increment() {
-		currBlockCount += addValue;
+		if (!isActive) return;
+		currBlockCount++;
 	}
 	
 	final void reset() {
+		if (!isActive) return;
 		if (currBlockCount > 0) {
 			totalBlockCount += currBlockCount; // flush to volatile variable (i.e. flush to memory)
 			currBlockCount = 0;
@@ -40,15 +40,12 @@ final class BlockingCounter {
 	}
 	
 	final long getTotalBlockCount() {
-		if (isActive) {
-			return totalBlockCount;
-		}
-		return -1;
+		if (!isActive) return -1;
+		return totalBlockCount;
 	}
 	
 	final void resetTotalBlockCount() {
-		if (isActive) { // avoid hitting the volatile variable unless you really have to
-			totalBlockCount = 0;
-		}
+		if (!isActive) return; // avoid hitting the volatile variable unless you really have to
+		totalBlockCount = 0;
 	}
 }
