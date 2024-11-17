@@ -32,9 +32,9 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	private final int capacity;
 	private final int capacityMinusOne;
 	private final E[] data;
-	private long lastOfferedSeq = -1;
+	private long lastOfferedSeq = 0;
 	private long maxSeqBeforeWrapping;
-	private final PaddedAtomicLong offerSequence = new PaddedAtomicLong(-1);
+	private final PaddedAtomicLong offerSequence = new PaddedAtomicLong(0);
 	private final Cursor[] cursors;
 	private final Consumer<E>[] consumers;
 
@@ -108,8 +108,8 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	
 	@Override
 	public final void clear() {
-		lastOfferedSeq = -1;
-		offerSequence.set(-1);
+		lastOfferedSeq = 0;
+		offerSequence.set(lastOfferedSeq);
 		for(int i = 0; i < cursors.length; i++) {
 			cursors[i].clear();
 		}
@@ -132,6 +132,10 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	private final long calcMaxSeqBeforeWrapping() {
 		return minCursorPollSeq() + capacity;
 	}
+	
+	private final int calcIndex(long value) {
+		return (int) ((value - 1) & capacityMinusOne);
+	}
 
 	@Override
 	public final E nextToDispatch() {
@@ -143,7 +147,7 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 				return null;				
 			}
 		}
-		return data[(int) (lastOfferedSeq & capacityMinusOne)];
+		return data[calcIndex(lastOfferedSeq)];
 	}
 
 	@Override
@@ -169,12 +173,12 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	public final E poll(int consumer) {
 		Cursor cursor = cursors[consumer];
 		cursor.incrementPollCount();
-		return data[(int) (cursor.incrementLastPolledSeq() & capacityMinusOne)];
+		return data[calcIndex(cursor.incrementLastPolledSeq())];
 	}
 	
 	@Override
 	public final E peek(int consumer) {
-		return data[(int) (cursors[consumer].getLastPolledSeq() & capacityMinusOne)];
+		return data[calcIndex(cursors[consumer].getLastPolledSeq())];
 	}
 
 	@Override

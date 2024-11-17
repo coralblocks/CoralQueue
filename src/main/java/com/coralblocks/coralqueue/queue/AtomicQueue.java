@@ -31,12 +31,12 @@ public class AtomicQueue<E> implements Queue<E> {
 	private final int capacity;
 	private final int capacityMinusOne;
 	private final E[] data;
-	private long lastOfferedSeq = -1;
-	private long lastPolledSeq = -1;
+	private long lastOfferedSeq = 0;
+	private long lastPolledSeq = 0;
 	private long pollCount = 0;
 	private long maxSeqBeforeWrapping;
-	private final PaddedAtomicLong offerSequence = new PaddedAtomicLong(-1);
-	private final PaddedAtomicLong pollSequence = new PaddedAtomicLong(-1);
+	private final PaddedAtomicLong offerSequence = new PaddedAtomicLong(0);
+	private final PaddedAtomicLong pollSequence = new PaddedAtomicLong(0);
 	
 	private final Builder<E> builder;
 
@@ -89,11 +89,11 @@ public class AtomicQueue<E> implements Queue<E> {
 	
 	@Override
 	public final void clear() {
-		lastOfferedSeq = -1;
-		lastPolledSeq = -1;
+		lastOfferedSeq = 0;
+		lastPolledSeq = 0;
 		pollCount = 0;
-		offerSequence.set(-1);
-		pollSequence.set(-1);
+		offerSequence.set(lastOfferedSeq);
+		pollSequence.set(lastPolledSeq);
 		maxSeqBeforeWrapping = calcMaxSeqBeforeWrapping();
 	}
 	
@@ -103,6 +103,10 @@ public class AtomicQueue<E> implements Queue<E> {
 	
 	public final Builder<E> getBuilder() {
 		return builder;
+	}
+	
+	private final int calcIndex(long value) {
+		return (int) ((value - 1) & capacityMinusOne);
 	}
 
 	@Override
@@ -115,14 +119,14 @@ public class AtomicQueue<E> implements Queue<E> {
 				return null;				
 			}
 		}
-		return data[(int) (lastOfferedSeq & capacityMinusOne)];
+		return data[calcIndex(lastOfferedSeq)];
 	}
 	
 	@Override
 	public final E nextToDispatch(E swap) {
 		E val = nextToDispatch();
 		if (val == null) return null;
-		data[(int) (lastOfferedSeq & capacityMinusOne)] = swap;
+		data[calcIndex(lastOfferedSeq)] = swap;
 		return val;
 	}
 	
@@ -149,17 +153,17 @@ public class AtomicQueue<E> implements Queue<E> {
 	@Override
 	public final E poll() {
 		pollCount++;
-		return data[(int) (++lastPolledSeq & capacityMinusOne)];
+		return data[calcIndex(++lastPolledSeq)];
 	}
 	
 	@Override
 	public final void replace(E newVal) {
-		data[(int) (lastPolledSeq & capacityMinusOne)] = newVal;
+		data[calcIndex(lastPolledSeq)] = newVal;
 	}
 	
 	@Override
 	public final E peek() {
-		return data[(int) (lastPolledSeq & capacityMinusOne)];
+		return data[calcIndex(lastPolledSeq)];
 	}
 
 	@Override

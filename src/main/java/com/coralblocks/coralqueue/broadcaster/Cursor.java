@@ -20,13 +20,13 @@ import com.coralblocks.coralqueue.util.PaddedAtomicLong;
 class Cursor {
 	
 	private long pollCount = 0;
-	private long lastPolledSeq = -1;
-	private final PaddedAtomicLong pollSequence = new PaddedAtomicLong(-1);
+	private long lastPolledSeq = 0;
+	private final PaddedAtomicLong pollSequence = new PaddedAtomicLong(0);
 	
 	final void clear() {
 		pollCount = 0;
-		lastPolledSeq = -1;
-		pollSequence.set(-1);
+		lastPolledSeq = 0;
+		pollSequence.set(lastPolledSeq);
 	}
 	
 	final long getLastPolledSeq() {
