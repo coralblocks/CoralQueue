@@ -18,8 +18,10 @@ package com.coralblocks.coralqueue.util;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * A padded <code>AtomicLong</code> that occupies a whole CPU cache line (64Kb) so that
- * two different sequences (from producer and from consumer) do not mess with each other inside the CPU cache. 
+ * <p>A padded <code>AtomicLong</code> that occupies a whole CPU cache line (64Kb) so that
+ * two different sequences (from producer and from consumer) do not mess with each other inside the CPU cache.</p>
+ * 
+ * <p>NOTE: The <code>AtomicLong</code> class stores its long value internally as a <i>volatile</i> variable.</p>
  */
 public class PaddedAtomicLong extends AtomicLong {
 	
