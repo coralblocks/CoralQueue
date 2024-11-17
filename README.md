@@ -66,7 +66,7 @@ queue.flush();
 
 Note that if the queue is full we just <i>busy spin</i> until a data transfer object becomes available. Later we will see how we can also use a <code>WaitStrategy</code> instead of busy spinning.
 
-You can also send messages in batches:
+You can (and should) send messages in batches:
 ```Java
 StringBuilder sb;
  
