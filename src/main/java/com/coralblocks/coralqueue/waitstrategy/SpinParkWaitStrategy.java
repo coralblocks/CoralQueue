@@ -22,7 +22,7 @@ import java.util.concurrent.locks.LockSupport;
  * It can also back off by incrementing its park time by 1 nanosecond until it reaches a maximum park time.
  * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "spinPark".</p>
  * 
- * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ * <p>NOTE: You can optionally pass -DcoralQueueCountBlocking=true to count the total number of blockings.</p>
  */
 public class SpinParkWaitStrategy implements WaitStrategy {
 
@@ -37,7 +37,7 @@ public class SpinParkWaitStrategy implements WaitStrategy {
 	private int count = 0;
 	private int parkTime = 0;
 	
-	private final BlockCount blockCount = new BlockCount();
+	private final BlockingCounter blockingCounter = new BlockingCounter();
 
 	/**
 	 * Creates a <code>SpinParkWaitStrategy</code>.
@@ -90,7 +90,7 @@ public class SpinParkWaitStrategy implements WaitStrategy {
 	@Override
 	public final void block() {
 		
-		blockCount.increment();
+		blockingCounter.increment();
 
 		if (count < spinCount) {
 
@@ -113,7 +113,7 @@ public class SpinParkWaitStrategy implements WaitStrategy {
 
 	@Override
 	public final void reset() {
-		blockCount.reset();
+		blockingCounter.reset();
 		count = 0;
 		parkTime = 0;
 	}
@@ -121,13 +121,13 @@ public class SpinParkWaitStrategy implements WaitStrategy {
 	@Override
 	public final long getTotalBlockCount() {
 		
-		return blockCount.getTotalBlockCount();
+		return blockingCounter.getTotalBlockCount();
 	}
 	
 	@Override
 	public final void resetTotalBlockCount() {
 		
-		blockCount.resetTotalBlockCount();
+		blockingCounter.resetTotalBlockCount();
 	}
 
 }

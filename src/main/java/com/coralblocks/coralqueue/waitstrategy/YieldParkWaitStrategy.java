@@ -22,7 +22,7 @@ import java.util.concurrent.locks.LockSupport;
  * It can also back off by incrementing its park time by 1 nanosecond until it reaches a maximum park time.
  * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "yieldPark".</p>
  * 
- * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ * <p>NOTE: You can optionally pass -DcoralQueueCountBlocking=true to count the total number of blockings.</p>
  */
 public class YieldParkWaitStrategy implements WaitStrategy {
 
@@ -37,7 +37,7 @@ public class YieldParkWaitStrategy implements WaitStrategy {
 	private int count = 0;
 	private int parkTime = 0;
 	
-	private final BlockCount blockCount = new BlockCount();
+	private final BlockingCounter blockingCounter = new BlockingCounter();
 
 	/**
 	 * Creates a <code>YieldParkWaitStrategy</code>.
@@ -100,7 +100,7 @@ public class YieldParkWaitStrategy implements WaitStrategy {
 	@Override
 	public final void block() {
 
-		blockCount.increment();
+		blockingCounter.increment();
 		
 		if (count < yieldCount) {
 			Thread.yield();
@@ -119,20 +119,20 @@ public class YieldParkWaitStrategy implements WaitStrategy {
 
 	@Override
 	public final void reset() {
-		blockCount.reset();
+		blockingCounter.reset();
 		count = 0;
 		parkTime = 0;
 	}
 	
 	@Override
 	public final long getTotalBlockCount() {
-		return blockCount.getTotalBlockCount();
+		return blockingCounter.getTotalBlockCount();
 	}
 	
 	@Override
 	public final void resetTotalBlockCount() {
 		
-		blockCount.resetTotalBlockCount();
+		blockingCounter.resetTotalBlockCount();
 	}
 
 }

@@ -15,15 +15,15 @@
  */
 package com.coralblocks.coralqueue.waitstrategy;
 
-final class BlockCount {
+final class BlockingCounter {
 	
 	private volatile long totalBlockCount = 0;
 	private long currBlockCount = 0;
 	private final boolean isActive;
 	private final int addValue;
 	
-	BlockCount() {
-		String s = System.getProperty("coralQueueBlockCount");
+	BlockingCounter() {
+		String s = System.getProperty("coralQueueCountBlocking");
 		this.isActive = s != null && s.equalsIgnoreCase("true");
 		this.addValue = isActive ? 1 : 0;
 	}

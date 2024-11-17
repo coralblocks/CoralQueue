@@ -20,7 +20,7 @@ package com.coralblocks.coralqueue.waitstrategy;
  * It can also back off by incrementing its sleep time by 1 millisecond until it reaches a maximum sleep time.
  * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "sleep".</p>
  * 
- * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ * <p>NOTE: You can optionally pass -DcoralQueueCountBlocking=true to count the total number of blockings.</p>
  */
 public class SleepWaitStrategy implements WaitStrategy {
 	
@@ -32,7 +32,7 @@ public class SleepWaitStrategy implements WaitStrategy {
 	
 	private int sleepTime = 0;
 	
-	private final BlockCount blockCount = new BlockCount();
+	private final BlockingCounter blockingCounter = new BlockingCounter();
 	
 	/**
 	 * Creates a <code>SleepWaitStrategy</code>.
@@ -65,7 +65,7 @@ public class SleepWaitStrategy implements WaitStrategy {
 	@Override
     public final void block() {
 		
-		blockCount.increment();
+		blockingCounter.increment();
 		
 		if (sleepBackOff) {
 			if (sleepTime != maxSleepTime) sleepTime++;
@@ -86,7 +86,7 @@ public class SleepWaitStrategy implements WaitStrategy {
 	@Override
     public final void reset() {
 		
-		blockCount.reset();
+		blockingCounter.reset();
 		
 		sleepTime = 0;
     }
@@ -94,12 +94,12 @@ public class SleepWaitStrategy implements WaitStrategy {
 	@Override
 	public final long getTotalBlockCount() {
 		
-		return blockCount.getTotalBlockCount();
+		return blockingCounter.getTotalBlockCount();
 	}
 	
 	@Override
 	public final void resetTotalBlockCount() {
 		
-		blockCount.resetTotalBlockCount();
+		blockingCounter.resetTotalBlockCount();
 	}
 }

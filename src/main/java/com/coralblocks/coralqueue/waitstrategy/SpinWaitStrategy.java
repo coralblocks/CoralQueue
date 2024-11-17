@@ -18,11 +18,11 @@ package com.coralblocks.coralqueue.waitstrategy;
 /**
  * <p>A wait strategy that simply performs busy spinning. Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "spin".</p>
  * 
- * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ * <p>NOTE: You can optionally pass -DcoralQueueCountBlocking=true to count the total number of blockings.</p>
  */
 public class SpinWaitStrategy implements WaitStrategy {
 	
-	private final BlockCount blockCount = new BlockCount();
+	private final BlockingCounter blockingCounter = new BlockingCounter();
 	
 	/**
 	 * Creates a new <code>SpinWaitStrategy</code>.
@@ -33,22 +33,22 @@ public class SpinWaitStrategy implements WaitStrategy {
 
 	@Override
 	public final void block() {
-		blockCount.increment();
+		blockingCounter.increment();
 	}
 
 	@Override
 	public final void reset() {
-		blockCount.reset();
+		blockingCounter.reset();
 	}
 	
 	@Override
 	public final long getTotalBlockCount() {
-		return blockCount.getTotalBlockCount();
+		return blockingCounter.getTotalBlockCount();
 	}
 	
 	@Override
 	public final void resetTotalBlockCount() {
-		blockCount.resetTotalBlockCount();
+		blockingCounter.resetTotalBlockCount();
 	}
 
 }

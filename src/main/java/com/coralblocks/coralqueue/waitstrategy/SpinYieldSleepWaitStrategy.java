@@ -20,7 +20,7 @@ package com.coralblocks.coralqueue.waitstrategy;
  * It can also back off by incrementing its sleep time by 1 millisecond until it reaches a maximum sleep time.
  * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "spinYieldSleep".</p>
  * 
- * <p>NOTE: You can optionally pass -DcoralQueueBlockCount=true to count the total number of blocks.</p>
+ * <p>NOTE: You can optionally pass -DcoralQueueCountBlocking=true to count the total number of blockings.</p>
  */
 public class SpinYieldSleepWaitStrategy implements WaitStrategy {
 
@@ -37,7 +37,7 @@ public class SpinYieldSleepWaitStrategy implements WaitStrategy {
 	private int count = 0;
 	private int sleepTime = 0;
 	
-	private final BlockCount blockCount = new BlockCount();
+	private final BlockingCounter blockingCounter = new BlockingCounter();
 
 	/**
 	 * Creates a <code>SpinYieldSleepWaitStrategy</code>.
@@ -104,7 +104,7 @@ public class SpinYieldSleepWaitStrategy implements WaitStrategy {
 	@Override
 	public final void block() {
 		
-		blockCount.increment();
+		blockingCounter.increment();
 
 		if (count < spinCount) {
 
@@ -145,20 +145,20 @@ public class SpinYieldSleepWaitStrategy implements WaitStrategy {
 
 	@Override
 	public final void reset() {
-		blockCount.reset();
+		blockingCounter.reset();
 		count = 0;
 		sleepTime = 0;
 	}
 	
 	@Override
 	public final long getTotalBlockCount() {
-		return blockCount.getTotalBlockCount();
+		return blockingCounter.getTotalBlockCount();
 	}
 	
 	@Override
 	public final void resetTotalBlockCount() {
 		
-		blockCount.resetTotalBlockCount();
+		blockingCounter.resetTotalBlockCount();
 	}
 
 }
