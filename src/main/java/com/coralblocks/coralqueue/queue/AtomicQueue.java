@@ -163,7 +163,7 @@ public class AtomicQueue<E> implements Queue<E> {
 	
 	@Override
 	public final E peek() {
-		return data[calcIndex(lastPolledSeq)];
+		return data[calcIndex(lastPolledSeq + 1)];
 	}
 
 	@Override
