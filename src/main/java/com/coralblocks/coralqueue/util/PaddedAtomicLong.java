@@ -63,7 +63,7 @@ public class PaddedAtomicLong extends AtomicLong {
 	 * @return the total of all values inside the object
 	 */
 	public long getTotal() {
-		// try to prevent hotspot optimization...
-		return value1 + value2 + value3 + value4 + value5 + value6;
+		// Prevent HotSpot optimization and code removal
+		return value1 + value2 - value3 + value4 - value5 + value6 - this.get();
 	}
 }
