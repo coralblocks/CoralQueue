@@ -16,82 +16,53 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * <p>A <code>WaitStrategy</code> interface describing how a producer and/or consumer can choose to wait (i.e. block) while its CoralQueue data structure is full/empty.</p>
+ * <p>A <code>WaitStrategy</code> interface describing how a producer and/or a consumer can choose to wait (i.e. block) while 
+ * its CoralQueue data structure is full/empty.</p>
  * 
- * <p>Note that using a <code>WaitStrategy</code> is not mandatory as producers and consumers can simply choose to busy spin. However, as a CPU core is a scarce resource, there
- * can be situations where you will want to not waste clock cycles by busy spinning.</p>
+ * <p>Note that it is not mandatory to use a <code>WaitStrategy</code> as producers and consumers can simply choose to busy spin. 
+ * However, as a CPU core is a scarce resource, there can be situations where you will not want to waste clock cycles by busy spinning.</p>
  */
 public interface WaitStrategy {
 	
 	/**
-	 * Do something to wait: busy spin, park, yield, sleep, back off, etc.
+	 * <p>Do something to wait: busy spin, busy sleep, park, yield, sleep, back off, etc.</p>
+	 * 
+	 * <p>It can return true to indicate that this wait strategy has finished.
+	 * This is important to signal to a {@link CompositeWaitStrategy} to switch to the next wait strategy in its list.</p>
+	 * 
+	 * <p>This method can be called multiple times before {@link reset()} is finally called.</p>
+	 * 
+	 * @return true if this wait strategy has finished
 	 */
-	public void block();
+	public boolean block();
 	
 	/**
-	 * Reset the strategy because we have waited and we have accomplished what we were waiting for.
+	 * <p>This method is used to indicate that after blocking for one or several times, we finally were able to accomplish what we were waiting for
+	 * and we can now reset the state of the waiting strategy to get ready for another cycle. This is important for backing off wait strategies that
+	 * increase their sleep/park time after each blocking. After <code>reset()</code> is called they will reset their sleep/park time to their initial value.
+	 * A {@link CompositeWaitStrategy} also resets its current wait strategy to the first one in its list.</p>
 	 */
 	public void reset();
 	
 	/**
-	 * Optional method to return the number of times this wait strategy has blocked, if supported
+	 * <p>This is an optional operation to register a {@link WaitStrategyListener} to receive callbacks from <code>block()</code> and <code>reset()</code>.
+	 * Note that all our provided wait strategies implement this method but when you are implementing your own wait strategies you might choose not to provide
+	 * this functionality, if you will not be registering any listener to your wait strategy.</p>
 	 * 
-	 * @return the number of times this wait strategy has blocked or -1 if block counting is not supported
+	 * @param listener the {@link WaitStrategyListener} to register
 	 */
-	default public long getTotalBlockCount() {
-		return -1;
+	default public void addListener(WaitStrategyListener listener) {
+		throw new UnsupportedOperationException();
 	}
 	
 	/**
-	 * Optional method to reset the total block count number to zero. If block counting is not supported, this method does nothing.
-	 */
-	default public void resetTotalBlockCount() {
-		
-	}
-	
-	/**
-	 * A factory static method to get a new <code>WaitStrategy</code> instance.
+	 * <p>This is an optional operation to unregister a {@link WaitStrategyListener} to receive callbacks from <code>block()</code> and <code>reset()</code>.
+	 * Note that all our provided wait strategies implement this method but when you are implementing your own wait strategies you might choose not to provide
+	 * this functionality, if you will not be registering any listener to your wait strategy.</p>
 	 * 
-	 * @param type the type of wait strategy to create and return
-	 * @return a new instance of the <code>WaitStrategy</code>
+	 * @param listener the {@link WaitStrategyListener} to unregister
 	 */
-	public static WaitStrategy getWaitStrategy(String type) {
-		if (type.equalsIgnoreCase("spin")) {
-			return new SpinWaitStrategy();
-		} else if (type.equalsIgnoreCase("park")) {
-			return new ParkWaitStrategy();
-		} else if (type.equalsIgnoreCase("park-backoff")) {
-			return new ParkWaitStrategy(true);
-		} else if (type.equalsIgnoreCase("spinYieldPark")) {
-			return new SpinYieldParkWaitStrategy();
-		} else if (type.equalsIgnoreCase("spinYieldPark-backoff")) {
-			return new SpinYieldParkWaitStrategy(true);
-		} else if (type.equalsIgnoreCase("spinPark")) {
-			return new SpinParkWaitStrategy();
-		} else if (type.equalsIgnoreCase("spinPark-backoff")) {
-			return new SpinParkWaitStrategy(true);
-		} else if (type.equalsIgnoreCase("yieldPark")) {
-			return new YieldParkWaitStrategy();
-		} else if (type.equalsIgnoreCase("yieldPark-backoff")) {
-			return new YieldParkWaitStrategy(true);
-		} else if (type.equalsIgnoreCase("sleep")) {
-			return new SleepWaitStrategy();
-		} else if (type.equalsIgnoreCase("sleep-backoff")) {
-			return new SleepWaitStrategy(true);
-		} else if (type.equalsIgnoreCase("spinYieldSleep")) {
-			return new SpinYieldSleepWaitStrategy();
-		} else if (type.equalsIgnoreCase("spinYieldSleep-backoff")) {
-			return new SpinYieldSleepWaitStrategy(true);
-		} else if (type.equalsIgnoreCase("spinSleep")) {
-			return new SpinSleepWaitStrategy();
-		} else if (type.equalsIgnoreCase("spinSleep-backoff")) {
-			return new SpinSleepWaitStrategy(true);
-		} else if (type.equalsIgnoreCase("yieldSleep")) {
-			return new YieldSleepWaitStrategy();
-		} else if (type.equalsIgnoreCase("yieldSleep-backoff")) {
-			return new YieldSleepWaitStrategy(true);
-		} else {
-			throw new IllegalArgumentException("Cannot create wait strategy for type: " + type);
-		}
+	default public void removeListener(WaitStrategyListener listener) {
+		throw new UnsupportedOperationException();
 	}
 }

@@ -15,32 +15,21 @@
  */
 package com.coralblocks.coralqueue.waitstrategy;
 
-import java.util.concurrent.locks.LockSupport;
-
 /**
- * A wait strategy that calls <code>LockSupport.parkNanos(long)</code> as its blocking operation.
+ * A wait strategy that does nothing as its blocking operation, in other words, it simply busy spins.
  */
-public class ParkWaitStrategy extends AbstractWaitStrategy {
+public class BusySpinWaitStrategy extends AbstractWaitStrategy {
 	
-	public final static long DEFAULT_PARK_TIME_IN_NANOS = 100;
-	
-	private final long parkTimeInNanos;
-
-	public ParkWaitStrategy(long maxBlockCount, long parkTimeInNanos) {
+	public BusySpinWaitStrategy(long maxBlockCount) {
 		super(maxBlockCount);
-		this.parkTimeInNanos = parkTimeInNanos;
 	}
 	
-	public ParkWaitStrategy(long parkTimeInNanos) {
-		this(DEFAULT_MAX_BLOCK_COUNT, parkTimeInNanos);
-	}
-	
-	public ParkWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT, DEFAULT_PARK_TIME_IN_NANOS);
+	public BusySpinWaitStrategy() {
+		this(DEFAULT_MAX_BLOCK_COUNT);
 	}
 
 	@Override
 	protected final void blockOperation() {
-		LockSupport.parkNanos(parkTimeInNanos);
+		// busy spinning so do nothing
 	}
 }

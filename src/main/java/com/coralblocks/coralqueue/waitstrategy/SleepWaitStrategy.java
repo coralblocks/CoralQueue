@@ -16,90 +16,33 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * <p>A wait strategy that sleeps 1 millisecond by calling <code>Thread.sleep(1)</code>.
- * It can also back off by incrementing its sleep time by 1 millisecond until it reaches a maximum sleep time.
- * Its string type for the factory method {@link WaitStrategy#getWaitStrategy(String)} is "sleep".</p>
- * 
- * <p>NOTE: You can optionally pass -DcoralQueueCountBlocking=true to count the total number of blockings.</p>
+ * A wait strategy that calls <code>Thread.sleep(long)</code> as its blocking operation.
  */
-public class SleepWaitStrategy implements WaitStrategy {
+public class SleepWaitStrategy extends AbstractWaitStrategy {
 	
-	private final static boolean DEFAULT_BACK_OFF = false;
-	private final static long DEFAULT_MAX_SLEEP_TIME = 5;
+	public final static long DEFAULT_SLEEP_TIME_IN_MILLIS = 1;
 	
-	private final boolean sleepBackOff;
-	private final long maxSleepTime;
-	
-	private int sleepTime = 0;
-	
-	private final BlockingCounter blockingCounter = new BlockingCounter();
-	
-	/**
-	 * Creates a <code>SleepWaitStrategy</code>.
-	 * 
-	 * @param sleepBackOff true to support backing off by increasing the sleep time
-	 * @param maxSleepTime the max sleep time in milliseconds if sleep backing off is enabled
-	 */
-	public SleepWaitStrategy(boolean sleepBackOff, long maxSleepTime) {
-		this.sleepBackOff = sleepBackOff;
-		this.maxSleepTime = maxSleepTime;
-		
+	private final long sleepTimeInMillis;
+
+	public SleepWaitStrategy(long maxBlockCount, long sleepTimeInMillis) {
+		super(maxBlockCount);
+		this.sleepTimeInMillis = sleepTimeInMillis;
 	}
 	
-	/**
-	 * Creates a <code>SleepWaitStrategy</code>. The default backing off max sleep time is used (5 milliseconds).
-	 * 
-	 * @param sleepBackOff true to support backing off by increasing the sleep time
-	 */
-	public SleepWaitStrategy(boolean sleepBackOff) {
-		this(sleepBackOff, DEFAULT_MAX_SLEEP_TIME);
+	public SleepWaitStrategy(long sleepTimeInMillis) {
+		this(DEFAULT_MAX_BLOCK_COUNT, sleepTimeInMillis);
 	}
 	
-	/**
-	 * Creates a <code>SleepWaitStrategy</code> without backing off.
-	 */
 	public SleepWaitStrategy() {
-		this(DEFAULT_BACK_OFF, DEFAULT_MAX_SLEEP_TIME);
+		this(DEFAULT_MAX_BLOCK_COUNT, DEFAULT_SLEEP_TIME_IN_MILLIS);
 	}
 
 	@Override
-    public final void block() {
-		
-		blockingCounter.increment();
-		
-		if (sleepBackOff) {
-			if (sleepTime != maxSleepTime) sleepTime++;
-			try {
-				Thread.sleep(sleepTime);
-			} catch(InterruptedException e) {
-				// NOOP
-			}
-		} else {
-			try {
-				Thread.sleep(1);
-			} catch(InterruptedException e) {
-				// NOOP
-			}
+	protected final void blockOperation() {
+		try {
+			Thread.sleep(sleepTimeInMillis);
+		} catch(InterruptedException e) {
+			throw new RuntimeException(e);
 		}
-    }
-
-	@Override
-    public final void reset() {
-		
-		blockingCounter.reset();
-		
-		sleepTime = 0;
-    }
-	
-	@Override
-	public final long getTotalBlockCount() {
-		
-		return blockingCounter.getTotalBlockCount();
-	}
-	
-	@Override
-	public final void resetTotalBlockCount() {
-		
-		blockingCounter.resetTotalBlockCount();
 	}
 }
