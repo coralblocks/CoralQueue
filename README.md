@@ -109,13 +109,13 @@ Note that we poll in batches, reducing the number of times we have to check for 
 
 By default, you should busy-spin when the queue is full or empty. That’s usually the fastest approach but not always the best as you might want to allow other threads to use the CPU core. CoralQueue comes with a variety of wait strategies that you can use instead of busy spinning, and you can also create your owns by implementing the <code>WaitStrategy</code> interface. Below are some examples of wait strategies that come with CoralQueue:
 
-- <code>ParkBackOffWaitStrategy</code>: park (i.e. sleep) for 1 microsecond backing off up to a maximum of 1 millisecond in steps of 1 microsecond. These start, max and step values can be configured.
-- <code>BusySpinParkBackOffWaitStrategy</code>: first busy spins for 10,000,000 cycles then it starts to park (i.e. sleep) by using the <code>ParkBackOffWaitStrategy</code> above. The number of busy-spin cycles can be configured.
-- <code>BusySpinYieldSleepWaitStrategy</code>: busy spins for 10,000,000 cycles, yields for 100 cycles then starts to sleep for 1 millisecond. All previous values can be changed/configured.
+- [ParkBackOffWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/ParkBackOffWaitStrategy.java): park (i.e. sleep) for 1 microsecond backing off up to a maximum of 1 millisecond in steps of 1 microsecond. The start, max and step values can be configured.
+- [BusySpinParkBackOffWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/BusySpinParkBackOffWaitStrategy.java): first busy spins for 10,000,000 cycles then it starts to park (i.e. sleep) by using the ParkBackOffWaitStrategy above. This is an example of a composite wait strategy, which combines multiple wait stratgies in a single one. The number of busy-spin cycles can be configured.
+- [BusySpinYieldSleepWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/BusySpinYieldSleepWaitStrategy.java): busy spins for 10,000,000 cycles, yields for 100 cycles then starts to sleep for 1 millisecond. All previous values can be changed/configured.
 
 To use a wait strategy, all you have to do is call its <code>block()</code> and <code>reset()</code> methods instead of busy spinning:
 
-#### Producer using a Wait Strategy (without batching)
+#### Producer using a Wait Strategy <i>(without batching)</i>
 ```Java
 WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
 StringBuilder sb;
@@ -128,7 +128,7 @@ queue.flush();
 producerWaitStrategy.reset(); // <=====
 ```
 
-#### Producer using a Wait Strategy (with batching)
+#### Producer using a Wait Strategy <i>(with batching)</i>
 ```Java
 WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
 StringBuilder sb;
