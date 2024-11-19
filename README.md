@@ -109,13 +109,13 @@ Note that we poll in batches, reducing the number of times we have to check for 
 
 By default, you should busy-spin when the queue is full or empty. That’s usually the fastest approach but not always the best as you might want to allow other threads to use the CPU core. CoralQueue comes with a variety of wait strategies that you can use instead of busy spinning, and you can also create your owns by implementing the <code>WaitStrategy</code> interface. Below are some examples of wait strategies that come with CoralQueue:
 
-- <code>ParkWaitStrategy</code>: park (i.e. sleep) for 1 nanosecond with the option to back off up to a maximum of N nanoseconds. N defaults to 1 million nanoseconds if not specified (1 millisecond).
-- <code>SpinParkWaitStrategy</code>: first busy spins for C cycles (default to 1 million cycles) then it starts to park (i.e. sleep) for 1 nanosecond with the option to back off up to a maximum of N nanoseconds (default 1 million nanoseconds).
-- <code>SpinYieldParkWaitStrategy</code>: busy spins for some cycles, yields for some cycles then starts to sleep for 1 nanosecond with the option to back off up to a maximum of N nanoseconds (defaults to 1 million nanoseconds).
+- <code>ParkBackOffWaitStrategy</code>: park (i.e. sleep) for 1 microsecond backing off up to a maximum of 1 millisecond in steps of 1 microsecond. These start, max and step values can be configured.
+- <code>BusySpinParkBackOffWaitStrategy</code>: first busy spins for 10,000,000 cycles then it starts to park (i.e. sleep) by using the <code>ParkBackOffWaitStrategy</code> above. The number of busy-spin cycles can be configured.
+- <code>BusySpinYieldSleepWaitStrategy</code>: busy spins for 10,000,000 cycles, yields for 100 cycles then starts to sleep for 1 millisecond. All previous values can be changed/configured.
 
 To use a wait strategy, all you have to do is call its <code>block()</code> and <code>reset()</code> methods instead of busy spinning:
 
-#### Producer using a Wait Strategy
+#### Producer using a Wait Strategy (without batching)
 ```Java
 WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
 StringBuilder sb;
@@ -126,6 +126,28 @@ sb.setLength(0);
 sb.append("Hello there!");
 queue.flush();
 producerWaitStrategy.reset(); // <=====
+```
+
+#### Producer using a Wait Strategy (with batching)
+```Java
+WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
+StringBuilder sb;
+
+while((sb = queue.nextToDispatch()) == null) {
+    producerWaitStrategy.block(); // <=====
+}
+producerWaitStrategy.reset(); // <=====
+sb.setLength(0);
+sb.append("Hello there!");
+
+while((sb = queue.nextToDispatch()) == null) {
+    producerWaitStrategy.block(); // <=====
+}
+producerWaitStrategy.reset(); // <=====
+sb.setLength(0);
+sb.append("Hello again!");
+
+queue.flush();
 ```
 
 #### Consumer using a Wait Strategy
