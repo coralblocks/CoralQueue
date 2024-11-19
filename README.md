@@ -152,7 +152,7 @@ queue.flush();
 
 #### Consumer using a Wait Strategy
 ```Java
-WaitStrategy consumerWaitStrategy = new SpinParkWaitStrategy();
+WaitStrategy consumerWaitStrategy = new BusySpinYieldSleepWaitStrategy();
 long avail;
 while((avail = queue.availableToPoll()) == 0) {
     consumerWaitStrategy.block(); // <=====
