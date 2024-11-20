@@ -1,5 +1,5 @@
 # CoralQueue
-CoralQueue is a ultra-low-latency, lock-free, garbage-free, batching and concurrent collection of circular data structures for inter-thread communication in Java. It uses memory barriers through <a href="https://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html#volatile" target="_blank"><i>volatile</i> variables</a> instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. All data structures are circular and bounded requiring producer/consumer blocking (but not locking) when they are full/empty through a wait strategy or busy spinning.
+CoralQueue is an ultra-low-latency, lock-free, garbage-free, batching and concurrent collection of circular data structures for inter-thread communication in Java. It uses memory barriers through <a href="https://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html#volatile" target="_blank"><i>volatile</i> variables</a> instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. All data structures are circular and bounded, requiring producer/consumer blocking (but not locking) when they are full/empty through a wait strategy or busy spinning.
 
 For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
@@ -107,7 +107,7 @@ Note that we poll in batches, reducing the number of times we have to check for 
 
 ### All about using Wait Strategies
 
-By default, you should busy-spin when the queue is full or empty. That’s usually the fastest approach but not always the best as you might want to allow other threads to use the CPU core. CoralQueue comes with a variety of wait strategies that you can use instead of busy spinning, and you can also create your owns by implementing the <code>WaitStrategy</code> interface. Below are some examples of wait strategies that come with CoralQueue:
+By default, you should busy-spin when the queue is full or empty. That’s usually the fastest approach but not always the best as you might want to allow other threads to use the CPU core. CoralQueue comes with a variety of wait strategies that you can use instead of busy spinning, and you can also create your own by implementing the <code>WaitStrategy</code> interface. Below are some examples of wait strategies that come with CoralQueue:
 
 - [ParkBackOffWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/ParkBackOffWaitStrategy.java): park (i.e. sleep) for 1 microsecond backing off up to a maximum of 1 millisecond in steps of 1 microsecond. The start, max and step values can be configured.
 - [BusySpinParkBackOffWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/BusySpinParkBackOffWaitStrategy.java): first busy spins for 10,000,000 cycles then it starts to park (i.e. sleep) by using the ParkBackOffWaitStrategy above. This is an example of a composite wait strategy, which combines multiple wait stratgies in a single one. The number of busy-spin cycles can be configured.
@@ -176,15 +176,15 @@ consumerWaitStrategy.reset(); // <=====
 
 To squeeze every bit of performance out of CoralQueue, you can use <i>semi-volatile writes</i> when sending and receiving messages. Basically, a semi-volatile write is done through the <code>lazySet</code> method from <code>java.util.concurrent.AtomicLong</code>. It is a faster operation for the thread that’s modifying the variable at the expense of the thread that’s interested in knowing about updates in the variable. For example, if you want to minimize the latency in the producer, you should use lazySet. On the other hand, if you want to minimize the message transit time, you should not use lazySet so the consumer is notified as soon as possible about a new message in the queue.
 
-By default, CoralQueue does not use <code>lazySet</code>, in other words the other thread is notified immediatelly (or as soon as possible). But you can easily take control of that by using the methods below:
+By default, CoralQueue does not use <code>lazySet</code>, in other words the other thread is notified immediately (or as soon as possible). But you can easily take control of that by using the methods below:
 ```Java
 // producer notifying consumer(s)
-queue.flush(); // no lazySet by default (notify the consumer thread immediatelly at the expense of the producer thread)
+queue.flush(); // no lazySet by default (notify the consumer thread immediately at the expense of the producer thread)
 queue.flush(true); // use lazySet (take more time to notify the consumer thread in order not to introduce any latency to the producer thread)
 ```
 ```Java
 // consumer notifying producer(s)
-queue.donePolling(); // no lazySet by default (notify the producer thread immediatelly at the expense of the consumer thread)
+queue.donePolling(); // no lazySet by default (notify the producer thread immediately at the expense of the consumer thread)
 queue.donePolling(true); // use lazySet (take more time to notify the producer thread in order not to introduce any latency to the consumer thread)
 ```
 </details>
