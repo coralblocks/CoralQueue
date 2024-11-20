@@ -1,7 +1,3 @@
-<head>
-  <meta name="google-site-verification" content="WIOaV4TlxabVLY1_nXmE_NRH29r9TAOaTRp78jn-pbg" />
-</head>
-
 # CoralQueue
 CoralQueue is an ultra-low-latency, lock-free, garbage-free, batching and concurrent collection of circular data structures for inter-thread communication in Java. It uses memory barriers through <a href="https://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html#volatile" target="_blank"><i>volatile</i> variables</a> instead of locks to allow Java threads (producers and consumers) to exchange messages as fast as possible. All data structures are circular and bounded, requiring producer/consumer blocking (but not locking) when they are full/empty through a wait strategy or busy spinning.
 
