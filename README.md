@@ -9,7 +9,7 @@ The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multip
 
 <img src="images/Queue.png" alt="Queue" width="50%" height="50%" />
 
-The Queue allows a single producer thread sending messages to the queue and a single consumer thread receiving messages from the queue, both running inside the same JVM. The consumer reads the messages in the same order that they were sent by the producer.
+The Queue allows a single producer thread sending messages to the queue and a single consumer thread receiving messages from the queue, both running inside the same JVM. The consumer reads the messages (all the messages) in the same order that they were sent by the producer.
 
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/queue/Minimal.java) for a minimal example of using the Queue
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/queue/Basics.java) for a basic example of using the Queue
@@ -193,7 +193,8 @@ queue.donePolling(true); // use lazySet (take more time to notify the producer t
 
 <img src="images/Mux.png" alt="Multiplexer" width="50%" height="50%" />
 
-The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages from the multiplexer, all running inside the same JVM.
+The Multiplexer allows multiple producer threads sending messages to the multiplexer and a single consumer thread receiving messages (all the messages) from the multiplexer, all running inside the same JVM.
+The order that the consumer will process the messages is of course undetermined due to the simultaneous producers.
 
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/multiplexer/Minimal.java) for a minimal example of using the Multiplexer
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/multiplexer/Basics.java) for a basic example of using the Multiplexer
