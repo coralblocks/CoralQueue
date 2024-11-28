@@ -151,9 +151,18 @@ public class AtomicQueue<E> implements Queue<E> {
 	}
 	
 	@Override
+	public final E fetch(boolean remove) {
+		if (remove) {
+			fetchCount++;
+			return data[calcIndex(++lastFetchedSeq)];
+		} else {
+			return data[calcIndex(lastFetchedSeq + 1)];
+		}
+	}
+	
+	@Override
 	public final E fetch() {
-		fetchCount++;
-		return data[calcIndex(++lastFetchedSeq)];
+		return fetch(true);
 	}
 	
 	@Override
@@ -161,11 +170,6 @@ public class AtomicQueue<E> implements Queue<E> {
 		data[calcIndex(lastFetchedSeq)] = newVal;
 	}
 	
-	@Override
-	public final E peek() {
-		return data[calcIndex(lastFetchedSeq + 1)];
-	}
-
 	@Override
 	public final void doneFetching(boolean lazySet) {
 		if (lazySet) {

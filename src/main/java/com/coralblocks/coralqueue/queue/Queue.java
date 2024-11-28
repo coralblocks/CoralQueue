@@ -89,6 +89,14 @@ public interface Queue<E> {
 	 * Read what you need to read from the object and release its reference.
 	 * The object returned should be treated as a <i>data transfer mutable object</i> therefore you should read what you need from it and let it go.</p>
 	 * 
+	 * @param remove true to remove the object (false if you just want to inspect but not to remove)
+	 * @return a data transfer mutable object from the queue
+	 */
+	public E fetch(boolean remove);
+	
+	/**
+	 * <p>This method simply calls {@link fetch(boolean)} passing <code>true</code> to remove the fetched object.</p>
+	 * 
 	 * @return a data transfer mutable object from the queue
 	 */
 	public E fetch();
@@ -115,13 +123,6 @@ public interface Queue<E> {
 	 * <p>That's the same as calling <code>doneFetching(false)</code>, in other words, the producer will be notified <b>immediately</b> that fetching is done.</p>
 	 */
 	public void doneFetching();
-	
-	/**
-	 * <p>Return the next object to be fetched without actually fetching it.</p>
-	 * 
-	 * @return the next object to be fetched from the queue, without actually fetching it
-	 */
-	public E peek();
 	
 	/**
 	 * <p>Pretend you never fetched any objects since you last called {@link #doneFetching()}. This method cancels (i.e. rolls back) any fetching operations you have done.</p>

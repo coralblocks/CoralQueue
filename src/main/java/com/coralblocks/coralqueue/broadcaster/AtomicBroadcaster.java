@@ -170,15 +170,19 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	}
 
 	@Override
-	public final E fetch(int consumer) {
-		Cursor cursor = cursors[consumer];
-		cursor.incrementFetchCount();
-		return data[calcIndex(cursor.incrementLastFetchedSeq())];
+	public final E fetch(int consumer, boolean remove) {
+		if (remove) {
+			Cursor cursor = cursors[consumer];
+			cursor.incrementFetchCount();
+			return data[calcIndex(cursor.incrementLastFetchedSeq())];
+		} else {
+			return data[calcIndex(cursors[consumer].getLastFetchedSeq())];
+		}
 	}
 	
 	@Override
-	public final E peek(int consumer) {
-		return data[calcIndex(cursors[consumer].getLastFetchedSeq())];
+	public final E fetch(int consumer) {
+		return fetch(consumer, true);
 	}
 
 	@Override

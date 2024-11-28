@@ -92,6 +92,11 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
     }
 	
 	@Override
+	public final E fetch(boolean remove) {
+		return broadcaster.fetch(consumerIndex, remove);
+	}
+	
+	@Override
 	public final void replace(E newVal) {
 		throw new UnsupportedOperationException();
 	}
@@ -114,10 +119,5 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	@Override
     public final void rollBack(long items) {
 		broadcaster.rollBack(consumerIndex, items);
-    }
-
-	@Override
-    public E peek() {
-	    return broadcaster.peek(consumerIndex);
     }
 }

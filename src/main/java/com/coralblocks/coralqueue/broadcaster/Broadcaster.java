@@ -74,6 +74,15 @@ public interface Broadcaster<E> {
 	 * The object returned should be treated as a <i>data transfer mutable object</i> therefore you should read what you need from it and let it go.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
+	 * @param remove true to remove the object (false if you just want to inspect but not to remove)
+	 * @return a data transfer mutable object from the broadcaster
+	 */
+	public E fetch(int consumerIndex, boolean remove);
+	
+	/**
+	 * <p>This method simply calls {@link fetch(int, boolean)} passing <code>true</code> to remove the fetched object.</p>
+	 * 
+	 * @param consumerIndex the index of the consumer thread calling this method
 	 * @return a data transfer mutable object from the broadcaster
 	 */
 	public E fetch(int consumerIndex);
@@ -114,15 +123,6 @@ public interface Broadcaster<E> {
 	 * @param items how many fetches to roll back
 	 */
 	public void rollBack(int consumerIndex, long items);
-	
-	/**
-	 * <p>Return the next object to be fetched without actually fetching it.
-	 * The consumer thread calling this method must pass its consumer index.</p>
-
-	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @return the next object to be fetched from the broadcaster, without actually fetching it
-	 */
-	public E peek(int consumerIndex);
 	
 	/**
 	 * <p>The (fixed) number of consumers listening on this broadcaster.</p>
