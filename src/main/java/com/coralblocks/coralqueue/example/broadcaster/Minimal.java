@@ -56,13 +56,13 @@ public class Minimal {
 					
 					while(isRunning) {
 						
-						long avail = broadcaster.availableToPoll(consumerIndex); // read available batches as fast as possible
+						long avail = broadcaster.availableToFetch(consumerIndex); // read available batches as fast as possible
 						
 						if (avail == 0) continue; // busy spin
 						
 						for(int i = 0; i < avail; i++) {
 							
-							MutableLong ml = broadcaster.poll(consumerIndex);
+							MutableLong ml = broadcaster.fetch(consumerIndex);
 							
 							if (ml.get() == -1) { // -1 means we need to finish
 								isRunning = false; // done receiving all messages from the producer
@@ -71,7 +71,7 @@ public class Minimal {
 							}
 						}
 						
-						broadcaster.donePolling(consumerIndex); // don't forget to notify the producer
+						broadcaster.doneFetching(consumerIndex); // don't forget to notify the producer
 					}
 				}
 				

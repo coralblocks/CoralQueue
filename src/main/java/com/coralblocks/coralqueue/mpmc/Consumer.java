@@ -28,48 +28,48 @@ public class Consumer<E> {
 	private int currConsumerIndex = 0;
 	private final int index;
 	private final int nConsumers;
-	private final long[] availToPoll;
-	private final boolean[] needsDonePolling;
+	private final long[] availToFetch;
+	private final boolean[] needsDoneFetching;
 	
 	Consumer(com.coralblocks.coralqueue.demultiplexer.Consumer<E>[] consumers, int index) {
 		this.consumers = consumers;
 		this.index = index;
 		this.nConsumers = consumers.length;
-		this.availToPoll = new long[consumers.length];
-		this.needsDonePolling = new boolean[consumers.length];
+		this.availToFetch = new long[consumers.length];
+		this.needsDoneFetching = new boolean[consumers.length];
 	}
 	
 	/**
-	 * See {@link com.coralblocks.coralqueue.queue.Queue#availableToPoll()} for more details.
+	 * See {@link com.coralblocks.coralqueue.queue.Queue#availableToFetch()} for more details.
 	 * 
-	 * @return the number of objects that can be polled
+	 * @return the number of objects that can be fetched
 	 */
-	public final long availableToPoll() {
+	public final long availableToFetch() {
 		long total = 0;
 		for(int i = 0; i < nConsumers; i++) {
-			long x = consumers[i].availableToPoll();
-			availToPoll[i] = x;
+			long x = consumers[i].availableToFetch();
+			availToFetch[i] = x;
 			total += x;
-			needsDonePolling[i] = false;
+			needsDoneFetching[i] = false;
 		}
 		currConsumerIndex = 0;
 		return total;
 	}
 	
 	/**
-	 * See {@link com.coralblocks.coralqueue.queue.Queue#poll()} for more details.
+	 * See {@link com.coralblocks.coralqueue.queue.Queue#fetch()} for more details.
 	 * 
 	 * @return a data transfer mutable object from the queue
 	 */
-	public final E poll() {
+	public final E fetch() {
 		while(true) {
-			if (availToPoll[currConsumerIndex] > 0) {
-				E e = consumers[currConsumerIndex].poll();
-				needsDonePolling[currConsumerIndex] = true;
+			if (availToFetch[currConsumerIndex] > 0) {
+				E e = consumers[currConsumerIndex].fetch();
+				needsDoneFetching[currConsumerIndex] = true;
 				if (e == null) {
 					if (++currConsumerIndex == nConsumers) return null;
 				} else {
-					availToPoll[currConsumerIndex]--;
+					availToFetch[currConsumerIndex]--;
 					return e;
 				}
 			} else {
@@ -79,22 +79,22 @@ public class Consumer<E> {
 	}
 	
 	/**
-	 * See {@link com.coralblocks.coralqueue.queue.Queue#donePolling(boolean)} for more details.
+	 * See {@link com.coralblocks.coralqueue.queue.Queue#doneFetching(boolean)} for more details.
 	 * 
 	 * @param lazySet true to notify the producer in a lazy way or false to notify the producer <b>immediately</b>
 	 */
-	public final void donePolling(boolean lazySet) {
+	public final void doneFetching(boolean lazySet) {
 		for(int i = 0; i < nConsumers; i++) {
-			if (needsDonePolling[i]) consumers[i].donePolling(lazySet);
+			if (needsDoneFetching[i]) consumers[i].doneFetching(lazySet);
 		}
 	}
 	
 	/**
-	 * See {@link com.coralblocks.coralqueue.queue.Queue#donePolling()} for more details.
+	 * See {@link com.coralblocks.coralqueue.queue.Queue#doneFetching()} for more details.
 	 */
-	public final void donePolling() {
+	public final void doneFetching() {
 		for(int i = 0; i < nConsumers; i++) {
-			if (needsDonePolling[i]) consumers[i].donePolling();
+			if (needsDoneFetching[i]) consumers[i].doneFetching();
 		}
 	}
 	

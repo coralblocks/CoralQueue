@@ -27,7 +27,7 @@ you to transfer <i>data</i> (and not object references) from producers to consum
 - The producer flushes to notify the consumer(s)
 - A consumer fetches an available data transfer mutable object from the queue
 - The consumer reads the data from the mutable object
-- The consumer calls <code>donePolling()</code> to notify the producer(s)
+- The consumer calls <code>doneFetching()</code> to notify the producer(s)
 
 Below we use a <code>StringBuilder</code> as our data transfer mutable object to create an <code>AtomicQueue</code>:
 ```Java
@@ -83,22 +83,22 @@ queue.flush();
 
 #### Reading messages from the queue
 
-To read messages from the queue you poll them from a consumer thread, as the code below shows:
+To read messages from the queue you fetch them from a consumer thread, as the code below shows:
 ```Java
 long avail;
-while((avail = queue.availableToPoll()) == 0); // busy spin
+while((avail = queue.availableToFetch()) == 0); // busy spin
 for(int i = 0; i < avail; i++) {
-    StringBuilder sb = queue.poll();
+    StringBuilder sb = queue.fetch();
     // do whatever you want with the StringBuilder
     // just do not create garbage
     // copy char by char if needed
     // or copy the contents to an external StringBuilder
 }
-queue.donePolling();
+queue.doneFetching();
 ```
 Again we busy spin if the queue is empty. Later we will see how we can also use a <code>WaitStrategy</code> instead of busy spinning.
 
-Note that we poll in batches, reducing the number of times we have to check for an empty queue through <code>availableToPoll()</code>.
+Note that we fetch in batches, reducing the number of times we have to check for an empty queue through <code>availableToFetch()</code>.
 
 </details> 
 
@@ -154,17 +154,17 @@ queue.flush();
 ```Java
 WaitStrategy consumerWaitStrategy = new BusySpinYieldSleepWaitStrategy();
 long avail;
-while((avail = queue.availableToPoll()) == 0) {
+while((avail = queue.availableToFetch()) == 0) {
     consumerWaitStrategy.block(); // <=====
 }
 for(int i = 0; i < avail; i++) {
-    StringBuilder sb = queue.poll();
+    StringBuilder sb = queue.fetch();
     // do whatever you want with the StringBuilder
     // just do not create garbage
     // copy char by char if needed
     // or copy the contents to an external StringBuilder
 }
-queue.donePolling();
+queue.doneFetching();
 consumerWaitStrategy.reset(); // <=====
 ```
 </details>
@@ -184,8 +184,8 @@ queue.flush(true); // use lazySet (take more time to notify the consumer thread 
 ```
 ```Java
 // consumer notifying producer(s)
-queue.donePolling(); // no lazySet by default (notify the producer thread immediately at the expense of the consumer thread)
-queue.donePolling(true); // use lazySet (take more time to notify the producer thread in order not to introduce any latency to the consumer thread)
+queue.doneFetching(); // no lazySet by default (notify the producer thread immediately at the expense of the consumer thread)
+queue.doneFetching(true); // use lazySet (take more time to notify the producer thread in order not to introduce any latency to the consumer thread)
 ```
 </details>
   

@@ -42,19 +42,19 @@ public class Consumer<E> {
 	/**
 	 * Delegates to the demultiplexer with the right consumer index.
 	 * 
-	 * @return the number of available objects to poll
+	 * @return the number of available objects to fetch
 	 */
-	public final long availableToPoll() {
-		return demux.availableToPoll(index);
+	public final long availableToFetch() {
+		return demux.availableToFetch(index);
 	}
 	
 	/**
 	 * Delegates to the demultiplexer with the right consumer index.
 	 * 
-	 * @return the polled object
+	 * @return the fetched object
 	 */
-	public final E poll() {
-		return demux.poll(index);
+	public final E fetch() {
+		return demux.fetch(index);
 	}
 	
 	/**
@@ -62,14 +62,14 @@ public class Consumer<E> {
 	 * 
 	 * @param lazySet true to notify later or false to notify immediately
 	 */
-	public final void donePolling(boolean lazySet) {
-		demux.donePolling(index, lazySet);
+	public final void doneFetching(boolean lazySet) {
+		demux.doneFetching(index, lazySet);
 	}
 	
 	/**
 	 * Delegates to the demultiplexer with the right consumer index.
 	 */
-	public final void donePolling() {
-		demux.donePolling(index);
+	public final void doneFetching() {
+		demux.doneFetching(index);
 	}
 }

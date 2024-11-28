@@ -42,20 +42,20 @@ public class Minimal {
 				
 				while(isRunning) {
 					
-					long avail = queue.availableToPoll(); // read available batches as fast as possible
+					long avail = queue.availableToFetch(); // read available batches as fast as possible
 					
 					if (avail == 0) continue; // busy spin
 					
 					for(int i = 0; i < avail; i++) {
 						
-						MutableLong ml = queue.poll();
+						MutableLong ml = queue.fetch();
 						
 						System.out.print(ml.get());
 						
 						if (ml.get() == messagesToSend - 1) isRunning = false; // done receiving all messages
 					}
 					
-					queue.donePolling(); // don't forget to notify producer
+					queue.doneFetching(); // don't forget to notify producer
 				}
 			}
 			

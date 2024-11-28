@@ -59,13 +59,13 @@ public class Minimal {
 					
 					while(isRunning) {
 						
-						long avail = demux.availableToPoll(consumerIndex); // read available batches as fast as possible
+						long avail = demux.availableToFetch(consumerIndex); // read available batches as fast as possible
 						
 						if (avail == 0) continue; // busy spin
 						
 						for(int i = 0; i < avail; i++) {
 							
-							MutableLong ml = demux.poll(consumerIndex);
+							MutableLong ml = demux.fetch(consumerIndex);
 							
 							if (ml.get() == -1) { // -1 means we need to finish
 								isRunning = false; // done receiving all messages from the producer
@@ -74,7 +74,7 @@ public class Minimal {
 							}
 						}
 						
-						demux.donePolling(consumerIndex); // don't forget to notify the producer
+						demux.doneFetching(consumerIndex); // don't forget to notify the producer
 					}
 				}
 				

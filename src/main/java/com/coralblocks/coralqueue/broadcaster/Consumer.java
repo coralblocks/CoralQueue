@@ -42,19 +42,19 @@ public class Consumer<E> {
 	/**
 	 * Delegate to the broadcaster
 	 * 
-	 * @return the number of available objects that can be polled
+	 * @return the number of available objects that can be fetched
 	 */
-	public final long availableToPoll() {
-		return broadcaster.availableToPoll(consumerIndex);
+	public final long availableToFetch() {
+		return broadcaster.availableToFetch(consumerIndex);
 	}
 	
 	/**
 	 * Delegate to the broadcaster
 	 * 
-	 * @return the object polled
+	 * @return the object fetched
 	 */
-	public final E poll() {
-		return broadcaster.poll(consumerIndex);
+	public final E fetch() {
+		return broadcaster.fetch(consumerIndex);
 	}
 	
 	/**
@@ -62,15 +62,15 @@ public class Consumer<E> {
 	 * 
 	 * @param lazySet false to signal to the producer immediately
 	 */
-	public final void donePolling(boolean lazySet) {
-		broadcaster.donePolling(consumerIndex, lazySet);
+	public final void doneFetching(boolean lazySet) {
+		broadcaster.doneFetching(consumerIndex, lazySet);
 	}
 	
 	/**
 	 * Delegate to the broadcaster
 	 */
-	public final void donePolling() {
-		broadcaster.donePolling(consumerIndex);
+	public final void doneFetching() {
+		broadcaster.doneFetching(consumerIndex);
 	}
 	
 	/**

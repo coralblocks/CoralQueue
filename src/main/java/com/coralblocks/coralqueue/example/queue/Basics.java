@@ -96,14 +96,14 @@ public class Basics {
 		public final void run() {
 			boolean isRunning = true;
 			while(isRunning) {
-				long avail = queue.availableToPoll(); // <=========
+				long avail = queue.availableToFetch(); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {
-						Message m = queue.poll(); // <=========
+						Message m = queue.fetch(); // <=========
 						messagesReceived.add(m.value); // save just the long value from this message
 						if (m.last) isRunning = false; // I'm done!
 					}
-					queue.donePolling(); // <=========
+					queue.doneFetching(); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin while blocking (default and fastest wait strategy)

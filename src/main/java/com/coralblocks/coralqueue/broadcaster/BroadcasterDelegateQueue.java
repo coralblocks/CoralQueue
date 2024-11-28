@@ -82,13 +82,13 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
     }
 
 	@Override
-    public final long availableToPoll() {
-	    return broadcaster.availableToPoll(consumerIndex);
+    public final long availableToFetch() {
+	    return broadcaster.availableToFetch(consumerIndex);
     }
 
 	@Override
-    public final E poll() {
-		return broadcaster.poll(consumerIndex);
+    public final E fetch() {
+		return broadcaster.fetch(consumerIndex);
     }
 	
 	@Override
@@ -97,13 +97,13 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	}
 
 	@Override
-    public final void donePolling(boolean lazySet) {
-		broadcaster.donePolling(consumerIndex, lazySet);
+    public final void doneFetching(boolean lazySet) {
+		broadcaster.doneFetching(consumerIndex, lazySet);
     }
 
 	@Override
-    public final void donePolling() {
-		broadcaster.donePolling(consumerIndex);
+    public final void doneFetching() {
+		broadcaster.doneFetching(consumerIndex);
     }
 
 	@Override

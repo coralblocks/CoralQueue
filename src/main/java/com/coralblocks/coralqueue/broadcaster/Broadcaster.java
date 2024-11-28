@@ -16,7 +16,7 @@
 package com.coralblocks.coralqueue.broadcaster;
 
 /**
- * <p>The Broadcaster API that is a special demultiplexer that broadcasts (delivers) all messages to all consumers, in other words, all consumers will poll and receive all messages sent by the producer.</p>
+ * <p>The Broadcaster API that is a special demultiplexer that broadcasts (delivers) all messages to all consumers, in other words, all consumers will fetch and receive all messages sent by the producer.</p>
  * 
  * <p><b>NOTE:</b> A broadcaster must have a <b>fixed</b> number of consumers specified by its constructor.</p>
  *
@@ -56,17 +56,17 @@ public interface Broadcaster<E> {
 	public void flush();
 	
 	/**
-	 * <p>Return the number of objects that can be safely polled from this broadcaster. The consumer thread calling this method must pass its consumer index.</p>
+	 * <p>Return the number of objects that can be safely fetched from this broadcaster. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p>If the broadcaster is empty, this method returns 0.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @return number of objects that can be polled
+	 * @return number of objects that can be fetched
 	 */
-	public long availableToPoll(int consumerIndex);
+	public long availableToFetch(int consumerIndex);
 
 	/**
-	 * <p>Poll an object from the broadcaster. You can only call this method after calling {@link #availableToPoll(int)} so you
+	 * <p>Fetch an object from the broadcaster. You can only call this method after calling {@link #availableToFetch(int)} so you
 	 * know for sure what is the maximum number of times you can call this method. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
@@ -76,51 +76,51 @@ public interface Broadcaster<E> {
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 * @return a data transfer mutable object from the broadcaster
 	 */
-	public E poll(int consumerIndex);
+	public E fetch(int consumerIndex);
 
 	/**
-	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
-	 * you poll what you can/want to poll and call this method to signal the producer thread that you are done.
+	 * <p>Must be called to indicate that all fetching has been concluded, in other words, 
+	 * you fetch what you can/want to fetch and call this method to signal the producer thread that you are done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex he index of the consumer thread calling this method
 	 * @param lazySet true to notify the producer in a lazy way or false to notify the producer <b>immediately</b>
 	 */
-	public void donePolling(int consumerIndex, boolean lazySet);
+	public void doneFetching(int consumerIndex, boolean lazySet);
 	
 	/**
-	 * <p>That's the same as calling <code>donePolling(consumerIndex, false)</code>, in other words, the producer will be notified <b>immediately</b> that polling is done.
+	 * <p>That's the same as calling <code>doneFetching(consumerIndex, false)</code>, in other words, the producer will be notified <b>immediately</b> that fetching is done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 */
-	public void donePolling(int consumerIndex);
+	public void doneFetching(int consumerIndex);
 	
 	/**
-	 * <p>Pretend you never polled any objects since you last called {@link #donePolling(int)}. This method cancels (i.e. rolls back) any polling operations you have done.
+	 * <p>Pretend you never fetched any objects since you last called {@link #doneFetching(int)}. This method cancels (i.e. rolls back) any fetching operations you have done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
-	 * <p>You can call this method as many times as you want before you call {@link #donePolling(int)} to roll back any polling operations (zero, one or more) you have done.</p>
+	 * <p>You can call this method as many times as you want before you call {@link #doneFetching(int)} to roll back any fetching operations (zero, one or more) you have done.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 */
 	public void rollBack(int consumerIndex);
 	
 	/**
-	 * <p>Same as {@link #rollBack(int)} but allows you to specify how many previous polls you want to roll back, instead of all of them (i.e. all previous ones).
+	 * <p>Same as {@link #rollBack(int)} but allows you to specify how many previous fetches you want to roll back, instead of all of them (i.e. all previous ones).
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @param items how many polls to roll back
+	 * @param items how many fetches to roll back
 	 */
 	public void rollBack(int consumerIndex, long items);
 	
 	/**
-	 * <p>Return the next object to be polled without actually polling it.
+	 * <p>Return the next object to be fetched without actually fetching it.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 
 	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @return the next object to be polled from the broadcaster, without actually polling it
+	 * @return the next object to be fetched from the broadcaster, without actually fetching it
 	 */
 	public E peek(int consumerIndex);
 	
@@ -133,7 +133,7 @@ public interface Broadcaster<E> {
 	
 	/**
 	 * <p>This method disables a consumer and allows the broadcaster to continue to operate and make progress without getting blocked
-	 * waiting for a slow consumer. This is useful for when a consumer has a problem and stops polling the broadcaster. In that situation
+	 * waiting for a slow consumer. This is useful for when a consumer has a problem and stops fetching the broadcaster. In that situation
 	 * the broadcaster will get full, causing the producer to block, unless you disable the consumer.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer that you want to disable

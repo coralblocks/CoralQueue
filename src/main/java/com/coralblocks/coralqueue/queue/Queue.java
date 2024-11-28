@@ -16,14 +16,14 @@
 package com.coralblocks.coralqueue.queue;
 
 /**
- * <p>A Queue API that allows offering and polling objects to and from the queue. Implementations should naturally/natively support batching (for speed) and pooling (for zero garbage).
+ * <p>A Queue API that allows offering and fetching objects to and from the queue. Implementations should naturally/natively support batching (for speed) and pooling (for zero garbage).
  * The objects must be mutable to act like <i>data transfer objects</i>.
  * The circular queue is fully populated with these objects at startup.</p>
  * 
  *  <p>So to offer to the queue, you first get a mutable object from the queue by calling {@link #nextToDispatch()}, modify this object and then call {@link #flush(boolean)} or {@link #flush()}.
  *  That allows the producer to send in batches if it wants to.</p>
  *  
- *  <p>And to poll you first call {@link #availableToPoll()} to know how many objects you can safely poll, call {@link #poll()} in a loop and when done call {@link #donePolling(boolean)} or {@link #donePolling()}.
+ *  <p>And to fetch you first call {@link #availableToFetch()} to know how many objects you can safely fetch, call {@link #fetch()} in a loop and when done call {@link #doneFetching(boolean)} or {@link #doneFetching()}.
  *  That allows the consumer to receive in batches if it wants to.</p>
  *  
  *  <p><b>NOTE:</b> This queue is intended to be used by only one producer thread and by only one consumer thread (i.e one-to-one). For other thread scenarios you should check Demux, Mux, Mpmc, etc.</p>
@@ -73,16 +73,16 @@ public interface Queue<E> {
 	public void flush();
 	
 	/**
-	 * <p>Return the number of objects that can be safely polled from this queue.</p>
+	 * <p>Return the number of objects that can be safely fetched from this queue.</p>
 	 * 
 	 * <p>If the queue is empty, this method returns 0.</p>
 	 * 
-	 * @return the number of objects that can be polled
+	 * @return the number of objects that can be fetched
 	 */
-	public long availableToPoll();
+	public long availableToFetch();
 
 	/**
-	 * <p>Poll an object from the queue. You can only call this method after calling {@link #availableToPoll()} so you
+	 * <p>Fetch an object from the queue. You can only call this method after calling {@link #availableToFetch()} so you
 	 * know for sure what is the maximum number of times you can call this method.</p>
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
@@ -91,49 +91,49 @@ public interface Queue<E> {
 	 * 
 	 * @return a data transfer mutable object from the queue
 	 */
-	public E poll();
+	public E fetch();
 	
 	/**
-	 * Replace the last polled object by the given one.
+	 * Replace the last fetched object by the given one.
 	 * 
-	 * @param newVal the new object to replace the last polled object from this queue
+	 * @param newVal the new object to replace the last fetched object from this queue
 	 */
 	public void replace(E newVal);
 
 	/**
-	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
-	 * you poll what you can/want to poll and call this method to signal the producer that you are done.</p>
+	 * <p>Must be called to indicate that all fetching has been concluded, in other words, 
+	 * you fetch what you can/want to fetch and call this method to signal the producer that you are done.</p>
 	 * 
-	 * <p><b>NOTE:</b> This method only needs to be called if there was something available to be polled by the consumer, in other words,
-	 * if {@link #availableToPoll()} returned zero then this method does not need to be called.</p>
+	 * <p><b>NOTE:</b> This method only needs to be called if there was something available to be fetched by the consumer, in other words,
+	 * if {@link #availableToFetch()} returned zero then this method does not need to be called.</p>
 	 * 
 	 * @param lazySet true to notify the producer in a lazy way or false to notify the producer <b>immediately</b>
 	 */
-	public void donePolling(boolean lazySet);
+	public void doneFetching(boolean lazySet);
 	
 	/**
-	 * <p>That's the same as calling <code>donePolling(false)</code>, in other words, the producer will be notified <b>immediately</b> that polling is done.</p>
+	 * <p>That's the same as calling <code>doneFetching(false)</code>, in other words, the producer will be notified <b>immediately</b> that fetching is done.</p>
 	 */
-	public void donePolling();
+	public void doneFetching();
 	
 	/**
-	 * <p>Return the next object to be polled without actually polling it.</p>
+	 * <p>Return the next object to be fetched without actually fetching it.</p>
 	 * 
-	 * @return the next object to be polled from the queue, without actually polling it
+	 * @return the next object to be fetched from the queue, without actually fetching it
 	 */
 	public E peek();
 	
 	/**
-	 * <p>Pretend you never polled any objects since you last called {@link #donePolling()}. This method cancels (i.e. rolls back) any polling operations you have done.</p>
+	 * <p>Pretend you never fetched any objects since you last called {@link #doneFetching()}. This method cancels (i.e. rolls back) any fetching operations you have done.</p>
 	 * 
-	 * <p>You can call this method as many times as you want before you call {@link #donePolling()} to roll back any polling operations (zero, one or more) you have done.</p>
+	 * <p>You can call this method as many times as you want before you call {@link #doneFetching()} to roll back any fetching operations (zero, one or more) you have done.</p>
 	 */
 	public void rollBack();
 	
 	/**
-	 * <p>Same as {@link #rollBack()} but allows you to specify how many previous polls you want to roll back, instead of all of them (i.e. all previous ones).</p>
+	 * <p>Same as {@link #rollBack()} but allows you to specify how many previous fetches you want to roll back, instead of all of them (i.e. all previous ones).</p>
 	 * 
-	 * @param items how many polls to roll back
+	 * @param items how many fetches to roll back
 	 */
 	public void rollBack(long items);
 }

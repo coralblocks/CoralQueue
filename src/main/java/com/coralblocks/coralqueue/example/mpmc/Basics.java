@@ -142,14 +142,14 @@ public class Basics {
 		public final void run() {
 			boolean isRunning = true;
 			while(isRunning) {
-				long avail = mpmc.availableToPoll(consumerIndex); // <=========
+				long avail = mpmc.availableToFetch(consumerIndex); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {
-						Message m = mpmc.poll(consumerIndex); // <=========
+						Message m = mpmc.fetch(consumerIndex); // <=========
 						messagesReceived.add(m.copy()); // save all messages received (don't forget to copy!!!) so we can later check them
 						if (m.last && ++lastCount == mpmc.getNumberOfProducers()) isRunning = false; // wait to receive the done signal from ALL producers
 					}
-					mpmc.donePolling(consumerIndex); // <=========
+					mpmc.doneFetching(consumerIndex); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin while blocking (default and fastest wait strategy)

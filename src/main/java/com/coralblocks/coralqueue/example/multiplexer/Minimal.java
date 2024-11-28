@@ -53,20 +53,20 @@ public class Minimal {
 				
 				while(isRunning) {
 					
-					long avail = mux.availableToPoll(); // read available batches as fast as possible
+					long avail = mux.availableToFetch(); // read available batches as fast as possible
 					
 					if (avail == 0) continue; // busy spin
 					
 					for(int i = 0; i < avail; i++) {
 						
-						MutableLong ml = mux.poll();
+						MutableLong ml = mux.fetch();
 						
 						System.out.print(ml.get());
 						
 						if (++messagesReceived == messagesToReceive) isRunning = false; // done receiving all messages from all producers
 					}
 					
-					mux.donePolling(); // don't forget to notify producers
+					mux.doneFetching(); // don't forget to notify producers
 				}
 			}
 			

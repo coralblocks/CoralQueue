@@ -122,27 +122,27 @@ public class AtomicMpMcBroadcaster<E> implements MpMcBroadcaster<E> {
 	}
 	
 	@Override
-	public final long availableToPoll(int consumerIndex) {
+	public final long availableToFetch(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
-		return consumer.availableToPoll();
+		return consumer.availableToFetch();
 	}
 	
 	@Override
-	public final E poll(int consumerIndex) {
+	public final E fetch(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
-		return consumer.poll();
+		return consumer.fetch();
 	}
 	
 	@Override
-	public final void donePolling(int consumerIndex, boolean lazySet) {
+	public final void doneFetching(int consumerIndex, boolean lazySet) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
-		consumer.donePolling(lazySet);
+		consumer.doneFetching(lazySet);
 	}
 	
 	@Override
-	public final void donePolling(int consumerIndex) {
+	public final void doneFetching(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
-		consumer.donePolling();
+		consumer.doneFetching();
 	}
 	
 	@Override

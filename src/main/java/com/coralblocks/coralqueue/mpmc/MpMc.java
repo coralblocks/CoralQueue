@@ -17,7 +17,7 @@ package com.coralblocks.coralqueue.mpmc;
 
 /**
  * <p>The MpMc (Multiple Producers / Multiple Consumers) API that allows multiple consumer threads receiving messages from the mpmc and multiple producer threads sending messages to the mpmc.
- * Two different consumers will never poll the same message.</p>
+ * Two different consumers will never fetch the same message.</p>
  * 
  * <p><b>NOTE:</b> A mpmc must have a <b>fixed</b> number of consumers and a fixed number of producers specified by its constructor.</p>
  *
@@ -73,17 +73,17 @@ public interface MpMc<E> {
 	public void flush(int producerIndex);
 	
 	/**
-	 * <p>Return the number of objects that can be safely polled from this mpmc consumer. The consumer thread calling this method must pass its consumer index.</p>
+	 * <p>Return the number of objects that can be safely fetched from this mpmc consumer. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p>If the mpmc is empty, this method returns 0.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @return number of objects that can be polled
+	 * @return number of objects that can be fetched
 	 */
-	public long availableToPoll(int consumerIndex);
+	public long availableToFetch(int consumerIndex);
 	
 	/**
-	 * <p>Poll an object from the mpmc. You can only call this method after calling {@link #availableToPoll(int)} so you
+	 * <p>Fetch an object from the mpmc. You can only call this method after calling {@link #availableToFetch(int)} so you
 	 * know for sure what is the maximum number of times you can call this method. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
@@ -93,25 +93,25 @@ public interface MpMc<E> {
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 * @return a data transfer mutable object from the mpmc
 	 */
-	public E poll(int consumerIndex);
+	public E fetch(int consumerIndex);
 	
 	/**
-	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
-	 * you poll what you can/want to poll and call this method to signal the producer threads that you are done.
+	 * <p>Must be called to indicate that all fetching has been concluded, in other words, 
+	 * you fetch what you can/want to fetch and call this method to signal the producer threads that you are done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex he index of the consumer thread calling this method
 	 * @param lazySet true to notify the producers in a lazy way or false to notify the producers <b>immediately</b>
 	 */
-	public void donePolling(int consumerIndex, boolean lazySet);
+	public void doneFetching(int consumerIndex, boolean lazySet);
 	
 	/**
-	 * <p>That's the same as calling <code>donePolling(consumerIndex, false)</code>, in other words, the producers will be notified <b>immediately</b> that polling is done.
+	 * <p>That's the same as calling <code>doneFetching(consumerIndex, false)</code>, in other words, the producers will be notified <b>immediately</b> that fetching is done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 */
-	public void donePolling(int consumerIndex);
+	public void doneFetching(int consumerIndex);
 	
 	/**
 	 * Return the producer corresponding to the given index. If a bad index is given this method throws a <code>RuntimeException</code>.

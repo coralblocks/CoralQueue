@@ -69,16 +69,16 @@ public interface Multiplexer<E> {
 	public void flush(int producer);
 	
 	/**
-	 * <p>Return the number of objects that can be safely polled from this multiplexer.</p>
+	 * <p>Return the number of objects that can be safely fetched from this multiplexer.</p>
 	 * 
 	 * <p>If the multiplexer is empty, this method returns 0.</p>
 	 * 
-	 * @return number of objects that can be polled
+	 * @return number of objects that can be fetched
 	 */
-	public long availableToPoll();
+	public long availableToFetch();
 	
 	/**
-	 * <p>Poll an object from the multiplexer. You can only call this method after calling {@link #availableToPoll()} so you
+	 * <p>Fetch an object from the multiplexer. You can only call this method after calling {@link #availableToFetch()} so you
 	 * know for sure what is the maximum number of times you can call this method.</p>
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
@@ -87,20 +87,20 @@ public interface Multiplexer<E> {
 	 * 
 	 * @return a data transfer mutable object from the multiplexer
 	 */
-	public E poll();
+	public E fetch();
 
 	/**
-	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
-	 * you poll what you can/want to poll and call this method to signal the producer threads that you are done.</p>
+	 * <p>Must be called to indicate that all fetching has been concluded, in other words, 
+	 * you fetch what you can/want to fetch and call this method to signal the producer threads that you are done.</p>
 	 * 
 	 * @param lazySet true to notify the producers in a lazy way or false to notify the producers <b>immediately</b>
 	 */
-	public void donePolling(boolean lazySet);
+	public void doneFetching(boolean lazySet);
 	
 	/**
-	 * <p>That's the same as calling <code>donePolling(false)</code>, in other words, the producers will be notified <b>immediately</b> that polling is done.</p>
+	 * <p>That's the same as calling <code>doneFetching(false)</code>, in other words, the producers will be notified <b>immediately</b> that fetching is done.</p>
 	 */
-	public void donePolling();
+	public void doneFetching();
 	
 	/**
 	 * The (fixed) number of producers that this multiplexer has.

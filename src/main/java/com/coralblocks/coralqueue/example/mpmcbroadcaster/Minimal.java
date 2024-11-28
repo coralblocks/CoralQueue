@@ -66,13 +66,13 @@ public class Minimal {
 					
 					while(isRunning) {
 						
-						long avail = mpmcBroadcaster.availableToPoll(consumerIndex); // read available batches as fast as possible
+						long avail = mpmcBroadcaster.availableToFetch(consumerIndex); // read available batches as fast as possible
 						
 						if (avail == 0) continue; // busy spin
 						
 						for(int i = 0; i < avail; i++) {
 							
-							MutableLong ml = mpmcBroadcaster.poll(consumerIndex);
+							MutableLong ml = mpmcBroadcaster.fetch(consumerIndex);
 							
 							if (ml.get() == -1) { // -1 means we need to finish
 								if (++lastCount == numberOfProducers) isRunning = false; // done receiving all finish signals from all producers
@@ -81,7 +81,7 @@ public class Minimal {
 							}
 						}
 						
-						mpmcBroadcaster.donePolling(consumerIndex); // don't forget to notify the producers
+						mpmcBroadcaster.doneFetching(consumerIndex); // don't forget to notify the producers
 					}
 				}
 				

@@ -32,11 +32,11 @@ public class AtomicQueue<E> implements Queue<E> {
 	private final int capacityMinusOne;
 	private final E[] data;
 	private long lastOfferedSeq = 0;
-	private long lastPolledSeq = 0;
-	private long pollCount = 0;
+	private long lastFetchedSeq = 0;
+	private long fetchCount = 0;
 	private long maxSeqBeforeWrapping;
 	private final PaddedAtomicLong offerSequence = new PaddedAtomicLong(0);
-	private final PaddedAtomicLong pollSequence = new PaddedAtomicLong(0);
+	private final PaddedAtomicLong fetchSequence = new PaddedAtomicLong(0);
 	
 	private final Builder<E> builder;
 
@@ -90,15 +90,15 @@ public class AtomicQueue<E> implements Queue<E> {
 	@Override
 	public final void clear() {
 		lastOfferedSeq = 0;
-		lastPolledSeq = 0;
-		pollCount = 0;
+		lastFetchedSeq = 0;
+		fetchCount = 0;
 		offerSequence.set(lastOfferedSeq);
-		pollSequence.set(lastPolledSeq);
+		fetchSequence.set(lastFetchedSeq);
 		maxSeqBeforeWrapping = calcMaxSeqBeforeWrapping();
 	}
 	
 	private final long calcMaxSeqBeforeWrapping() {
-		return pollSequence.get() + capacity;
+		return fetchSequence.get() + capacity;
 	}
 	
 	public final Builder<E> getBuilder() {
@@ -146,54 +146,54 @@ public class AtomicQueue<E> implements Queue<E> {
 	}
 
 	@Override
-	public final long availableToPoll() {
-		return offerSequence.get() - lastPolledSeq;
+	public final long availableToFetch() {
+		return offerSequence.get() - lastFetchedSeq;
 	}
 	
 	@Override
-	public final E poll() {
-		pollCount++;
-		return data[calcIndex(++lastPolledSeq)];
+	public final E fetch() {
+		fetchCount++;
+		return data[calcIndex(++lastFetchedSeq)];
 	}
 	
 	@Override
 	public final void replace(E newVal) {
-		data[calcIndex(lastPolledSeq)] = newVal;
+		data[calcIndex(lastFetchedSeq)] = newVal;
 	}
 	
 	@Override
 	public final E peek() {
-		return data[calcIndex(lastPolledSeq + 1)];
+		return data[calcIndex(lastFetchedSeq + 1)];
 	}
 
 	@Override
-	public final void donePolling(boolean lazySet) {
+	public final void doneFetching(boolean lazySet) {
 		if (lazySet) {
-			pollSequence.lazySet(lastPolledSeq);
+			fetchSequence.lazySet(lastFetchedSeq);
 		} else {
-			pollSequence.set(lastPolledSeq);
+			fetchSequence.set(lastFetchedSeq);
 		}
-		pollCount = 0;
+		fetchCount = 0;
 	}
 	
 	@Override
 	public final void rollBack() {
-		rollBack(pollCount);
+		rollBack(fetchCount);
 	}
 	
 	@Override
 	public final void rollBack(long count) {
-		if (count < 0 || count > pollCount) {
-			throw new RuntimeException("Invalid rollback request! polled=" + pollCount + " requested=" + count);
+		if (count < 0 || count > fetchCount) {
+			throw new RuntimeException("Invalid rollback request! fetched=" + fetchCount + " requested=" + count);
 		}
-		lastPolledSeq -= count;
-		pollCount -= count;
+		lastFetchedSeq -= count;
+		fetchCount -= count;
 	}
 	
 	@Override
-	public final void donePolling() {
-		// don't call donePolling(false) to save one method call (more performance)
-		pollSequence.set(lastPolledSeq); // no lazySet by default...
-		pollCount = 0;
+	public final void doneFetching() {
+		// don't call doneFetching(false) to save one method call (more performance)
+		fetchSequence.set(lastFetchedSeq); // no lazySet by default...
+		fetchCount = 0;
 	}
 }

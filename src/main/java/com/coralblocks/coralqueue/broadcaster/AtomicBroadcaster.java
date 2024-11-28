@@ -116,21 +116,21 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 		maxSeqBeforeWrapping = calcMaxSeqBeforeWrapping();
 	}
 	
-	private final long minCursorPollSeq() {
+	private final long minCursosFetchSeq() {
 		long min = Long.MAX_VALUE;
 		for(int i = 0; i < cursors.length; i++) {
-			min = Math.min(cursors[i].getPollSequence(), min);
+			min = Math.min(cursors[i].getFetchSequence(), min);
 		}
 		return min;
 	}
 	
 	@Override
 	public final void disableConsumer(int index) {
-		cursors[index].setPollSequenceToMax();
+		cursors[index].setFetchSequenceToMax();
 	}
 	
 	private final long calcMaxSeqBeforeWrapping() {
-		return minCursorPollSeq() + capacity;
+		return minCursosFetchSeq() + capacity;
 	}
 	
 	private final int calcIndex(long value) {
@@ -165,47 +165,47 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	}
 
 	@Override
-	public final long availableToPoll(int consumer) {
-		return offerSequence.get() - cursors[consumer].getLastPolledSeq();
+	public final long availableToFetch(int consumer) {
+		return offerSequence.get() - cursors[consumer].getLastFetchedSeq();
 	}
 
 	@Override
-	public final E poll(int consumer) {
+	public final E fetch(int consumer) {
 		Cursor cursor = cursors[consumer];
-		cursor.incrementPollCount();
-		return data[calcIndex(cursor.incrementLastPolledSeq())];
+		cursor.incrementFetchCount();
+		return data[calcIndex(cursor.incrementLastFetchedSeq())];
 	}
 	
 	@Override
 	public final E peek(int consumer) {
-		return data[calcIndex(cursors[consumer].getLastPolledSeq())];
+		return data[calcIndex(cursors[consumer].getLastFetchedSeq())];
 	}
 
 	@Override
-	public final void donePolling(int consumer, boolean lazySet) {
+	public final void doneFetching(int consumer, boolean lazySet) {
 		Cursor cursor = cursors[consumer];
-		cursor.updatePollSequence(lazySet);
-		cursor.resetPollCount();
+		cursor.updateFetchSequence(lazySet);
+		cursor.resetFetchCount();
 	}
 	
 	@Override
 	public final void rollBack(int consumer) {
-		rollBack(consumer, cursors[consumer].getPollCount());
+		rollBack(consumer, cursors[consumer].getFetchCount());
 	}
 	
 	@Override
 	public final void rollBack(int consumer, long count) {
 		Cursor cursor = cursors[consumer];
-		if (count < 0 || count > cursor.getPollCount()) {
-			throw new RuntimeException("Invalid rollback request! polled=" + cursor.getPollCount() + " requested=" + count);
+		if (count < 0 || count > cursor.getFetchCount()) {
+			throw new RuntimeException("Invalid rollback request! fetched=" + cursor.getFetchCount() + " requested=" + count);
 		}
-		cursor.decrementLastPolledSeq(count);
-		cursor.decrementPollCount(count);
+		cursor.decrementLastFetchedSeq(count);
+		cursor.decrementFetchCount(count);
 	}
 	
 	@Override
-	public final void donePolling(int consumer) {
-		donePolling(consumer, false);
+	public final void doneFetching(int consumer) {
+		doneFetching(consumer, false);
 	}
 	
 	@Override

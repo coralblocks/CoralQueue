@@ -21,7 +21,7 @@ import com.coralblocks.coralqueue.util.Builder;
 
 /**
  * An implementation of {@link MpMc} that uses <i>memory barriers</i> to synchronize producers and consumers threads.
- * Two different consumers will never poll the same message.
+ * Two different consumers will never fetch the same message.
  *
  * @param <E> The data transfer mutable object to be used by this mpmc
  */
@@ -128,27 +128,27 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	}
 	
 	@Override
-	public final long availableToPoll(int consumerIndex) {
+	public final long availableToFetch(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
-		return consumer.availableToPoll();
+		return consumer.availableToFetch();
 	}
 	
 	@Override
-	public final E poll(int consumerIndex) {
+	public final E fetch(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
-		return consumer.poll();
+		return consumer.fetch();
 	}
 	
 	@Override
-	public final void donePolling(int consumerIndex, boolean lazySet) {
+	public final void doneFetching(int consumerIndex, boolean lazySet) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
-		consumer.donePolling(lazySet);
+		consumer.doneFetching(lazySet);
 	}
 	
 	@Override
-	public final void donePolling(int consumerIndex) {
+	public final void doneFetching(int consumerIndex) {
 		Consumer<E> consumer = getConsumer(consumerIndex);
-		consumer.donePolling();
+		consumer.doneFetching();
 	}
 	
 	@Override

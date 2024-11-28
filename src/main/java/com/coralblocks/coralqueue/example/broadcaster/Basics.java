@@ -98,14 +98,14 @@ public class Basics {
 		public final void run() {
 			boolean isRunning = true;
 			while(isRunning) {
-				long avail = broadcaster.availableToPoll(consumerIndex); // <=========
+				long avail = broadcaster.availableToFetch(consumerIndex); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {
-						Message m = broadcaster.poll(consumerIndex); // <=========
+						Message m = broadcaster.fetch(consumerIndex); // <=========
 						messagesReceived.add(m.value); // save all messages received so we can later check them
 						if (m.last) isRunning = false; // wait to receive the done signal from the producer
 					}
-					broadcaster.donePolling(consumerIndex); // <=========
+					broadcaster.doneFetching(consumerIndex); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin while blocking (default and fastest wait strategy)

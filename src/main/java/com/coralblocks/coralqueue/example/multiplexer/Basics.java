@@ -125,14 +125,14 @@ public class Basics {
 		public final void run() {
 			boolean isRunning = true;
 			while(isRunning) {
-				long avail = mux.availableToPoll(); // <=========
+				long avail = mux.availableToFetch(); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {
-						Message m = mux.poll(); // <=========
+						Message m = mux.fetch(); // <=========
 						messagesReceived.add(m.copy()); // save all messages received (don't forget to copy!!!) so we can later check them
 						if (m.last && ++lastCount == mux.getNumberOfProducers()) isRunning = false; // wait to receive the done signal from ALL producers
 					}
-					mux.donePolling(); // <=========
+					mux.doneFetching(); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin while blocking (default and fastest wait strategy)

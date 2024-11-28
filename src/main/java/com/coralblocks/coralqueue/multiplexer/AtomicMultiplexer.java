@@ -119,10 +119,10 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
     }
 
 	@Override
-    public final long availableToPoll() {
+    public final long availableToFetch() {
 		long total = 0;
 		for(int i = 0; i < numberOfProducers; i++) {
-			long x = queues[i].availableToPoll();
+			long x = queues[i].availableToFetch();
 			if (x == 0) {
 				avail[i] = -1;
 			} else {
@@ -133,30 +133,30 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
     }
 
 	@Override
-    public final E poll() {
+    public final E fetch() {
 		for(int i = 0; i < numberOfProducers; i++) {
 			int index = producerIndex++;
 			if (producerIndex == numberOfProducers) producerIndex = 0;
 			if (avail[index] > 0) {
 				avail[index]--;
-				return queues[index].poll();
+				return queues[index].fetch();
 			}
 		}
 		return null;
 	}
 
 	@Override
-    public final void donePolling(boolean lazySet) {
+    public final void doneFetching(boolean lazySet) {
 		for(int i = 0; i < numberOfProducers; i++) {
 			if (avail[i] != -1) {
-				queues[i].donePolling(lazySet);
+				queues[i].doneFetching(lazySet);
 			}
 		}
     }
 
 	@Override
-    public final void donePolling() {
-		donePolling(false);
+    public final void doneFetching() {
+		doneFetching(false);
     }
 
 	@Override

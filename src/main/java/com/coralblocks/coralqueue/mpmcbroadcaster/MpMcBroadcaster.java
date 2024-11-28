@@ -61,17 +61,17 @@ public interface MpMcBroadcaster<E> {
 	public void flush(int producerIndex);
 	
 	/**
-	 * <p>Return the number of objects that can be safely polled from this mpmc broadcaster consumer. The consumer thread calling this method must pass its consumer index.</p>
+	 * <p>Return the number of objects that can be safely fetched from this mpmc broadcaster consumer. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p>If the mpmc broadcaster is empty, this method returns 0.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @return number of objects that can be polled
+	 * @return number of objects that can be fetched
 	 */
-	public long availableToPoll(int consumerIndex);
+	public long availableToFetch(int consumerIndex);
 	
 	/**
-	 * <p>Poll an object from the mpmc broadcaster. You can only call this method after calling {@link #availableToPoll(int)} so you
+	 * <p>Fetch an object from the mpmc broadcaster. You can only call this method after calling {@link #availableToFetch(int)} so you
 	 * know for sure what is the maximum number of times you can call this method. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
@@ -81,29 +81,29 @@ public interface MpMcBroadcaster<E> {
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 * @return a data transfer mutable object from the mpmc broadcaster
 	 */
-	public E poll(int consumerIndex);
+	public E fetch(int consumerIndex);
 	
 	/**
-	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
-	 * you poll what you can/want to poll and call this method to signal the producer threads that you are done.
+	 * <p>Must be called to indicate that all fetching has been concluded, in other words, 
+	 * you fetch what you can/want to fetch and call this method to signal the producer threads that you are done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex he index of the consumer thread calling this method
 	 * @param lazySet true to notify the producers in a lazy way or false to notify the producers <b>immediately</b>
 	 */
-	public void donePolling(int consumerIndex, boolean lazySet);
+	public void doneFetching(int consumerIndex, boolean lazySet);
 	
 	/**
-	 * <p>That's the same as calling <code>donePolling(consumerIndex, false)</code>, in other words, the producers will be notified <b>immediately</b> that polling is done.
+	 * <p>That's the same as calling <code>doneFetching(consumerIndex, false)</code>, in other words, the producers will be notified <b>immediately</b> that fetching is done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 */
-	public void donePolling(int consumerIndex);
+	public void doneFetching(int consumerIndex);
 	
 	/**
 	 * <p>This method disables a consumer and allows the mpmc broadcaster to continue to operate and make progress without getting full.
-	 * This is useful for when a consumer has a problem and stops polling the mpmc broadcaster. In that situation
+	 * This is useful for when a consumer has a problem and stops fetching the mpmc broadcaster. In that situation
 	 * the mpmc broadcaster will get full unless you disable the consumer.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer that you want to disable

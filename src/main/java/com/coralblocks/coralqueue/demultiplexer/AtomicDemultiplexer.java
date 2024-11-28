@@ -22,7 +22,7 @@ import com.coralblocks.coralqueue.util.MathUtils;
 
 /**
  * An implementation of {@link Demultiplexer} that uses <i>memory barriers</i> to synchronize producer and consumers sequences.
- * Two different consumers will never poll the same message.
+ * Two different consumers will never fetch the same message.
  *
  * @param <E> The data transfer mutable object to be used by this demultiplexer
  */
@@ -157,13 +157,13 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	}
 
 	@Override
-	public final long availableToPoll(int consumer) {
-		return queues[consumer].availableToPoll();
+	public final long availableToFetch(int consumer) {
+		return queues[consumer].availableToFetch();
 	}
 	
 	@Override
-	public final E poll(int consumer) {
-		return queues[consumer].poll();
+	public final E fetch(int consumer) {
+		return queues[consumer].fetch();
 	}
 	
 	@Override
@@ -172,13 +172,13 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	}
 	
 	@Override
-	public final void donePolling(int consumer, boolean lazySet) {
-		queues[consumer].donePolling(lazySet);
+	public final void doneFetching(int consumer, boolean lazySet) {
+		queues[consumer].doneFetching(lazySet);
 	}
 	
 	@Override
-	public final void donePolling(int consumer) {
-		queues[consumer].donePolling(false);
+	public final void doneFetching(int consumer) {
+		queues[consumer].doneFetching(false);
 	}
 
 	@Override

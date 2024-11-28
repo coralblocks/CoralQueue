@@ -17,7 +17,7 @@ package com.coralblocks.coralqueue.demultiplexer;
 
 /**
  * <p>The Demultiplexer API that allows multiple consumer threads receiving messages from the demultiplexer and a single producer thread sending messages to the demultiplexer.
- * Two different consumers will never poll the same message.</p>
+ * Two different consumers will never fetch the same message.</p>
  * 
  * <p><b>NOTE:</b> A demultiplexer must have a <b>fixed</b> number of consumers specified by its constructor.</p>
  *
@@ -68,17 +68,17 @@ public interface Demultiplexer<E> {
 	public void flush();
 	
 	/**
-	 * <p>Return the number of objects that can be safely polled from this demultiplexer. The consumer thread calling this method must pass its consumer index.</p>
+	 * <p>Return the number of objects that can be safely fetched from this demultiplexer. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p>If the demultiplexer is empty, this method returns 0.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
-	 * @return number of objects that can be polled
+	 * @return number of objects that can be fetched
 	 */
-	public long availableToPoll(int consumerIndex);
+	public long availableToFetch(int consumerIndex);
 	
 	/**
-	 * <p>Poll an object from the demultiplexer. You can only call this method after calling {@link #availableToPoll(int)} so you
+	 * <p>Fetch an object from the demultiplexer. You can only call this method after calling {@link #availableToFetch(int)} so you
 	 * know for sure what is the maximum number of times you can call this method. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * <p><b>NOTE:</b> You must <b>never</b> keep your own reference to the mutable object returned by this method.
@@ -88,33 +88,33 @@ public interface Demultiplexer<E> {
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 * @return a data transfer mutable object from the demultiplexer
 	 */
-	public E poll(int consumerIndex);
+	public E fetch(int consumerIndex);
 	
 	/**
-	 * <p>Replace the last polled object by this consumer by the given one. The consumer thread calling this method must pass its consumer index.</p>
+	 * <p>Replace the last fetched object by this consumer by the given one. The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex he index of the consumer thread calling this method
-	 * @param newVal the new object to replace the last polled object from this demultiplexer
+	 * @param newVal the new object to replace the last fetched object from this demultiplexer
 	 */
 	public void replace(int consumerIndex, E newVal);
 
 	/**
-	 * <p>Must be called to indicate that all polling has been concluded, in other words, 
-	 * you poll what you can/want to poll and call this method to signal the producer thread that you are done.
+	 * <p>Must be called to indicate that all fetching has been concluded, in other words, 
+	 * you fetch what you can/want to fetch and call this method to signal the producer thread that you are done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex he index of the consumer thread calling this method
 	 * @param lazySet true to notify the producer in a lazy way or false to notify the producer <b>immediately</b>
 	 */
-	public void donePolling(int consumerIndex, boolean lazySet);
+	public void doneFetching(int consumerIndex, boolean lazySet);
 	
 	/**
-	 * <p>That's the same as calling <code>donePolling(consumerIndex, false)</code>, in other words, the producer will be notified <b>immediately</b> that polling is done.
+	 * <p>That's the same as calling <code>doneFetching(consumerIndex, false)</code>, in other words, the producer will be notified <b>immediately</b> that fetching is done.
 	 * The consumer thread calling this method must pass its consumer index.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 */
-	public void donePolling(int consumerIndex);
+	public void doneFetching(int consumerIndex);
 	
 	/**
 	 * The (fixed) number of consumers that this demultiplexer has.

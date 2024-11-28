@@ -19,57 +19,57 @@ import com.coralblocks.coralqueue.util.PaddedAtomicLong;
 
 class Cursor {
 	
-	private long pollCount = 0;
-	private long lastPolledSeq = 0;
-	private final PaddedAtomicLong pollSequence = new PaddedAtomicLong(0);
+	private long fetchCount = 0;
+	private long lastFetchedSeq = 0;
+	private final PaddedAtomicLong fetchSequence = new PaddedAtomicLong(0);
 	
 	final void clear() {
-		pollCount = 0;
-		lastPolledSeq = 0;
-		pollSequence.set(lastPolledSeq);
+		fetchCount = 0;
+		lastFetchedSeq = 0;
+		fetchSequence.set(lastFetchedSeq);
 	}
 	
-	final long getLastPolledSeq() {
-		return lastPolledSeq;
+	final long getLastFetchedSeq() {
+		return lastFetchedSeq;
 	}
 	
-	final long incrementLastPolledSeq() {
-		return ++lastPolledSeq;
+	final long incrementLastFetchedSeq() {
+		return ++lastFetchedSeq;
 	}
 	
-	final long getPollCount() {
-		return pollCount;
+	final long getFetchCount() {
+		return fetchCount;
 	}
 	
-	final void incrementPollCount() {
-		pollCount++;
+	final void incrementFetchCount() {
+		fetchCount++;
 	}
 	
-	final void resetPollCount() {
-		pollCount = 0;
+	final void resetFetchCount() {
+		fetchCount = 0;
 	}
 	
-	final void decrementPollCount(long x) {
-		pollCount -= x;
+	final void decrementFetchCount(long x) {
+		fetchCount -= x;
 	}
 	
-	final void decrementLastPolledSeq(long x) {
-		lastPolledSeq -= x;
+	final void decrementLastFetchedSeq(long x) {
+		lastFetchedSeq -= x;
 	}
 	
-	final void updatePollSequence(boolean lazySet) {
+	final void updateFetchSequence(boolean lazySet) {
 		if (lazySet) {
-			pollSequence.lazySet(lastPolledSeq);
+			fetchSequence.lazySet(lastFetchedSeq);
 		} else {
-			pollSequence.set(lastPolledSeq);
+			fetchSequence.set(lastFetchedSeq);
 		}
 	}
 	
-	final long getPollSequence() {
-		return pollSequence.get();
+	final long getFetchSequence() {
+		return fetchSequence.get();
 	}
 	
-	final void setPollSequenceToMax() {
-		pollSequence.set(Long.MAX_VALUE);
+	final void setFetchSequenceToMax() {
+		fetchSequence.set(Long.MAX_VALUE);
 	}
 }

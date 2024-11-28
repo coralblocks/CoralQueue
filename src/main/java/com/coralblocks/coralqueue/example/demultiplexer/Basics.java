@@ -110,14 +110,14 @@ public class Basics {
 		public final void run() {
 			boolean isRunning = true;
 			while(isRunning) {
-				long avail = demux.availableToPoll(consumerIndex); // <=========
+				long avail = demux.availableToFetch(consumerIndex); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {
-						Message m = demux.poll(consumerIndex); // <=========
+						Message m = demux.fetch(consumerIndex); // <=========
 						messagesReceived.add(m.value); // save all messages received so we can later check them
 						if (m.last) isRunning = false; // wait to receive the done signal from the producer
 					}
-					demux.donePolling(consumerIndex); // <=========
+					demux.doneFetching(consumerIndex); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin while blocking (default and fastest wait strategy)
