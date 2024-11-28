@@ -176,7 +176,7 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 			cursor.incrementFetchCount();
 			return data[calcIndex(cursor.incrementLastFetchedSeq())];
 		} else {
-			return data[calcIndex(cursors[consumer].getLastFetchedSeq())];
+			return data[calcIndex(cursors[consumer].getLastFetchedSeq() + 1)];
 		}
 	}
 	
