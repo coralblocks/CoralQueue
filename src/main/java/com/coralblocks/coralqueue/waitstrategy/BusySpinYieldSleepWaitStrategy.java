@@ -17,9 +17,9 @@ package com.coralblocks.coralqueue.waitstrategy;
 
 public class BusySpinYieldSleepWaitStrategy extends AbstractCompositeWaitStrategy {
 	
-	public final static long DEFAULT_MAX_BUSY_SPIN_COUNT = 20_000_000;
-	public final static long DEFAULT_MAX_YIELD_COUNT = 100;
-	public final static long DEFAULT_SLEEP_TIME_IN_MILLIS = 1;
+	public static final long DEFAULT_MAX_BUSY_SPIN_COUNT = 20_000_000;
+	public static final long DEFAULT_MAX_YIELD_COUNT = 100;
+	public static final long DEFAULT_SLEEP_TIME_IN_MILLIS = 1;
 	
 	private final CompositeWaitStrategy compositeWS;
 	

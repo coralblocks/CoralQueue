@@ -20,7 +20,7 @@ package com.coralblocks.coralqueue.waitstrategy;
  */
 public class BusySleepWaitStrategy extends AbstractWaitStrategy {
 	
-	public final static long DEFAULT_SLEEP_TIME_IN_NANOS = 100;
+	public static final long DEFAULT_SLEEP_TIME_IN_NANOS = 100;
 	
 	private final long sleepTimeInNanos;
 
@@ -48,7 +48,7 @@ public class BusySleepWaitStrategy extends AbstractWaitStrategy {
 	 * @param nanos the number of nanoseconds to wait for
 	 * @return the number of times it has to loop to reach the give number of nanoseconds
 	 */
-    public final static long sleepFor(long nanos) {
+    public static final long sleepFor(long nanos) {
     	// NOTE: we are returning loops from a public method
     	// just to avoid code removal (just to be safe)
     	long loops = 0;

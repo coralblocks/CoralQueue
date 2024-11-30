@@ -27,7 +27,7 @@ import com.coralblocks.coralqueue.util.Builder;
  */
 public class AtomicMpMcBroadcaster<E> implements MpMcBroadcaster<E> {
 	
-	private final static int DEFAULT_CAPACITY = 1024;
+	private static final int DEFAULT_CAPACITY = 1024;
 	
 	private final Broadcaster<E>[] broadcasters;
 	private final Producer<E>[] producers;

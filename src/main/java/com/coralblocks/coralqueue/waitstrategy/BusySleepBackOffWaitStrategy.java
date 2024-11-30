@@ -23,9 +23,9 @@ package com.coralblocks.coralqueue.waitstrategy;
  */
 public class BusySleepBackOffWaitStrategy extends AbstractWaitStrategy {
 	
-	public final static long DEFAULT_START_SLEEP_TIME_IN_NANOS = 1_000;
-	public final static long DEFAULT_MAX_SLEEP_TIME_IN_NANOS = 1_000_000;
-	public final static int DEFAULT_STEP_IN_NANOS = 1_000;
+	public static final long DEFAULT_START_SLEEP_TIME_IN_NANOS = 1_000;
+	public static final long DEFAULT_MAX_SLEEP_TIME_IN_NANOS = 1_000_000;
+	public static final int DEFAULT_STEP_IN_NANOS = 1_000;
 	
 	private final long startSleepTimeInNanos;
 	private final long maxSleepTimeInNanos;

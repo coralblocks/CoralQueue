@@ -28,7 +28,7 @@ import com.coralblocks.coralqueue.util.MathUtils;
  */
 public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	
-	private final static int DEFAULT_CAPACITY = 1024;
+	private static final int DEFAULT_CAPACITY = 1024;
 
 	private final Queue<E>[] queues;
 	private final int numberOfConsumers;

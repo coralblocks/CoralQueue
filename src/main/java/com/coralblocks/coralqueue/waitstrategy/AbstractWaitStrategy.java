@@ -29,7 +29,7 @@ import java.util.List;
  */
 public abstract class AbstractWaitStrategy implements WaitStrategy {
 	
-	public final static long DEFAULT_MAX_BLOCK_COUNT = -1;
+	public static final long DEFAULT_MAX_BLOCK_COUNT = -1;
 	
 	private final long maxBlockCount;
 	private long blockCount = 0;

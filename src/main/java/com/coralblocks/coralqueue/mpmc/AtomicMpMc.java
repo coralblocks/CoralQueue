@@ -27,7 +27,7 @@ import com.coralblocks.coralqueue.util.Builder;
  */
 public class AtomicMpMc<E> implements MpMc<E> {
 	
-	private final static int DEFAULT_CAPACITY = 1024;
+	private static final int DEFAULT_CAPACITY = 1024;
 	
 	private final Demultiplexer<E>[] demuxes;
 	private final Producer<E>[] producers;

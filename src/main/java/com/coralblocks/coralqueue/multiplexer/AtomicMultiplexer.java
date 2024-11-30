@@ -26,7 +26,7 @@ import com.coralblocks.coralqueue.util.Builder;
  */
 public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	
-	private final static int DEFAULT_CAPACITY = 1024;
+	private static final int DEFAULT_CAPACITY = 1024;
 	
 	private final int numberOfProducers;
 	private final Queue<E>[] queues;

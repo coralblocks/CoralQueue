@@ -20,7 +20,7 @@ package com.coralblocks.coralqueue.waitstrategy;
  */
 public class SleepWaitStrategy extends AbstractWaitStrategy {
 	
-	public final static long DEFAULT_SLEEP_TIME_IN_MILLIS = 1;
+	public static final long DEFAULT_SLEEP_TIME_IN_MILLIS = 1;
 	
 	private final long sleepTimeInMillis;
 

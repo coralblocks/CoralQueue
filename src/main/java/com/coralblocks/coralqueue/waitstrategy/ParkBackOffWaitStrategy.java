@@ -25,9 +25,9 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class ParkBackOffWaitStrategy extends AbstractWaitStrategy {
 	
-	public final static long DEFAULT_START_PARK_TIME_IN_NANOS = 1_000;
-	public final static long DEFAULT_MAX_PARK_TIME_IN_NANOS = 1_000_000;
-	public final static int DEFAULT_STEP_IN_NANOS = 1_000;
+	public static final long DEFAULT_START_PARK_TIME_IN_NANOS = 1_000;
+	public static final long DEFAULT_MAX_PARK_TIME_IN_NANOS = 1_000_000;
+	public static final int DEFAULT_STEP_IN_NANOS = 1_000;
 	
 	private final long startParkTimeInNanos;
 	private final long maxParkTimeInNanos;

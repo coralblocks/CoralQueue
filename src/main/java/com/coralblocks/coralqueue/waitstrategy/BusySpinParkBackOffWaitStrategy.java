@@ -17,10 +17,10 @@ package com.coralblocks.coralqueue.waitstrategy;
 
 public class BusySpinParkBackOffWaitStrategy extends AbstractCompositeWaitStrategy {
 	
-	public final static long DEFAULT_MAX_BUSY_SPIN_COUNT = 10_000_000;
-	public final static long DEFAULT_START_PARK_TIME_IN_NANOS = 1_000;
-	public final static long DEFAULT_MAX_PARK_TIME_IN_NANOS = 1_000_000;
-	public final static int DEFAULT_STEP_IN_NANOS = 1_000;
+	public static final long DEFAULT_MAX_BUSY_SPIN_COUNT = 10_000_000;
+	public static final long DEFAULT_START_PARK_TIME_IN_NANOS = 1_000;
+	public static final long DEFAULT_MAX_PARK_TIME_IN_NANOS = 1_000_000;
+	public static final int DEFAULT_STEP_IN_NANOS = 1_000;
 	
 	private final CompositeWaitStrategy compositeWS;
 	

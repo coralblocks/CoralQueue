@@ -23,9 +23,9 @@ package com.coralblocks.coralqueue.waitstrategy;
  */
 public class SleepBackOffWaitStrategy extends AbstractWaitStrategy {
 	
-	public final static long DEFAULT_START_SLEEP_TIME_IN_MILLIS = 1;
-	public final static long DEFAULT_MAX_SLEEP_TIME_IN_MILLIS = 1_000;
-	public final static int DEFAULT_STEP_IN_MILLIS = 10;
+	public static final long DEFAULT_START_SLEEP_TIME_IN_MILLIS = 1;
+	public static final long DEFAULT_MAX_SLEEP_TIME_IN_MILLIS = 1_000;
+	public static final int DEFAULT_STEP_IN_MILLIS = 10;
 	
 	private final long startSleepTimeInMillis;
 	private final long maxSleepTimeInMillis;

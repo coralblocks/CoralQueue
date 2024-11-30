@@ -22,7 +22,7 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class ParkWaitStrategy extends AbstractWaitStrategy {
 	
-	public final static long DEFAULT_PARK_TIME_IN_NANOS = 100;
+	public static final long DEFAULT_PARK_TIME_IN_NANOS = 100;
 	
 	private final long parkTimeInNanos;
 
