@@ -17,7 +17,7 @@ public class AtomicDiamondTest {
     public static class AddTask extends Task {
     	
     	public int uniqueId;
-    	public int laneNumber;
+    	public int workerThreadIndex;
         public int x;
         public int y;
         public int result;
@@ -168,7 +168,7 @@ public class AtomicDiamondTest {
     }
     
     @Test
-    public void testOrderThroughLaneNumber() throws InterruptedException {
+    public void testOrderThroughWorkerThreadIndex() throws InterruptedException {
     	
         Diamond<AddTask> diamond = new AtomicDiamond<AddTask>(AddTask.class, 4);
          
@@ -190,12 +190,12 @@ public class AtomicDiamondTest {
 				while(tasksSent > 0) {
 					int batchSizeToSend = rand.nextInt(100) + 1;
 					int batchToSend = Math.min(batchSizeToSend, tasksSent);
-					int laneNumber = rand.nextInt(numberOfWorkerThreads); // choose lane number
+					int workerThreadIndex = rand.nextInt(numberOfWorkerThreads); // choose worker thread index
 					for(int i = 0; i < batchToSend; i++) {
 						AddTask at;
-						while((at = input.nextToDispatch(laneNumber)) == null); // notice lane number
+						while((at = input.nextToDispatch(workerThreadIndex)) == null); // notice work thread index
 						at.uniqueId = ids++;
-						at.laneNumber = laneNumber;
+						at.workerThreadIndex = workerThreadIndex;
 						at.x = rand.nextInt(1000);
 						at.y = rand.nextInt(1000);
 					}
@@ -227,10 +227,10 @@ public class AtomicDiamondTest {
 						Assert.assertEquals(at.x + at.y, at.result);
 						Assert.assertEquals(true, testUnique.add(at.uniqueId));
 						
-						List<Integer> orderedList = testOrder.get(at.laneNumber);
+						List<Integer> orderedList = testOrder.get(at.workerThreadIndex);
 						if (orderedList == null) {
 							orderedList = new ArrayList<Integer>();
-							testOrder.put(at.laneNumber, orderedList);
+							testOrder.put(at.workerThreadIndex, orderedList);
 						} else {
 							int lastId = orderedList.get(orderedList.size() - 1);
 							Assert.assertTrue(at.uniqueId > lastId);
