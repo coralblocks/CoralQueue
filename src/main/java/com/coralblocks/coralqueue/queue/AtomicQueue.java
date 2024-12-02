@@ -26,7 +26,7 @@ import com.coralblocks.coralqueue.util.PaddedAtomicLong;
  */
 public class AtomicQueue<E> implements Queue<E> {
 	
-	private static final int DEFAULT_CAPACITY = 1024;
+	public static final int DEFAULT_CAPACITY = 1024;
 
 	private final int capacity;
 	private final int capacityMinusOne;
