@@ -25,11 +25,13 @@ public class Basics {
 	
     private static final long receiveTasks(Output<AddTask> output) {
 		long avail = output.availableToFetch();
-		for(long i = 0; i < avail; i++) {
-			AddTask at = output.fetch();
-			if (at.x + at.y != at.result) throw new RuntimeException("Wrong result!");
+		if (avail > 0) {
+			for(long i = 0; i < avail; i++) {
+				AddTask at = output.fetch();
+				if (at.x + at.y != at.result) throw new RuntimeException("Wrong result!");
+			}
+			output.doneFetching();
 		}
-		output.doneFetching();
 		return avail;
     }
 	
