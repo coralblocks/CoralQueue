@@ -239,7 +239,7 @@ The MpMcBroadcaster (i.e. Multiple Producers / Multiple Consumers) allows multip
 
 <img src="images/Diamond.png" alt="Diamond" width="50%" height="50%" />
 
-The Diamond allows tasks to be distributed across a set of _worker threads_ for execution. A producer thread will dispatch _tasks_ to the worker threads of the diamond and a consumer thread will fetch _executed_ tasks from the worker threads of the diamond. It is not uncommon for the producer and consumer to be running on the same thread. If order is important, in other words, if some tasks must be executed in order, they can be assigned to the same worker thread when the producer dispatches them.
+The Diamond allows tasks to be distributed across a set of _worker threads_ for execution. A producer thread will dispatch _tasks_ to the worker threads of the diamond and a consumer thread will fetch _executed_ tasks from the worker threads of the diamond. `It is not uncommon for the producer and consumer to be running on the same thread.` If order is important, in other words, if some tasks must be executed in order, they can be assigned to the same worker thread when the producer dispatches them.
 
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/diamond/Minimal.java) for a minimal example of using the Diamond
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/diamond/Basics.java) for a basic example of using the Diamond
