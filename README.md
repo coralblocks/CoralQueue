@@ -246,6 +246,6 @@ The Diamond allows tasks to be distributed across a set of _worker threads_ for 
 
 ## CoralRing
 
-<img src="images/BlockingRing.png" alt="CoralRing" width="50%" height="50%" />
+<img src="images/OffHeapQueue2.png" alt="CoralRing" width="50%" height="50%" />
 
 CoralQueue is great for threads inside the same JVM. But how about threads running in _different JVMs_? For that you can check our [CoralRing](https://github.com/coralblocks/CoralRing) project which is an inter-process communication (IPC) shared-memory ring with blocking and non-blocking producers and consumers.
