@@ -21,7 +21,7 @@ package com.coralblocks.coralqueue.waitstrategy;
  * unregistering listeners, calling the listeners, counting the number of blockings, returning false from
  * <code>block()</code>, etc.</p>
  * 
- * <p>By inheriting from this abstract base class, all you have to do is implement {@link getCompositeWaitStrategy()} to return
+ * <p>By inheriting from this abstract base class, all you have to do is implement {@link #getCompositeWaitStrategy()} to return
  * the actual {@link CompositeWaitStrategy} that your class will contain through composition.</p>
  */
 public abstract class AbstractCompositeWaitStrategy implements WaitStrategy {

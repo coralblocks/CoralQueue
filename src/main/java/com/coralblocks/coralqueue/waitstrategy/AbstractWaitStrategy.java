@@ -24,8 +24,8 @@ import java.util.List;
  * unregistering listeners, calling the listeners, counting the number of blockings, returning false from
  * <code>block()</code>, etc.</p>
  * 
- * <p>By inheriting from this abstract base class, all you have to do is implement {@link blockOperation()} and
- * {@link resetOperation()}.
+ * <p>By inheriting from this abstract base class, all you have to do is implement {@link #blockOperation()} and
+ * {@link #resetOperation()}.
  */
 public abstract class AbstractWaitStrategy implements WaitStrategy {
 	

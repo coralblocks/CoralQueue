@@ -95,7 +95,7 @@ public interface Queue<E> {
 	public E fetch(boolean remove);
 	
 	/**
-	 * <p>This method simply calls {@link fetch(boolean)} passing <code>true</code> to remove the fetched object.</p>
+	 * <p>This method simply calls {@link #fetch(boolean)} passing <code>true</code> to remove the fetched object.</p>
 	 * 
 	 * @return a data transfer mutable object from the queue
 	 */

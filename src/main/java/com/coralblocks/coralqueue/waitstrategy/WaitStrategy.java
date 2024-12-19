@@ -30,7 +30,7 @@ public interface WaitStrategy {
 	 * <p>It can return true to indicate that this wait strategy has finished.
 	 * This is important to signal to a {@link CompositeWaitStrategy} to switch to the next wait strategy in its list.</p>
 	 * 
-	 * <p>This method can be called multiple times before {@link reset()} is finally called.</p>
+	 * <p>This method can be called multiple times before {@link #reset()} is finally called.</p>
 	 * 
 	 * @return true if this wait strategy has finished
 	 */

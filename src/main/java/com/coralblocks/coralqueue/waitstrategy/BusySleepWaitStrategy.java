@@ -16,7 +16,7 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * A wait strategy that calls the {@link sleepFor(long)} method as its blocking operation.
+ * A wait strategy that calls the {@link #sleepFor(long)} method as its blocking operation.
  */
 public class BusySleepWaitStrategy extends AbstractWaitStrategy {
 	

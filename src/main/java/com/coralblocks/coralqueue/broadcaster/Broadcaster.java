@@ -80,7 +80,7 @@ public interface Broadcaster<E> {
 	public E fetch(int consumerIndex, boolean remove);
 	
 	/**
-	 * <p>This method simply calls {@link fetch(int, boolean)} passing <code>true</code> to remove the fetched object.</p>
+	 * <p>This method simply calls {@link #fetch(int, boolean)} passing <code>true</code> to remove the fetched object.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 * @return a data transfer mutable object from the broadcaster
