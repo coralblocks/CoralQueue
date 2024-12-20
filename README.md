@@ -5,6 +5,12 @@ For some performance numbers you can check [this link](https://www.coralblocks.c
 
 The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), [Broadcaster](#broadcaster) (one-producer-to-many-consumers) and [MpMcBroadcaster](#mpmcbroadcaster) (many-producers-to-many-consumers).
 
+<pre>
+<b>Note:</b> CoralQueue allows the exchange of messages <i>inside the same JVM</i>.
+For a multicast message middleware solution to build distributed systems across multiple
+machines using the <i>sequencer architecture</i> you should refer to <a href="https://www.coralblocks.com/index.php/state-of-the-art-distributed-systems-with-coralmq/">this article</a>.
+</pre>
+
 ## Queue
 
 <img src="images/Queue.png" alt="Queue" width="50%" height="50%" />
