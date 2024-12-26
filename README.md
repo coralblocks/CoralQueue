@@ -121,38 +121,16 @@ By default, you should busy-spin when the queue is full or empty. That’s usual
 
 To use a wait strategy, all you have to do is call its <code>await()</code> and <code>reset()</code> methods instead of busy spinning:
 
-#### Producer using a Wait Strategy <i>(without batching)</i>
+#### Producer using a Wait Strategy
 ```Java
 WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
 StringBuilder sb;
 while((sb = queue.nextToDispatch()) == null) {
     producerWaitStrategy.await(); // <=====
 }
-sb.setLength(0);
-sb.append("Hello there!");
-queue.flush();
-producerWaitStrategy.reset(); // <=====
-```
-
-#### Producer using a Wait Strategy <i>(with batching)</i>
-```Java
-WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
-StringBuilder sb;
-
-while((sb = queue.nextToDispatch()) == null) {
-    producerWaitStrategy.await(); // <=====
-}
 producerWaitStrategy.reset(); // <=====
 sb.setLength(0);
 sb.append("Hello there!");
-
-while((sb = queue.nextToDispatch()) == null) {
-    producerWaitStrategy.await(); // <=====
-}
-producerWaitStrategy.reset(); // <=====
-sb.setLength(0);
-sb.append("Hello again!");
-
 queue.flush();
 ```
 
