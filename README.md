@@ -141,6 +141,7 @@ long avail;
 while((avail = queue.availableToFetch()) == 0) {
     consumerWaitStrategy.await(); // <=====
 }
+consumerWaitStrategy.reset(); // <=====
 for(int i = 0; i < avail; i++) {
     StringBuilder sb = queue.fetch();
     // do whatever you want with the StringBuilder
@@ -149,7 +150,6 @@ for(int i = 0; i < avail; i++) {
     // or copy the contents to an external StringBuilder
 }
 queue.doneFetching();
-consumerWaitStrategy.reset(); // <=====
 ```
 </details>
 
