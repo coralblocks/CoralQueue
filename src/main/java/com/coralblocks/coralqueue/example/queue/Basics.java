@@ -56,7 +56,7 @@ public class Basics {
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
 					while((m = queue.nextToDispatch()) == null) { // <=========
-						// busy spin while blocking (default and fastest wait strategy)
+						// busy spin while waiting (default and fastest wait strategy)
 						busySpinCount++;
 					}
 					m.value = idToSend++; // sending an unique value so the messages sent are unique
@@ -106,7 +106,7 @@ public class Basics {
 					queue.doneFetching(); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
-					// busy spin while blocking (default and fastest wait strategy)
+					// busy spin while waiting (default and fastest wait strategy)
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}

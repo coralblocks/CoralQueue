@@ -17,17 +17,17 @@ package com.coralblocks.coralqueue.waitstrategy;
 
 /**
  * A listener to receive callbacks from a {@link WaitStrategy}. A {@link WaitStrategy} can register one or more of these
- * listeners to provide callbacks from its main methods <code>block()</code> and <code>reset()</code>.
+ * listeners to provide callbacks from its main methods <code>await()</code> and <code>reset()</code>.
  */
 public interface WaitStrategyListener {
 	
 	/**
-	 * The wait strategy was blocked (i.e. method <code>block()</code> was called)
+	 * The wait strategy has waited (i.e. method <code>await()</code> was called)
 	 * 
 	 * @param waitStrategy the wait strategy providing this callback
-	 * @param isDone true if the wait strategy is done and its <code>block()</code> method will be returning true
+	 * @param isDone true if the wait strategy is done and its <code>await()</code> method will be returning true
 	 */
-	public void blocked(WaitStrategy waitStrategy, boolean isDone);
+	public void waited(WaitStrategy waitStrategy, boolean isDone);
 	
 	/**
 	 * The wait strategy was reset (i.e. method <code>reset()</code> was called)

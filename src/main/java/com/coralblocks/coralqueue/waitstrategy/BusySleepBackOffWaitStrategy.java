@@ -17,7 +17,7 @@ package com.coralblocks.coralqueue.waitstrategy;
 
 /**
  * A wait strategy that busy sleeps with backing off. It has a start sleep time in nanoseconds, a maximum sleep time in nanoseconds and a step value in nanoseconds.
- * Basically with each <code>block()</code> it increases the sleep time value, stepping with the step value, until it reaches the maximum sleep time value.
+ * Basically with each <code>await()</code> it increases the sleep time value, stepping with the step value, until it reaches the maximum sleep time value.
  * Once it reaches the maximum sleep time value it remains sleeping with the maximum value.
  * When <code>reset()</code> is called it then starts over from the start sleep time value.
  */
@@ -33,28 +33,28 @@ public class BusySleepBackOffWaitStrategy extends AbstractWaitStrategy {
 	
 	private long currSleepTimeInNanos;
 
-	public BusySleepBackOffWaitStrategy(long maxBlockCount, long startSleepTimeInNanos, long maxSleepTimeInNanos, int stepInNanos) {
-		super(maxBlockCount);
+	public BusySleepBackOffWaitStrategy(long maxAwaitCycleCount, long startSleepTimeInNanos, long maxSleepTimeInNanos, int stepInNanos) {
+		super(maxAwaitCycleCount);
 		this.startSleepTimeInNanos = startSleepTimeInNanos;
 		this.maxSleepTimeInNanos = maxSleepTimeInNanos;
 		this.stepInNanos = stepInNanos;
 		this.currSleepTimeInNanos = startSleepTimeInNanos;
 	}
 	
-	public BusySleepBackOffWaitStrategy(long maxBlockCount) {
-		this(maxBlockCount, DEFAULT_START_SLEEP_TIME_IN_NANOS, DEFAULT_MAX_SLEEP_TIME_IN_NANOS, DEFAULT_STEP_IN_NANOS);
+	public BusySleepBackOffWaitStrategy(long maxAwaitCycleCount) {
+		this(maxAwaitCycleCount, DEFAULT_START_SLEEP_TIME_IN_NANOS, DEFAULT_MAX_SLEEP_TIME_IN_NANOS, DEFAULT_STEP_IN_NANOS);
 	}
 	
 	public BusySleepBackOffWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT, DEFAULT_START_SLEEP_TIME_IN_NANOS, DEFAULT_MAX_SLEEP_TIME_IN_NANOS, DEFAULT_STEP_IN_NANOS);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, DEFAULT_START_SLEEP_TIME_IN_NANOS, DEFAULT_MAX_SLEEP_TIME_IN_NANOS, DEFAULT_STEP_IN_NANOS);
 	}
 	
 	public BusySleepBackOffWaitStrategy(long startSleepTimeInNanos, long maxSleepTimeInNanos, int stepInNanos) {
-		this(DEFAULT_MAX_BLOCK_COUNT, startSleepTimeInNanos, maxSleepTimeInNanos, stepInNanos);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, startSleepTimeInNanos, maxSleepTimeInNanos, stepInNanos);
 	}
 	
 	@Override
-	protected final void blockOperation() {
+	protected final void awaitOperation() {
 
 		BusySleepWaitStrategy.sleepFor(currSleepTimeInNanos);
 		

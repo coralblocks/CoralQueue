@@ -18,7 +18,7 @@ package com.coralblocks.coralqueue.waitstrategy;
 import java.util.concurrent.locks.LockSupport;
 
 /**
- * A wait strategy that calls <code>LockSupport.parkNanos(long)</code> as its blocking operation.
+ * A wait strategy that calls <code>LockSupport.parkNanos(long)</code> for its await operation.
  */
 public class ParkWaitStrategy extends AbstractWaitStrategy {
 	
@@ -26,21 +26,21 @@ public class ParkWaitStrategy extends AbstractWaitStrategy {
 	
 	private final long parkTimeInNanos;
 
-	public ParkWaitStrategy(long maxBlockCount, long parkTimeInNanos) {
-		super(maxBlockCount);
+	public ParkWaitStrategy(long maxAwaitCycleCount, long parkTimeInNanos) {
+		super(maxAwaitCycleCount);
 		this.parkTimeInNanos = parkTimeInNanos;
 	}
 	
 	public ParkWaitStrategy(long parkTimeInNanos) {
-		this(DEFAULT_MAX_BLOCK_COUNT, parkTimeInNanos);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, parkTimeInNanos);
 	}
 	
 	public ParkWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT, DEFAULT_PARK_TIME_IN_NANOS);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, DEFAULT_PARK_TIME_IN_NANOS);
 	}
 
 	@Override
-	protected final void blockOperation() {
+	protected final void awaitOperation() {
 		LockSupport.parkNanos(parkTimeInNanos);
 	}
 }

@@ -16,7 +16,7 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * A wait strategy that calls <code>Thread.sleep(long)</code> as its blocking operation.
+ * A wait strategy that calls <code>Thread.sleep(long)</code> for its await operation.
  */
 public class SleepWaitStrategy extends AbstractWaitStrategy {
 	
@@ -24,21 +24,21 @@ public class SleepWaitStrategy extends AbstractWaitStrategy {
 	
 	private final long sleepTimeInMillis;
 
-	public SleepWaitStrategy(long maxBlockCount, long sleepTimeInMillis) {
-		super(maxBlockCount);
+	public SleepWaitStrategy(long maxAwaitCycleCount, long sleepTimeInMillis) {
+		super(maxAwaitCycleCount);
 		this.sleepTimeInMillis = sleepTimeInMillis;
 	}
 	
 	public SleepWaitStrategy(long sleepTimeInMillis) {
-		this(DEFAULT_MAX_BLOCK_COUNT, sleepTimeInMillis);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, sleepTimeInMillis);
 	}
 	
 	public SleepWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT, DEFAULT_SLEEP_TIME_IN_MILLIS);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, DEFAULT_SLEEP_TIME_IN_MILLIS);
 	}
 
 	@Override
-	protected final void blockOperation() {
+	protected final void awaitOperation() {
 		try {
 			Thread.sleep(sleepTimeInMillis);
 		} catch(InterruptedException e) {

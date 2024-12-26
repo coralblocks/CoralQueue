@@ -19,7 +19,7 @@ import java.util.concurrent.locks.LockSupport;
 
 /**
  * A wait strategy that parks with backing off. It has a start park time in nanoseconds, a maximum park time in nanoseconds and a step value in nanoseconds.
- * Basically with each <code>block()</code> it increases the park time value, stepping with the step value, until it reaches the maximum park time value.
+ * Basically with each <code>await()</code> it increases the park time value, stepping with the step value, until it reaches the maximum park time value.
  * Once it reaches the maximum park time value it remains parking with the maximum value.
  * When <code>reset()</code> is called it then starts over from the start park time value.
  */
@@ -35,28 +35,28 @@ public class ParkBackOffWaitStrategy extends AbstractWaitStrategy {
 	
 	private long currParkTimeInNanos;
 
-	public ParkBackOffWaitStrategy(long maxBlockCount, long startParkTimeInNanos, long maxParkTimeInNanos, int stepInNanos) {
-		super(maxBlockCount);
+	public ParkBackOffWaitStrategy(long maxAwaitCycleCount, long startParkTimeInNanos, long maxParkTimeInNanos, int stepInNanos) {
+		super(maxAwaitCycleCount);
 		this.startParkTimeInNanos = startParkTimeInNanos;
 		this.maxParkTimeInNanos = maxParkTimeInNanos;
 		this.stepInNanos = stepInNanos;
 		this.currParkTimeInNanos = startParkTimeInNanos;
 	}
 	
-	public ParkBackOffWaitStrategy(long maxBlockCount) {
-		this(maxBlockCount, DEFAULT_START_PARK_TIME_IN_NANOS, DEFAULT_MAX_PARK_TIME_IN_NANOS, DEFAULT_STEP_IN_NANOS);
+	public ParkBackOffWaitStrategy(long maxAwaitCycleCount) {
+		this(maxAwaitCycleCount, DEFAULT_START_PARK_TIME_IN_NANOS, DEFAULT_MAX_PARK_TIME_IN_NANOS, DEFAULT_STEP_IN_NANOS);
 	}
 	
 	public ParkBackOffWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT, DEFAULT_START_PARK_TIME_IN_NANOS, DEFAULT_MAX_PARK_TIME_IN_NANOS, DEFAULT_STEP_IN_NANOS);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, DEFAULT_START_PARK_TIME_IN_NANOS, DEFAULT_MAX_PARK_TIME_IN_NANOS, DEFAULT_STEP_IN_NANOS);
 	}
 	
 	public ParkBackOffWaitStrategy(long startParkTimeInNanos, long maxParkTimeInNanos, int stepInNanos) {
-		this(DEFAULT_MAX_BLOCK_COUNT, startParkTimeInNanos, maxParkTimeInNanos, stepInNanos);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, startParkTimeInNanos, maxParkTimeInNanos, stepInNanos);
 	}
 	
 	@Override
-	protected final void blockOperation() {
+	protected final void awaitOperation() {
 
 		LockSupport.parkNanos(currParkTimeInNanos);
 		

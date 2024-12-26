@@ -57,7 +57,7 @@ public class Basics {
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
 					while((m = demux.nextToDispatch()) == null) { // <=========
-						// busy spin while blocking (default and fastest wait strategy)
+						// busy spin while waiting (default and fastest wait strategy)
 						busySpinCount++; // save the number of busy-spins, just for extra info later
 					}
 					m.value = idToSend++; // sending an unique value so the messages sent are unique
@@ -70,7 +70,7 @@ public class Basics {
 			for(int i = 0; i < numberOfConsumers; i++) {
 				Message m;
 				while((m = demux.nextToDispatch(i)) == null) { // <========= here we direct the message to a specific consumer
-					// busy spin while blocking (default and fastest wait strategy)
+					// busy spin while waiting (default and fastest wait strategy)
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 				m.value = idToSend++; // sending an unique value so the messages sent are unique
@@ -120,7 +120,7 @@ public class Basics {
 					demux.doneFetching(consumerIndex); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
-					// busy spin while blocking (default and fastest wait strategy)
+					// busy spin while waiting (default and fastest wait strategy)
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}

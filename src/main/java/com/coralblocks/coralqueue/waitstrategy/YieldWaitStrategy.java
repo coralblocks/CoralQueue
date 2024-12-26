@@ -16,20 +16,20 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * A wait strategy that calls <code>Thread.yield()</code> as its blocking operation.
+ * A wait strategy that calls <code>Thread.yield()</code> for its await operation.
  */
 public class YieldWaitStrategy extends AbstractWaitStrategy {
 	
-	public YieldWaitStrategy(long maxBlockCount) {
-		super(maxBlockCount);
+	public YieldWaitStrategy(long maxAwaitCycleCount) {
+		super(maxAwaitCycleCount);
 	}
 	
 	public YieldWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT);
 	}
 
 	@Override
-	protected final void blockOperation() {
+	protected final void awaitOperation() {
 		Thread.yield();
 	}
 }

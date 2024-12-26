@@ -132,9 +132,9 @@ public interface Broadcaster<E> {
 	public int getNumberOfConsumers();
 	
 	/**
-	 * <p>This method disables a consumer and allows the broadcaster to continue to operate and make progress without getting blocked
-	 * waiting for a slow consumer. This is useful for when a consumer has a problem and stops fetching the broadcaster. In that situation
-	 * the broadcaster will get full, causing the producer to block, unless you disable the consumer.</p>
+	 * <p>This method disables a consumer and allows the broadcaster to continue to operate and make progress without having to wait
+	 * for a slow consumer. This is useful for when a consumer has a problem and stops fetching the broadcaster. In that situation
+	 * the broadcaster will get full, causing the producer to wait, unless you disable the consumer.</p>
 	 * 
 	 * @param consumerIndex the index of the consumer that you want to disable
 	 */

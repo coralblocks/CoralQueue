@@ -41,11 +41,11 @@ public class Minimal {
 					
 					MutableLong ml; // our data transfer mutable object
 					
-					while((ml = queue.nextToDispatch()) == null) producerWaitStrategy.block();
+					while((ml = queue.nextToDispatch()) == null) producerWaitStrategy.await();
 					producerWaitStrategy.reset();
 					ml.set(i);
 					
-					while((ml = queue.nextToDispatch()) == null) producerWaitStrategy.block();
+					while((ml = queue.nextToDispatch()) == null) producerWaitStrategy.await();
 					producerWaitStrategy.reset();
 					ml.set(i + 1);
 					
@@ -69,7 +69,7 @@ public class Minimal {
 					long avail = queue.availableToFetch(); // read available batches as fast as possible
 					
 					if (avail == 0) {
-						consumerWaitStrategy.block();
+						consumerWaitStrategy.await();
 						continue;
 					}
 					

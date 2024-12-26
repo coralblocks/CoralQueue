@@ -21,36 +21,36 @@ import java.util.List;
 /**
  * <p>An abstract implementation of the {@link WaitStrategy} interface that you can as the base class for
  * your wait strategy implementations. It takes care of most of the boilerplate code like registering and
- * unregistering listeners, calling the listeners, counting the number of blockings, returning false from
- * <code>block()</code>, etc.</p>
+ * unregistering listeners, calling the listeners, counting the number of wait cycles, returning false from
+ * <code>await()</code>, etc.</p>
  * 
- * <p>By inheriting from this abstract base class, all you have to do is implement {@link #blockOperation()} and
+ * <p>By inheriting from this abstract base class, all you have to do is implement {@link #awaitOperation()} and
  * {@link #resetOperation()}.
  */
 public abstract class AbstractWaitStrategy implements WaitStrategy {
 	
-	public static final long DEFAULT_MAX_BLOCK_COUNT = -1;
+	public static final long DEFAULT_MAX_AWAIT_CYCLE_COUNT = -1;
 	
-	private final long maxBlockCount;
-	private long blockCount = 0;
+	private final long maxAwaitCycleCount;
+	private long awaitCycleCount = 0;
 	
 	private final List<WaitStrategyListener> listeners = new ArrayList<WaitStrategyListener>(8);
 
 	/**
-	 * Creates a new wait strategy using the given maximum number of blockings.
+	 * Creates a new wait strategy using the given maximum number of await cycles.
 	 *
-	 * @param maxBlockCount the maximum number of blockings before <code>block()</code> starts to return true
+	 * @param maxAwaitCycleCount the maximum number of wait cycles before <code>await()</code> starts to return true
 	 */
-	public AbstractWaitStrategy(long maxBlockCount) {
-		this.maxBlockCount = maxBlockCount;
+	public AbstractWaitStrategy(long maxAwaitCycleCount) {
+		this.maxAwaitCycleCount = maxAwaitCycleCount;
 	}
 	
 	/**
-	 * Creates a new wait strategy using the default maximum number of blockings, which is <code>-1</code>, in other words,
-	 * by default this wait strategy will not count the number of blockings and never return true from the <code>block()</code> method.
+	 * Creates a new wait strategy using the default maximum number of wait cycles, which is <code>-1</code>, in other words,
+	 * by default this wait strategy will not count the number of wait cycles and never return true from the <code>await()</code> method.
 	 */
 	public AbstractWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT);
 	}
 	
 	@Override
@@ -64,35 +64,35 @@ public abstract class AbstractWaitStrategy implements WaitStrategy {
 	}
 	
 	/**
-	 * Return the maximum number of blockings configured for this wait strategy
+	 * Return the maximum number of wait cycles configured for this wait strategy
 	 * 
-	 * @return the maximum number of blockings
+	 * @return the maximum number of wait cycles
 	 */
-	protected final long getMaxBlockCount() {
-		return maxBlockCount;
+	protected final long getMaxAwaitCycleCount() {
+		return maxAwaitCycleCount;
 	}
 	
 	/**
-	 * Return the current number of blockings (block count)
+	 * Return the current number of await cycles (await count)
 	 * 
-	 * @return the current number of blockings
+	 * @return the current number of wait cycles
 	 */
-	protected final long getBlockCount() {
-		return blockCount;
+	protected final long getAwaitCycleCount() {
+		return awaitCycleCount;
 	}
 
 	@Override
-	public final boolean block() {
-		// Only increment blockCount if you really have to
+	public final boolean await() {
+		// Only increment awaitCycleCount if you really have to
 		boolean done = false;
-		if (maxBlockCount < 0) done = false; // we will be never done
-		else if (blockCount == maxBlockCount) done = true; // don't increment forever
-		else if (++blockCount == maxBlockCount) done = true; // increment
+		if (maxAwaitCycleCount < 0) done = false; // we will be never done
+		else if (awaitCycleCount == maxAwaitCycleCount) done = true; // don't increment forever
+		else if (++awaitCycleCount == maxAwaitCycleCount) done = true; // increment
 		
-		blockOperation();
+		awaitOperation();
 		
 		for(int i = listeners.size() - 1; i >= 0; i--) {
-			listeners.get(i).blocked(this, done);
+			listeners.get(i).waited(this, done);
 		}
 		
 		return done;
@@ -101,7 +101,7 @@ public abstract class AbstractWaitStrategy implements WaitStrategy {
 	@Override
 	public final void reset() {
 		
-		blockCount = 0;
+		awaitCycleCount = 0;
 		
 		resetOperation(); // this is useful for backing off wait strategies
 		
@@ -111,13 +111,13 @@ public abstract class AbstractWaitStrategy implements WaitStrategy {
 	}
 	
 	/**
-	 * Implement this abstract method to perform the actually operation that will cause the blocking.
+	 * Implement this abstract method to perform the actually operation that will cause the waiting.
 	 * For example, one such operation can be <code>Thread.sleep(long)</code>.
 	 */
-	protected abstract void blockOperation();
+	protected abstract void awaitOperation();
 	
 	/**
-	 * Implement this method to reset any state of the wait strategy after blocking for one or more invocations of the <code>block()</code> method.
+	 * Implement this method to reset any state of the wait strategy after waiting for one or more invocations of the <code>await()</code> method.
 	 * This is usually used by a {@link CompositeWaitStrategy} to reset back to its first wait strategy. This is also used by a backing off
 	 * wait strategy to reset its sleep/park time to its initial value. Therefore, for most wait strategies, this method is optional and does
 	 * not need to be overridden.

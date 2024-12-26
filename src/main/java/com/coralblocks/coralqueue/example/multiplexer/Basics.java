@@ -83,7 +83,7 @@ public class Basics {
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
 					while((m = mux.nextToDispatch(producerIndex)) == null) { // <=========
-						// busy spin while blocking (default and fastest wait strategy)
+						// busy spin while waiting (default and fastest wait strategy)
 						busySpinCount++; // save the number of busy-spins, just for extra info later
 					}
 					m.producerIndex = producerIndex;
@@ -135,7 +135,7 @@ public class Basics {
 					mux.doneFetching(); // <=========
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
-					// busy spin while blocking (default and fastest wait strategy)
+					// busy spin while waiting (default and fastest wait strategy)
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}

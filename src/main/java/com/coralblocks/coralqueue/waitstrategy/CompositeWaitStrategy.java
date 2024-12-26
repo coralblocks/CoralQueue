@@ -47,9 +47,9 @@ public class CompositeWaitStrategy implements WaitStrategy {
 	}
 
 	@Override
-	public boolean block() {
+	public boolean await() {
 		WaitStrategy waitStrategy = waitStrategies[currIndex];
-		boolean done = waitStrategy.block();
+		boolean done = waitStrategy.await();
 		if (!done) return false; // still going...
 		else if (currIndex < waitStrategies.length - 1) { // is it not the last one?
 			// move on to next wait strategy

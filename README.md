@@ -119,14 +119,14 @@ By default, you should busy-spin when the queue is full or empty. That’s usual
 - [BusySpinParkBackOffWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/BusySpinParkBackOffWaitStrategy.java): first busy spins for 10,000,000 cycles then it starts to park (i.e. sleep) by using the ParkBackOffWaitStrategy above. This is an example of a composite wait strategy, which combines multiple wait stratgies in a single one. The number of busy-spin cycles can be configured.
 - [BusySpinYieldSleepWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/BusySpinYieldSleepWaitStrategy.java): busy spins for 10,000,000 cycles, yields for 100 cycles then starts to sleep for 1 millisecond. All previous values can be changed/configured.
 
-To use a wait strategy, all you have to do is call its <code>block()</code> and <code>reset()</code> methods instead of busy spinning:
+To use a wait strategy, all you have to do is call its <code>await()</code> and <code>reset()</code> methods instead of busy spinning:
 
 #### Producer using a Wait Strategy <i>(without batching)</i>
 ```Java
 WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
 StringBuilder sb;
 while((sb = queue.nextToDispatch()) == null) {
-    producerWaitStrategy.block(); // <=====
+    producerWaitStrategy.await(); // <=====
 }
 sb.setLength(0);
 sb.append("Hello there!");
@@ -140,14 +140,14 @@ WaitStrategy producerWaitStrategy = new ParkWaitStrategy();
 StringBuilder sb;
 
 while((sb = queue.nextToDispatch()) == null) {
-    producerWaitStrategy.block(); // <=====
+    producerWaitStrategy.await(); // <=====
 }
 producerWaitStrategy.reset(); // <=====
 sb.setLength(0);
 sb.append("Hello there!");
 
 while((sb = queue.nextToDispatch()) == null) {
-    producerWaitStrategy.block(); // <=====
+    producerWaitStrategy.await(); // <=====
 }
 producerWaitStrategy.reset(); // <=====
 sb.setLength(0);
@@ -161,7 +161,7 @@ queue.flush();
 WaitStrategy consumerWaitStrategy = new BusySpinYieldSleepWaitStrategy();
 long avail;
 while((avail = queue.availableToFetch()) == 0) {
-    consumerWaitStrategy.block(); // <=====
+    consumerWaitStrategy.await(); // <=====
 }
 for(int i = 0; i < avail; i++) {
     StringBuilder sb = queue.fetch();

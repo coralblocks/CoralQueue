@@ -16,20 +16,20 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * A wait strategy that does nothing as its blocking operation, in other words, it simply busy spins.
+ * A wait strategy that does nothing for its await operation, in other words, it simply busy spins.
  */
 public class BusySpinWaitStrategy extends AbstractWaitStrategy {
 	
-	public BusySpinWaitStrategy(long maxBlockCount) {
-		super(maxBlockCount);
+	public BusySpinWaitStrategy(long maxAwaitCycleCount) {
+		super(maxAwaitCycleCount);
 	}
 	
 	public BusySpinWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT);
 	}
 
 	@Override
-	protected final void blockOperation() {
+	protected final void awaitOperation() {
 		// busy spinning so do nothing
 	}
 }

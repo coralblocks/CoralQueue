@@ -16,7 +16,7 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * A wait strategy that calls the {@link #sleepFor(long)} method as its blocking operation.
+ * A wait strategy that calls the {@link #sleepFor(long)} method as its await operation.
  */
 public class BusySleepWaitStrategy extends AbstractWaitStrategy {
 	
@@ -24,21 +24,21 @@ public class BusySleepWaitStrategy extends AbstractWaitStrategy {
 	
 	private final long sleepTimeInNanos;
 
-	public BusySleepWaitStrategy(long maxBlockCount, long sleepTimeInNanos) {
-		super(maxBlockCount);
+	public BusySleepWaitStrategy(long maxAwaitCycleCount, long sleepTimeInNanos) {
+		super(maxAwaitCycleCount);
 		this.sleepTimeInNanos = sleepTimeInNanos;
 	}
 	
 	public BusySleepWaitStrategy(long sleepTimeInNanos) {
-		this(DEFAULT_MAX_BLOCK_COUNT, sleepTimeInNanos);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, sleepTimeInNanos);
 	}
 	
 	public BusySleepWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT, DEFAULT_SLEEP_TIME_IN_NANOS);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, DEFAULT_SLEEP_TIME_IN_NANOS);
 	}
 
 	@Override
-	protected final void blockOperation() {
+	protected final void awaitOperation() {
 		sleepFor(sleepTimeInNanos);
 	}
 	

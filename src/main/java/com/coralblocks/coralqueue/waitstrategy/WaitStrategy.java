@@ -16,7 +16,7 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * <p>A <code>WaitStrategy</code> interface describing how a producer and/or a consumer can choose to wait (i.e. block) while 
+ * <p>A <code>WaitStrategy</code> interface describing how a producer and/or a consumer can choose to wait (i.e. await) while 
  * its CoralQueue data structure is full/empty.</p>
  * 
  * <p>Note that it is not mandatory to use a <code>WaitStrategy</code> as producers and consumers can simply choose to busy spin. 
@@ -34,18 +34,18 @@ public interface WaitStrategy {
 	 * 
 	 * @return true if this wait strategy has finished
 	 */
-	public boolean block();
+	public boolean await();
 	
 	/**
-	 * <p>This method is used to indicate that after blocking for one or several times, we finally were able to accomplish what we were waiting for
+	 * <p>This method is used to indicate that after waiting for one or several cycles, we finally were able to accomplish what we were waiting for
 	 * and we can now reset the state of the waiting strategy to get ready for another cycle. This is important for backing off wait strategies that
-	 * increase their sleep/park time after each blocking. After <code>reset()</code> is called they will reset their sleep/park time to their initial value.
+	 * increase their sleep/park time after each await cycle. After <code>reset()</code> is called they will reset their sleep/park time to their initial value.
 	 * A {@link CompositeWaitStrategy} also resets its current wait strategy to the first one in its list.</p>
 	 */
 	public void reset();
 	
 	/**
-	 * <p>This is an optional operation to register a {@link WaitStrategyListener} to receive callbacks from <code>block()</code> and <code>reset()</code>.
+	 * <p>This is an optional operation to register a {@link WaitStrategyListener} to receive callbacks from <code>await()</code> and <code>reset()</code>.
 	 * Note that all our provided wait strategies implement this method but when you are implementing your own wait strategies you might choose not to provide
 	 * this functionality, if you will not be registering any listener to your wait strategy.</p>
 	 * 
@@ -56,7 +56,7 @@ public interface WaitStrategy {
 	}
 	
 	/**
-	 * <p>This is an optional operation to unregister a {@link WaitStrategyListener} to receive callbacks from <code>block()</code> and <code>reset()</code>.
+	 * <p>This is an optional operation to unregister a {@link WaitStrategyListener} to receive callbacks from <code>await()</code> and <code>reset()</code>.
 	 * Note that all our provided wait strategies implement this method but when you are implementing your own wait strategies you might choose not to provide
 	 * this functionality, if you will not be registering any listener to your wait strategy.</p>
 	 * 

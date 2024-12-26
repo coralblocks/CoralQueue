@@ -17,7 +17,7 @@ package com.coralblocks.coralqueue.waitstrategy;
 
 /**
  * A wait strategy that sleeps with backing off. It has a start sleep time in milliseconds, a maximum sleep time in milliseconds and a step value in milliseconds.
- * Basically with each <code>block()</code> it increases the sleep time value, stepping with the step value, until it reaches the maximum sleep time value.
+ * Basically with each <code>await()</code> it increases the sleep time value, stepping with the step value, until it reaches the maximum sleep time value.
  * Once it reaches the maximum sleep time value it remains sleeping with the maximum value.
  * When <code>reset()</code> is called it then starts over from the start sleep time value.
  */
@@ -33,28 +33,28 @@ public class SleepBackOffWaitStrategy extends AbstractWaitStrategy {
 	
 	private long currSleepTimeInMillis;
 
-	public SleepBackOffWaitStrategy(long maxBlockCount, long startSleepTimeInMillis, long maxSleepTimeInMillis, int stepInMillis) {
-		super(maxBlockCount);
+	public SleepBackOffWaitStrategy(long maxAwaitCycleCount, long startSleepTimeInMillis, long maxSleepTimeInMillis, int stepInMillis) {
+		super(maxAwaitCycleCount);
 		this.startSleepTimeInMillis = startSleepTimeInMillis;
 		this.maxSleepTimeInMillis = maxSleepTimeInMillis;
 		this.stepInMillis = stepInMillis;
 		this.currSleepTimeInMillis = startSleepTimeInMillis;
 	}
 	
-	public SleepBackOffWaitStrategy(long maxBlockCount) {
-		this(maxBlockCount, DEFAULT_START_SLEEP_TIME_IN_MILLIS, DEFAULT_MAX_SLEEP_TIME_IN_MILLIS, DEFAULT_STEP_IN_MILLIS);
+	public SleepBackOffWaitStrategy(long maxAwaitCycleCount) {
+		this(maxAwaitCycleCount, DEFAULT_START_SLEEP_TIME_IN_MILLIS, DEFAULT_MAX_SLEEP_TIME_IN_MILLIS, DEFAULT_STEP_IN_MILLIS);
 	}
 	
 	public SleepBackOffWaitStrategy() {
-		this(DEFAULT_MAX_BLOCK_COUNT, DEFAULT_START_SLEEP_TIME_IN_MILLIS, DEFAULT_MAX_SLEEP_TIME_IN_MILLIS, DEFAULT_STEP_IN_MILLIS);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, DEFAULT_START_SLEEP_TIME_IN_MILLIS, DEFAULT_MAX_SLEEP_TIME_IN_MILLIS, DEFAULT_STEP_IN_MILLIS);
 	}
 	
 	public SleepBackOffWaitStrategy(long startSleepTimeInMillis, long maxSleepTimeInMillis, int stepInMillis) {
-		this(DEFAULT_MAX_BLOCK_COUNT, startSleepTimeInMillis, maxSleepTimeInMillis, stepInMillis);
+		this(DEFAULT_MAX_AWAIT_CYCLE_COUNT, startSleepTimeInMillis, maxSleepTimeInMillis, stepInMillis);
 	}
 	
 	@Override
-	protected final void blockOperation() {
+	protected final void awaitOperation() {
 		
 		try {
 			Thread.sleep(currSleepTimeInMillis);
