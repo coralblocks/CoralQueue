@@ -3,7 +3,7 @@ CoralQueue is an ultra-low-latency, lock-free, garbage-free, batching and concur
 
 For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
-The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), [Broadcaster](#broadcaster) (one-producer-to-many-consumers), [MpMcBroadcaster](#mpmcbroadcaster) (many-producers-to-many-consumers) and [Diamond](#diamond) (worker threads).
+The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), [Broadcaster](#broadcaster) (one-producer-to-many-consumers), [MpMcBroadcaster](#mpmcbroadcaster) (many-producers-to-many-consumers), [Diamond](#diamond) (worker threads) and [RawQueue](#rawqueue) (raw binary).
 
 <pre>
 <b>Note:</b> CoralQueue allows the exchange of messages <i>inside the same JVM</i>.
@@ -227,6 +227,13 @@ The Diamond allows tasks to be distributed across a set of _worker threads_ for 
 
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/diamond/Minimal.java) for a minimal example of using the Diamond
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/diamond/Basics.java) for a basic example of using the Diamond
+
+## RawQueue
+
+For maximum performance (lowest possible latency) you can use the [RawQueue](src/main/java/com/coralblocks/coralqueue/raw/RawQueue.java) for a circular buffer of _raw bytes_. Therefore, instead of writing to mutable transfer objects from the queue, you write raw data (raw bytes) directly to a contiguous piece of memory, reducing the amount of pointer dereferencing and improving CPU cache locality by avoiding heap-scattered object references. The [RawBytes](src/main/java/com/coralblocks/coralqueue/raw/RawBytes.java) interface is implemented using a regular `ByteBuffer` to represent a contiguous memory that can be direct (off-heap) or non-direct (heap-based).
+
+- Click [here](src/main/java/com/coralblocks/coralqueue/example/raw/Minimal.java) for a minimal example of using the RawQueue
+- Click [here](src/main/java/com/coralblocks/coralqueue/example/raw/Basics.java) for a basic example of using the RawQueue
 
 ## CoralRing
 
