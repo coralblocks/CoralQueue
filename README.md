@@ -230,7 +230,7 @@ The Diamond allows tasks to be distributed across a set of _worker threads_ for 
 
 ## RawQueue
 
-For maximum performance (lowest possible latency) you can use the [RawQueue](src/main/java/com/coralblocks/coralqueue/raw/RawQueue.java) for a circular buffer of _raw bytes_. Therefore, instead of writing to mutable transfer objects from the queue, you write raw data (raw bytes) directly to a contiguous piece of memory, reducing the amount of pointer dereferencing and improving CPU cache locality by avoiding heap-scattered object references. The [RawBytes](src/main/java/com/coralblocks/coralqueue/raw/RawBytes.java) interface is implemented using a regular `ByteBuffer` to represent a contiguous memory that can be direct (off-heap) or non-direct (heap-based).
+For maximum performance (lowest possible latency) you can use the [RawQueue](src/main/java/com/coralblocks/coralqueue/raw/RawQueue.java) for a circular buffer of _raw bytes_. Therefore, instead of writing to mutable transfer objects from the queue, you write raw data (raw bytes) directly to a contiguous piece of circular memory, reducing the amount of pointer dereferencing and improving CPU cache locality by avoiding heap-scattered object references. The [RawBytes](src/main/java/com/coralblocks/coralqueue/raw/RawBytes.java) interface is implemented using a regular `ByteBuffer` to represent a contiguous circular memory that can be direct (off-heap) or non-direct (heap-based).
 
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/raw/Minimal.java) for a minimal example of using the RawQueue
 - Click [here](src/main/java/com/coralblocks/coralqueue/example/raw/Basics.java) for a basic example of using the RawQueue
