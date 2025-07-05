@@ -3,7 +3,7 @@ CoralQueue is an ultra-low-latency, lock-free, garbage-free, batching and concur
 
 For some performance numbers you can check [this link](https://www.coralblocks.com/index.php/coralqueue-performance-numbers/).
 
-The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), [Broadcaster](#broadcaster) (one-producer-to-many-consumers), [MpMcBroadcaster](#mpmcbroadcaster) (many-producers-to-many-consumers), [Diamond](#diamond) (worker threads) and [RawQueue](#rawqueue) (raw binary).
+The data structures are: [Queue](#queue) (one-producer-to-one-consumer), [Multiplexer](#multiplexer) (many-producers-to-one-consumer), [Demultiplexer](#demultiplexer) (one-producer-to-many-consumers), [MpMc](#mpmc) (many-producers-to-many-consumers), [Broadcaster](#broadcaster) (one-producer-to-many-consumers), [MpMcBroadcaster](#mpmcbroadcaster) (many-producers-to-many-consumers), [Diamond](#diamond) (worker threads) and [RawQueue](#rawqueue) (binary raw).
 
 <pre>
 <b>Note:</b> CoralQueue allows the exchange of messages <i>inside the same JVM</i>.
