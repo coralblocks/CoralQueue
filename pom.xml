@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.coralblocks</groupId>
   <artifactId>coralqueue</artifactId>
-  <version>1.13.3-SNAPSHOT</version>
+  <version>1.14.1</version>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
@@ -14,7 +14,7 @@
     <connection>scm:git:https://coralblocks@github.com/coralblocks/CoralQueue</connection>
     <developerConnection>scm:git:https://coralblocks@github.com/coralblocks/CoralQueue</developerConnection>
     <url>https://coralblocks@github.com/coralblocks/CoralQueue</url>
-    <tag>HEAD</tag>
+    <tag>1.14.1</tag>
   </scm>
 
   <dependencies>
