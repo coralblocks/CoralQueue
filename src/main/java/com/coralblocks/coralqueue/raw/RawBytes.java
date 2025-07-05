@@ -42,9 +42,9 @@ public interface RawBytes {
 	public boolean hasRemaining();
 	
 	/**
-	 * Skip some bytes or space in bytes instead of reading from or writing to
+	 * Skip some bytes or space (in bytes) instead of reading from or writing to
 	 * 
-	 * @param bytes the number of byte/space to skip
+	 * @param bytes the number of bytes or space (in bytes) to skip
 	 */
 	public void skipBytes(long bytes);
 	
