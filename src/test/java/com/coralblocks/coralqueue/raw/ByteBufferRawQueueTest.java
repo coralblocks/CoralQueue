@@ -26,6 +26,41 @@ import com.coralblocks.coralqueue.example.raw.Basics.Consumer;
 import com.coralblocks.coralqueue.example.raw.Basics.Producer;
 
 public class ByteBufferRawQueueTest {
+
+	@Test
+	public void testFlushIsIdempotent() {
+
+		RawQueue queue = new ByteBufferRawQueue(16, false);
+
+		Assert.assertEquals(16, queue.availableToWrite());
+		queue.getProducer().putLong(123L);
+		queue.flush();
+		queue.flush();
+
+		Assert.assertEquals(8, queue.availableToRead());
+		Assert.assertEquals(123L, queue.getConsumer().getLong());
+	}
+
+	@Test
+	public void testDoneReadingIsIdempotent() {
+
+		RawQueue queue = new ByteBufferRawQueue(16, false);
+
+		Assert.assertEquals(16, queue.availableToWrite());
+		RawBytes producer = queue.getProducer();
+		producer.putLong(123L);
+		producer.putLong(456L);
+		queue.flush();
+
+		Assert.assertEquals(16, queue.availableToRead());
+		Assert.assertEquals(123L, queue.getConsumer().getLong());
+		queue.doneReading();
+		queue.doneReading();
+
+		Assert.assertEquals(8, queue.availableToRead());
+		Assert.assertEquals(8, queue.availableToWrite());
+		Assert.assertEquals(456L, queue.getConsumer().getLong());
+	}
 	
 	@Test
 	public void testAll() throws InterruptedException {

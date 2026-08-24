@@ -51,6 +51,7 @@ class RawWriter extends ByteBufferRawBytes {
     
     long updateWriteSequence() {
     	nextSequenceToWrite += pos;
+		resetPosition();
     	return nextSequenceToWrite;
     }
     

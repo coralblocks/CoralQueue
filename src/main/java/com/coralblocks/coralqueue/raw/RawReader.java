@@ -49,6 +49,7 @@ class RawReader extends ByteBufferRawBytes {
     
     long updateReadSequence() {
     	nextSequenceToRead += pos;
+		resetPosition();
     	return nextSequenceToRead;
     }
     
