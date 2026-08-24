@@ -93,6 +93,7 @@ public class ByteBufferRawQueue implements RawQueue {
 	
 	@Override
 	public final RawBytes getProducer() {
+		rawWriter.availableToWrite(nextSequenceToRead.get());
 		rawWriter.resetPosition();
 		return rawWriter;
 	}
@@ -104,6 +105,7 @@ public class ByteBufferRawQueue implements RawQueue {
 	
 	@Override
 	public final RawBytes getConsumer() {
+		rawReader.availableToRead(nextSequenceToWrite.get());
 		rawReader.resetPosition();
 		return rawReader;
 	}

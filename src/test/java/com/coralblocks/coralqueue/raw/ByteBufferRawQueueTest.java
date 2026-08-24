@@ -15,6 +15,8 @@
  */
 package com.coralblocks.coralqueue.raw;
 
+import java.nio.BufferOverflowException;
+import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +28,54 @@ import com.coralblocks.coralqueue.example.raw.Basics.Consumer;
 import com.coralblocks.coralqueue.example.raw.Basics.Producer;
 
 public class ByteBufferRawQueueTest {
+
+	@Test
+	public void testGetProducerRefreshesWritableLength() {
+
+		RawQueue queue = new ByteBufferRawQueue(16, false);
+
+		Assert.assertEquals(16, queue.availableToWrite());
+		queue.getProducer().putLong(123L);
+		queue.flush();
+
+		RawBytes producer = queue.getProducer();
+		Assert.assertEquals(8, producer.getRemaining());
+		producer.putLong(456L);
+
+		try {
+			producer.putLong(789L);
+			Assert.fail("Expected BufferOverflowException");
+		} catch(BufferOverflowException expected) {
+			// expected
+		}
+	}
+
+	@Test
+	public void testGetConsumerRefreshesReadableLength() {
+
+		RawQueue queue = new ByteBufferRawQueue(16, false);
+
+		Assert.assertEquals(16, queue.availableToWrite());
+		RawBytes producer = queue.getProducer();
+		producer.putLong(123L);
+		producer.putLong(456L);
+		queue.flush();
+
+		Assert.assertEquals(16, queue.availableToRead());
+		Assert.assertEquals(123L, queue.getConsumer().getLong());
+		queue.doneReading();
+
+		RawBytes consumer = queue.getConsumer();
+		Assert.assertEquals(8, consumer.getRemaining());
+		Assert.assertEquals(456L, consumer.getLong());
+
+		try {
+			consumer.getLong();
+			Assert.fail("Expected BufferUnderflowException");
+		} catch(BufferUnderflowException expected) {
+			// expected
+		}
+	}
 
 	@Test
 	public void testFlushIsIdempotent() {
