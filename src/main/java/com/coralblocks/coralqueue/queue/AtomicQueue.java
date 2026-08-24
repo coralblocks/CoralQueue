@@ -124,6 +124,7 @@ public class AtomicQueue<E> implements Queue<E> {
 	
 	@Override
 	public final E nextToDispatch(E swap) {
+		if (swap == null) throw new NullPointerException("swap");
 		E val = nextToDispatch();
 		if (val == null) return null;
 		data[calcIndex(lastOfferedSeq)] = swap;
@@ -156,6 +157,9 @@ public class AtomicQueue<E> implements Queue<E> {
 			fetchCount++;
 			return data[calcIndex(++lastFetchedSeq)];
 		} else {
+			if (lastFetchedSeq >= offerSequence.get()) {
+				throw new IllegalStateException("Cannot fetch from an empty queue");
+			}
 			return data[calcIndex(lastFetchedSeq + 1)];
 		}
 	}
@@ -167,6 +171,8 @@ public class AtomicQueue<E> implements Queue<E> {
 	
 	@Override
 	public final void replace(E newVal) {
+		if (newVal == null) throw new NullPointerException("newVal");
+		if (fetchCount == 0) throw new IllegalStateException("No fetched object to replace");
 		data[calcIndex(lastFetchedSeq)] = newVal;
 	}
 	

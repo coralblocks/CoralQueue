@@ -27,6 +27,67 @@ import com.coralblocks.coralqueue.example.queue.Basics.Message;
 import com.coralblocks.coralqueue.example.queue.Basics.Producer;
 
 public class AtomicQueueTest {
+
+	@Test
+	public void testNullSwapIsRejectedWithoutClaimingSlot() {
+
+		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);
+
+		try {
+			queue.nextToDispatch(null);
+			Assert.fail("Expected NullPointerException");
+		} catch(NullPointerException expected) {
+			// expected
+		}
+
+		Assert.assertNotNull(queue.nextToDispatch());
+	}
+
+	@Test
+	public void testFetchWithoutRemoveRejectsEmptyQueue() {
+
+		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);
+
+		try {
+			queue.fetch(false);
+			Assert.fail("Expected IllegalStateException");
+		} catch(IllegalStateException expected) {
+			// expected
+		}
+	}
+
+	@Test
+	public void testReplaceRequiresFetchedObject() {
+
+		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);
+		Message replacement = new Message();
+
+		try {
+			queue.replace(replacement);
+			Assert.fail("Expected IllegalStateException");
+		} catch(IllegalStateException expected) {
+			// expected
+		}
+
+		Assert.assertNotSame(replacement, queue.nextToDispatch());
+	}
+
+	@Test
+	public void testReplaceRejectsNull() {
+
+		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);
+
+		queue.nextToDispatch();
+		queue.flush();
+		queue.fetch();
+
+		try {
+			queue.replace(null);
+			Assert.fail("Expected NullPointerException");
+		} catch(NullPointerException expected) {
+			// expected
+		}
+	}
 	
 	@Test
 	public void testAll() throws InterruptedException {
