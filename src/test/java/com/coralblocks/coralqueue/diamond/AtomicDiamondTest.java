@@ -60,6 +60,31 @@ public class AtomicDiamondTest {
 	}
 
 	@Test
+	public void testCannotStartWhileRunning() throws InterruptedException {
+		Diamond<StopTask> diamond = new AtomicDiamond<StopTask>(StopTask.class, 1);
+		diamond.start(true);
+
+		try {
+			IllegalStateException e = Assert.assertThrows(IllegalStateException.class, () -> diamond.start(true));
+			Assert.assertEquals("Diamond has already been started", e.getMessage());
+		} finally {
+			diamond.stop();
+			diamond.join();
+		}
+	}
+
+	@Test
+	public void testCannotRestartAfterStop() throws InterruptedException {
+		Diamond<StopTask> diamond = new AtomicDiamond<StopTask>(StopTask.class, 1);
+		diamond.start(true);
+		diamond.stop();
+		diamond.join();
+
+		IllegalStateException e = Assert.assertThrows(IllegalStateException.class, () -> diamond.start(true));
+		Assert.assertEquals("Diamond cannot be restarted after it has been stopped", e.getMessage());
+	}
+
+	@Test
 	public void testStopWhileWorkerWaitsForOutput() throws InterruptedException {
 
 		CountDownLatch workerDied = new CountDownLatch(1);

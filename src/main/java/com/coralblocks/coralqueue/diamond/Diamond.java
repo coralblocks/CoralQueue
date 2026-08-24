@@ -20,6 +20,8 @@ package com.coralblocks.coralqueue.diamond;
  * A producer thread can use the input to send the tasks for execution by the worker threads.
  * A consumer thread can use the output to receive the executed tasks.
  * Producer and consumer can be the same thread, in other words, you can send tasks and receive results simultaneously.
+ * A diamond is single-use: it can be started only once. If a worker stops, tasks still queued for that worker are
+ * not reassigned to another worker and will not appear in the output.
  *
  * @param <E> an object inheriting from {@link Task}
  */
@@ -50,11 +52,12 @@ public interface Diamond<E extends Task> {
 	 * Start the worker threads to begin receiving and executing tasks.
 	 * 
 	 * @param deamon true to make the worker threads deamon threads
+	 * @throws IllegalStateException if this diamond has already been started or stopped
 	 */
 	public void start(boolean deamon);
 	
 	/**
-	 * Make all worker threads stop, exit and die.
+	 * Make all worker threads stop, exit and die. After this method is called, this diamond cannot be started again.
 	 */
 	public void stop();
 

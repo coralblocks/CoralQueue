@@ -25,6 +25,12 @@ import com.coralblocks.coralqueue.util.Builder;
 import com.coralblocks.coralqueue.waitstrategy.WaitStrategy;
 
 public class AtomicDiamond<E extends Task> implements Diamond<E> {
+
+	private enum State {
+		NEW,
+		RUNNING,
+		STOPPED
+	}
 	
 	public static final int DEFAULT_CAPACITY = 1024;
 	
@@ -34,6 +40,7 @@ public class AtomicDiamond<E extends Task> implements Diamond<E> {
 	private final Output<E> output;
 	private final Thread[] threads;
 	private final AtomicBoolean[] isRunning;
+	private State state = State.NEW;
 	
 	public AtomicDiamond(Class<E> klass, int workerThreads) {
 		this(DEFAULT_CAPACITY, Builder.createBuilder(klass), workerThreads, null);
@@ -141,7 +148,17 @@ public class AtomicDiamond<E extends Task> implements Diamond<E> {
 	}
 	
 	@Override
-	public void start(boolean daemon) {
+	public synchronized void start(boolean daemon) {
+		if (state == State.RUNNING) {
+			throw new IllegalStateException("Diamond has already been started");
+		}
+
+		if (state == State.STOPPED) {
+			throw new IllegalStateException("Diamond cannot be restarted after it has been stopped");
+		}
+
+		state = State.RUNNING;
+
 		for(int i = 0; i < threads.length; i++) {
 			threads[i].setDaemon(daemon);
 			threads[i].start();
@@ -149,7 +166,9 @@ public class AtomicDiamond<E extends Task> implements Diamond<E> {
 	}
 	
 	@Override
-	public void stop() {
+	public synchronized void stop() {
+		state = State.STOPPED;
+
 		for(int i = 0; i < isRunning.length; i++) {
 			isRunning[i].set(false);
 		}
