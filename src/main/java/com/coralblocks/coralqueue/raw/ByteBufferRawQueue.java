@@ -35,7 +35,7 @@ public class ByteBufferRawQueue implements RawQueue {
 	/**
 	 * The default isDirect for the ByteBuffer
 	 */
-	public static final boolean DEFAULT_DIRECT = true;
+	public static final boolean DEFAULT_DIRECT = false;
 
 	/**
 	 * The default byte order for the ByteBuffer
