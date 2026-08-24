@@ -19,21 +19,38 @@ import com.coralblocks.coralqueue.util.Builder;
 import com.coralblocks.coralqueue.util.MathUtils;
 import com.coralblocks.coralqueue.util.PaddedAtomicLong;
 
+/*
+ * The producer owns these fields while consumers access unrelated fields declared in AtomicBroadcaster. If they
+ * occupied the same cache line, producer writes would invalidate the consumers' copies and consumer reads would
+ * force the line to be shared again. This is false sharing. On HotSpot with 64-byte cache lines, the class hierarchy
+ * and 56-byte padding on both sides keep those unrelated fields out of the producer's cache lines.
+ */
+abstract class AtomicBroadcasterProducerLhsPadding {
+	long p01, p02, p03, p04, p05, p06, p07;
+}
+
+abstract class AtomicBroadcasterProducerFields extends AtomicBroadcasterProducerLhsPadding {
+	long lastOfferedSeq = 0;
+	long maxSeqBeforeWrapping;
+}
+
+abstract class AtomicBroadcasterProducerRhsPadding extends AtomicBroadcasterProducerFields {
+	long p08, p09, p10, p11, p12, p13, p14;
+}
+
 /**
  * An implementation of a {@link Broadcaster} that uses <i>memory barriers</i> to synchronize producer and consumers sequences.
  * All messages are delivered to all consumers in the exact same order that they are sent by the producer.
  *
  * @param <E> The data transfer mutable object to be used by this broadcaster
  */
-public class AtomicBroadcaster<E> implements Broadcaster<E> {
+public class AtomicBroadcaster<E> extends AtomicBroadcasterProducerRhsPadding implements Broadcaster<E> {
 
 	public static final int DEFAULT_CAPACITY = 1024;
 
 	private final int capacity;
 	private final int capacityMinusOne;
 	private final E[] data;
-	private long lastOfferedSeq = 0;
-	private long maxSeqBeforeWrapping;
 	private final PaddedAtomicLong offerSequence = new PaddedAtomicLong(0);
 	private final Cursor[] cursors;
 	private final Consumer<E>[] consumers;

@@ -19,22 +19,46 @@ import com.coralblocks.coralqueue.util.Builder;
 import com.coralblocks.coralqueue.util.MathUtils;
 import com.coralblocks.coralqueue.util.PaddedAtomicLong;
 
+/*
+ * The producer and consumer each own a local field group. Even though these fields are not shared, unrelated fields
+ * could occupy the same cache line. Reads or writes by another thread would then create cache-coherence traffic for
+ * the whole line, forcing the owner to reacquire it before another update. This is false sharing. On HotSpot with
+ * 64-byte cache lines, the class hierarchy and 56-byte padding on both sides keep unrelated fields out of these lines.
+ */
+abstract class AtomicQueueProducerLhsPadding {
+	long p01, p02, p03, p04, p05, p06, p07;
+}
+
+abstract class AtomicQueueProducerFields extends AtomicQueueProducerLhsPadding {
+	long lastOfferedSeq = 0;
+	long maxSeqBeforeWrapping;
+}
+
+abstract class AtomicQueueProducerRhsPadding extends AtomicQueueProducerFields {
+	long p08, p09, p10, p11, p12, p13, p14;
+}
+
+abstract class AtomicQueueConsumerFields extends AtomicQueueProducerRhsPadding {
+	long lastFetchedSeq = 0;
+	long fetchCount = 0;
+}
+
+abstract class AtomicQueueConsumerRhsPadding extends AtomicQueueConsumerFields {
+	long p15, p16, p17, p18, p19, p20, p21;
+}
+
 /**
  * An implementation of {@link Queue} that uses <i>memory barriers</i> to synchronize producer and consumer sequences.
  *
  * @param <E> The data transfer mutable object to be used by this queue
  */
-public class AtomicQueue<E> implements Queue<E> {
+public class AtomicQueue<E> extends AtomicQueueConsumerRhsPadding implements Queue<E> {
 	
 	public static final int DEFAULT_CAPACITY = 1024;
 
 	private final int capacity;
 	private final int capacityMinusOne;
 	private final E[] data;
-	private long lastOfferedSeq = 0;
-	private long lastFetchedSeq = 0;
-	private long fetchCount = 0;
-	private long maxSeqBeforeWrapping;
 	private final PaddedAtomicLong offerSequence = new PaddedAtomicLong(0);
 	private final PaddedAtomicLong fetchSequence = new PaddedAtomicLong(0);
 	
