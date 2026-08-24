@@ -113,18 +113,20 @@ public interface MpMcBroadcaster<E> {
 	public void disableConsumer(int consumerIndex);
 	
 	/**
-	 * Return the producer corresponding to the given index. If a bad index is given this method throws a <code>RuntimeException</code>.
+	 * Return the producer corresponding to the given index.
 	 * 
 	 * @param index the producer index
 	 * @return the producer for the given index
+	 * @throws IndexOutOfBoundsException if the index is invalid
 	 */
 	public Producer<E> getProducer(int index);
 	
 	/**
-	 * Return the consumer corresponding to the given index. If a bad index is given this method throws a <code>RuntimeException</code>.
+	 * Return the consumer corresponding to the given index.
 	 * 
 	 * @param index the consumer index
 	 * @return the consumer for the given index
+	 * @throws IndexOutOfBoundsException if the index is invalid
 	 */
 	public Consumer<E> getConsumer(int index);
 	

@@ -194,7 +194,7 @@ public class AtomicQueue<E> implements Queue<E> {
 	@Override
 	public final void rollBack(long count) {
 		if (count < 0 || count > fetchCount) {
-			throw new RuntimeException("Invalid rollback request! fetched=" + fetchCount + " requested=" + count);
+			throw new IllegalArgumentException("Invalid rollback request! fetched=" + fetchCount + " requested=" + count);
 		}
 		lastFetchedSeq -= count;
 		fetchCount -= count;

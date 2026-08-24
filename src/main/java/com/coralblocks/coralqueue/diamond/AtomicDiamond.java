@@ -64,7 +64,10 @@ public class AtomicDiamond<E extends Task> implements Diamond<E> {
 	}
 	
 	public AtomicDiamond(int capacity, Builder<E> builder, int workerThreads, final WorkerThreadListener listener) {
-		
+		if (workerThreads <= 0) {
+			throw new IllegalArgumentException("workerThreads must be positive: " + workerThreads);
+		}
+
 		this.demux = new AtomicDemultiplexer<E>(capacity, builder, workerThreads);
 		this.mux = new AtomicMultiplexer<E>(capacity, builder, workerThreads);
 		

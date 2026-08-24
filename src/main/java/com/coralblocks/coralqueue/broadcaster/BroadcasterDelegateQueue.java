@@ -34,6 +34,9 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	 * @param consumerIndex the consumerIndex to use
 	 */
 	public BroadcasterDelegateQueue(Broadcaster<E> broadcaster, int consumerIndex) {
+		if (consumerIndex < 0 || consumerIndex >= broadcaster.getNumberOfConsumers()) {
+			throw new IndexOutOfBoundsException("consumerIndex=" + consumerIndex + ", numberOfConsumers=" + broadcaster.getNumberOfConsumers());
+		}
 		this.broadcaster = broadcaster;
 		this.consumerIndex = consumerIndex;
 	}

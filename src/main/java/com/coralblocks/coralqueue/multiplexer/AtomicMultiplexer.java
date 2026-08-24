@@ -44,6 +44,9 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	 */
 	@SuppressWarnings("unchecked")
     public AtomicMultiplexer(int capacity, Builder<E> builder, int numberOfProducers) {
+		if (numberOfProducers <= 0) {
+			throw new IllegalArgumentException("numberOfProducers must be positive: " + numberOfProducers);
+		}
 		this.numberOfProducers = numberOfProducers;
 		this.queues = (Queue<E>[]) new AtomicQueue[numberOfProducers];
 		this.producers = (Producer<E>[]) new Producer[numberOfProducers];
@@ -100,24 +103,24 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 
 	@Override
     public final E nextToDispatch(int producer) {
-	    return queues[producer].nextToDispatch();
+	    return getQueue(producer).nextToDispatch();
     }
 	
 	@Override
     public final E nextToDispatch(int producer, E swap) {
-	    E val = queues[producer].nextToDispatch(swap);
+	    E val = getQueue(producer).nextToDispatch(swap);
 	    if (val == null) return null;
 	    return val;
     }
 
 	@Override
     public final void flush(int producer, boolean lazySet) {
-		queues[producer].flush(lazySet);
+		getQueue(producer).flush(lazySet);
     }
 
 	@Override
     public final void flush(int producer) {
-		queues[producer].flush();
+		getQueue(producer).flush();
     }
 
 	@Override
@@ -167,9 +170,18 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	
 	@Override
 	public final Producer<E> getProducer(int index) {
-		if (index >= numberOfProducers) {
-			throw new RuntimeException("Tried to get a producer with a bad index: " + index);
-		}
+		checkProducerIndex(index);
 		return producers[index];
+	}
+
+	private final void checkProducerIndex(int index) {
+		if (index < 0 || index >= numberOfProducers) {
+			throw new IndexOutOfBoundsException("producerIndex=" + index + ", numberOfProducers=" + numberOfProducers);
+		}
+	}
+
+	private final Queue<E> getQueue(int producerIndex) {
+		checkProducerIndex(producerIndex);
+		return queues[producerIndex];
 	}
 }

@@ -135,6 +135,7 @@ public interface Queue<E> {
 	 * <p>Same as {@link #rollBack()} but allows you to specify how many previous fetches you want to roll back, instead of all of them (i.e. all previous ones).</p>
 	 * 
 	 * @param items how many fetches to roll back
+	 * @throws IllegalArgumentException if items is negative or greater than the number of fetched items
 	 */
 	public void rollBack(long items);
 }

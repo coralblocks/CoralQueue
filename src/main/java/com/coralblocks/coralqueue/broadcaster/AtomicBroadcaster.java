@@ -48,6 +48,9 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	@SuppressWarnings("unchecked")
 	public AtomicBroadcaster(int capacity, Builder<E> builder, int numberOfConsumers) {
 		MathUtils.ensurePowerOfTwo(capacity);
+		if (numberOfConsumers <= 0) {
+			throw new IllegalArgumentException("numberOfConsumers must be positive: " + numberOfConsumers);
+		}
 		this.capacity = capacity;
 		this.capacityMinusOne = capacity - 1;
 		this.data = (E[]) new Object[capacity];
@@ -100,10 +103,19 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	
 	@Override
 	public final Consumer<E> getConsumer(int index) {
-		if (index >= consumers.length) {
-			throw new RuntimeException("Tried to get a consumer with a bad index: " + index);
-		}
+		checkConsumerIndex(index);
 		return consumers[index];
+	}
+
+	private final void checkConsumerIndex(int index) {
+		if (index < 0 || index >= consumers.length) {
+			throw new IndexOutOfBoundsException("consumerIndex=" + index + ", numberOfConsumers=" + consumers.length);
+		}
+	}
+
+	private final Cursor getCursor(int index) {
+		checkConsumerIndex(index);
+		return cursors[index];
 	}
 	
 	@Override
@@ -126,7 +138,7 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	
 	@Override
 	public final void disableConsumer(int index) {
-		cursors[index].disable();
+		getCursor(index).disable();
 	}
 	
 	private final long calcMaxSeqBeforeWrapping() {
@@ -167,14 +179,14 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 
 	@Override
 	public final long availableToFetch(int consumer) {
-		Cursor cursor = cursors[consumer];
+		Cursor cursor = getCursor(consumer);
 		if (cursor.isDisabled()) return 0;
 		return offerSequence.get() - cursor.getLastFetchedSeq();
 	}
 
 	@Override
 	public final E fetch(int consumer, boolean remove) {
-		Cursor cursor = cursors[consumer];
+		Cursor cursor = getCursor(consumer);
 		cursor.ensureEnabled();
 		if (remove) {
 			cursor.incrementFetchCount();
@@ -191,22 +203,26 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 
 	@Override
 	public final void doneFetching(int consumer, boolean lazySet) {
-		Cursor cursor = cursors[consumer];
+		Cursor cursor = getCursor(consumer);
 		cursor.updateFetchSequence(lazySet);
 		cursor.resetFetchCount();
 	}
 	
 	@Override
 	public final void rollBack(int consumer) {
-		rollBack(consumer, cursors[consumer].getFetchCount());
+		Cursor cursor = getCursor(consumer);
+		rollBack(cursor, cursor.getFetchCount());
 	}
 	
 	@Override
 	public final void rollBack(int consumer, long count) {
-		Cursor cursor = cursors[consumer];
+		rollBack(getCursor(consumer), count);
+	}
+
+	private final void rollBack(Cursor cursor, long count) {
 		cursor.ensureEnabled();
 		if (count < 0 || count > cursor.getFetchCount()) {
-			throw new RuntimeException("Invalid rollback request! fetched=" + cursor.getFetchCount() + " requested=" + count);
+			throw new IllegalArgumentException("Invalid rollback request! fetched=" + cursor.getFetchCount() + " requested=" + count);
 		}
 		cursor.decrementLastFetchedSeq(count);
 		cursor.decrementFetchCount(count);

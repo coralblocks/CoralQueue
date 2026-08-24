@@ -121,6 +121,7 @@ public interface Broadcaster<E> {
 	 * 
 	 * @param consumerIndex the index of the consumer thread calling this method
 	 * @param items how many fetches to roll back
+	 * @throws IllegalArgumentException if items is negative or greater than the number of fetched items
 	 */
 	public void rollBack(int consumerIndex, long items);
 	
@@ -143,10 +144,11 @@ public interface Broadcaster<E> {
 	public void disableConsumer(int consumerIndex);
 	
 	/**
-	 * Return a consumer by its index. This method throws a <code>RuntimeException</code> if the index is invalid.
+	 * Return a consumer by its index.
 	 * 
 	 * @param consumerIndex the zero-based index of the consumer to be returned
 	 * @return the consumer
+	 * @throws IndexOutOfBoundsException if the index is invalid
 	 */
 	public Consumer<E> getConsumer(int consumerIndex);
 }

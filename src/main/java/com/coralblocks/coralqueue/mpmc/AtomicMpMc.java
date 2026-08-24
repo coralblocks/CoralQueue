@@ -77,6 +77,12 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	 */
 	@SuppressWarnings("unchecked")
     public AtomicMpMc(int capacity, Builder<E> builder, int numberOfProducers, int numberOfConsumers) {
+		if (numberOfProducers <= 0) {
+			throw new IllegalArgumentException("numberOfProducers must be positive: " + numberOfProducers);
+		}
+		if (numberOfConsumers <= 0) {
+			throw new IllegalArgumentException("numberOfConsumers must be positive: " + numberOfConsumers);
+		}
 		this.demuxes = (Demultiplexer<E>[]) new Demultiplexer[numberOfProducers];
 		this.producers = (Producer<E>[]) new Producer[numberOfProducers];
 		this.consumers = (Consumer<E>[]) new Consumer[numberOfConsumers];
@@ -153,16 +159,16 @@ public class AtomicMpMc<E> implements MpMc<E> {
 	
 	@Override
 	public final Producer<E> getProducer(int index) {
-		if (index >= producers.length) {
-			throw new RuntimeException("Tried to get a producer with a bad index: " + index);
+		if (index < 0 || index >= producers.length) {
+			throw new IndexOutOfBoundsException("producerIndex=" + index + ", numberOfProducers=" + producers.length);
 		}
 		return producers[index];
 	}
 	
 	@Override
 	public final Consumer<E> getConsumer(int index) {
-		if (index >= consumers.length) {
-			throw new RuntimeException("Tried to get a consumer with a bad index: " + index);
+		if (index < 0 || index >= consumers.length) {
+			throw new IndexOutOfBoundsException("consumerIndex=" + index + ", numberOfConsumers=" + consumers.length);
 		}
 		return consumers[index];
 	}

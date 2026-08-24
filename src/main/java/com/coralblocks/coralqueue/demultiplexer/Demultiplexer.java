@@ -51,6 +51,7 @@ public interface Demultiplexer<E> {
 	 * 
 	 * @param toConsumerIndex the consumer that you want to receive the message
 	 * @return the next mutable object that can be used by the producer or null if the demultiplexer is full
+	 * @throws IndexOutOfBoundsException if the index is invalid
 	 */
 	public E nextToDispatch(int toConsumerIndex);
 
@@ -124,10 +125,11 @@ public interface Demultiplexer<E> {
 	public int getNumberOfConsumers();
 	
 	/**
-	 * Return a consumer by its index. This method throws a <code>RuntimeException</code> if the index is invalid.
+	 * Return a consumer by its index.
 	 * 
 	 * @param index the zero-based index of the consumer to be returned
 	 * @return the consumer
+	 * @throws IndexOutOfBoundsException if the index is invalid
 	 */
 	public Consumer<E> getConsumer(int index);
 }

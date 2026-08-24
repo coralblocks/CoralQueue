@@ -110,10 +110,11 @@ public interface Multiplexer<E> {
 	public int getNumberOfProducers();
 	
 	/**
-	 * Return a producer by its index. This method throws a <code>RuntimeException</code> if the index is invalid.
+	 * Return a producer by its index.
 	 * 
 	 * @param index the zero-based index of the producer to be returned
 	 * @return the producer
+	 * @throws IndexOutOfBoundsException if the index is invalid
 	 */
 	public Producer<E> getProducer(int index);
 }

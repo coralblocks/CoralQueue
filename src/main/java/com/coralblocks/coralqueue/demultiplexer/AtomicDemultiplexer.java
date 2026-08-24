@@ -46,6 +46,9 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	@SuppressWarnings("unchecked")
 	public AtomicDemultiplexer(int capacity, Builder<E> builder, int numberOfConsumers) {
 		MathUtils.ensurePowerOfTwo(capacity);
+		if (numberOfConsumers <= 0) {
+			throw new IllegalArgumentException("numberOfConsumers must be positive: " + numberOfConsumers);
+		}
 		this.numberOfConsumers = numberOfConsumers;
 		this.queues = new Queue[numberOfConsumers];
 		this.needsToFlush = new boolean[numberOfConsumers];
@@ -90,10 +93,19 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	
 	@Override
 	public final Consumer<E> getConsumer(int index) {
-		if (index >= numberOfConsumers) {
-			throw new RuntimeException("Tried to get a consumer with a bad index: " + index);
-		}
+		checkConsumerIndex(index);
 		return consumers[index];
+	}
+
+	private final void checkConsumerIndex(int index) {
+		if (index < 0 || index >= numberOfConsumers) {
+			throw new IndexOutOfBoundsException("consumerIndex=" + index + ", numberOfConsumers=" + numberOfConsumers);
+		}
+	}
+
+	private final Queue<E> getQueue(int consumerIndex) {
+		checkConsumerIndex(consumerIndex);
+		return queues[consumerIndex];
 	}
 	
 	@Override
@@ -126,14 +138,7 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 	
 	@Override
 	public final E nextToDispatch(int toConsumerIndex) {
-		
-		if (toConsumerIndex < 0) return nextToDispatch(); // fall back to regular implementation...
-		
-		if (toConsumerIndex >= numberOfConsumers) {
-			throw new RuntimeException("Bad toConsumerIndex: " + toConsumerIndex + " numberOfConsumers=" + numberOfConsumers);
-		}
-		
-		E e = queues[toConsumerIndex].nextToDispatch();
+		E e = getQueue(toConsumerIndex).nextToDispatch();
 		if (e != null) {
 			needsToFlush[toConsumerIndex] = true;
 			return e;
@@ -158,27 +163,27 @@ public class AtomicDemultiplexer<E> implements Demultiplexer<E> {
 
 	@Override
 	public final long availableToFetch(int consumer) {
-		return queues[consumer].availableToFetch();
+		return getQueue(consumer).availableToFetch();
 	}
 	
 	@Override
 	public final E fetch(int consumer) {
-		return queues[consumer].fetch();
+		return getQueue(consumer).fetch();
 	}
 	
 	@Override
 	public final void replace(int consumer, E newVal) {
-		queues[consumer].replace(newVal);
+		getQueue(consumer).replace(newVal);
 	}
 	
 	@Override
 	public final void doneFetching(int consumer, boolean lazySet) {
-		queues[consumer].doneFetching(lazySet);
+		getQueue(consumer).doneFetching(lazySet);
 	}
 	
 	@Override
 	public final void doneFetching(int consumer) {
-		queues[consumer].doneFetching(false);
+		getQueue(consumer).doneFetching(false);
 	}
 
 	@Override
