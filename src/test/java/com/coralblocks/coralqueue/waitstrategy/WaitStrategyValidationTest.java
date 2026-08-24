@@ -25,6 +25,18 @@ public class WaitStrategyValidationTest {
 	}
 
 	@Test
+	public void testAwaitCycleLimitAndReset() throws InterruptedException {
+		WaitStrategy waitStrategy = new BusySpinWaitStrategy(2);
+
+		Assert.assertFalse(waitStrategy.await());
+		Assert.assertTrue(waitStrategy.await());
+		Assert.assertTrue(waitStrategy.await());
+
+		waitStrategy.reset();
+		Assert.assertFalse(waitStrategy.await());
+	}
+
+	@Test
 	public void testCompositeRequiresStrategies() {
 		Assert.assertThrows(NullPointerException.class, () -> new CompositeWaitStrategy((WaitStrategy[]) null));
 		Assert.assertThrows(IllegalArgumentException.class, () -> new CompositeWaitStrategy());

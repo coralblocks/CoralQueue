@@ -29,6 +29,73 @@ import com.coralblocks.coralqueue.example.queue.Basics.Producer;
 public class AtomicQueueTest {
 
 	@Test
+	public void testSwapReplacesDispatchedSlot() {
+
+		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);
+		Message swap = new Message();
+
+		Message pooled = queue.nextToDispatch(swap);
+		Assert.assertNotSame(swap, pooled);
+		queue.flush();
+
+		Assert.assertSame(swap, queue.fetch());
+		queue.doneFetching();
+		Assert.assertSame(swap, queue.nextToDispatch(pooled));
+	}
+
+	@Test
+	public void testReplaceChangesFetchedSlot() {
+
+		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);
+		Message original = queue.nextToDispatch();
+		queue.flush();
+
+		Assert.assertSame(original, queue.fetch());
+		Message replacement = new Message();
+		queue.replace(replacement);
+		queue.doneFetching();
+
+		Assert.assertSame(replacement, queue.nextToDispatch());
+	}
+
+	@Test
+	public void testRollBackReplaysFetchedObjects() {
+
+		Queue<Message> queue = new AtomicQueue<Message>(2, Message.class);
+		Message first = queue.nextToDispatch();
+		Message second = queue.nextToDispatch();
+		queue.flush();
+
+		Assert.assertSame(first, queue.fetch());
+		Assert.assertSame(second, queue.fetch());
+
+		queue.rollBack(1);
+		Assert.assertEquals(1, queue.availableToFetch());
+		Assert.assertSame(second, queue.fetch());
+
+		queue.rollBack();
+		Assert.assertEquals(2, queue.availableToFetch());
+		Assert.assertSame(first, queue.fetch());
+		Assert.assertSame(second, queue.fetch());
+		queue.doneFetching();
+	}
+
+	@Test
+	public void testClearDiscardsMessagesAndAllowsReuse() {
+
+		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);
+		Message message = queue.nextToDispatch();
+		queue.flush();
+		Assert.assertEquals(1, queue.availableToFetch());
+
+		queue.clear();
+
+		Assert.assertEquals(0, queue.availableToFetch());
+		Assert.assertSame(message, queue.nextToDispatch());
+		Assert.assertNull(queue.nextToDispatch());
+	}
+
+	@Test
 	public void testNullSwapIsRejectedWithoutClaimingSlot() {
 
 		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);

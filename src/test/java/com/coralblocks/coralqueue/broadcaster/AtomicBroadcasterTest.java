@@ -26,6 +26,43 @@ import com.coralblocks.coralqueue.example.broadcaster.Basics.Producer;
 public class AtomicBroadcasterTest {
 
 	@Test
+	public void testRollBackReplaysFetchedObjects() {
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(2, Message.class, 1);
+		Message first = broadcaster.nextToDispatch();
+		Message second = broadcaster.nextToDispatch();
+		broadcaster.flush();
+
+		Assert.assertSame(first, broadcaster.fetch(0));
+		Assert.assertSame(second, broadcaster.fetch(0));
+
+		broadcaster.rollBack(0, 1);
+		Assert.assertEquals(1, broadcaster.availableToFetch(0));
+		Assert.assertSame(second, broadcaster.fetch(0));
+
+		broadcaster.rollBack(0);
+		Assert.assertEquals(2, broadcaster.availableToFetch(0));
+		Assert.assertSame(first, broadcaster.fetch(0));
+		Assert.assertSame(second, broadcaster.fetch(0));
+		broadcaster.doneFetching(0);
+	}
+
+	@Test
+	public void testClearDiscardsMessagesAndAllowsReuse() {
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(1, Message.class, 2);
+		Message message = broadcaster.nextToDispatch();
+		broadcaster.flush();
+		Assert.assertEquals(1, broadcaster.availableToFetch(0));
+		Assert.assertEquals(1, broadcaster.availableToFetch(1));
+
+		broadcaster.clear();
+
+		Assert.assertEquals(0, broadcaster.availableToFetch(0));
+		Assert.assertEquals(0, broadcaster.availableToFetch(1));
+		Assert.assertSame(message, broadcaster.nextToDispatch());
+		Assert.assertNull(broadcaster.nextToDispatch());
+	}
+
+	@Test
 	public void testDelegateCannotClearBroadcaster() {
 		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(1, Message.class, 2);
 		BroadcasterDelegateQueue<Message> delegate = new BroadcasterDelegateQueue<Message>(broadcaster, 0);
