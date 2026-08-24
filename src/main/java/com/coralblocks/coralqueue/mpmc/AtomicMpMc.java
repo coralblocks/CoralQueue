@@ -82,7 +82,7 @@ public class AtomicMpMc<E> implements MpMc<E> {
 		this.consumers = (Consumer<E>[]) new Consumer[numberOfConsumers];
 		
 		for(int i = 0; i < numberOfProducers; i++) {
-			this.demuxes[i] = new AtomicDemultiplexer<E>(builder, numberOfConsumers);
+			this.demuxes[i] = new AtomicDemultiplexer<E>(capacity, builder, numberOfConsumers);
 			this.producers[i] = new Producer<E>(this.demuxes[i], i);
 		}
 		

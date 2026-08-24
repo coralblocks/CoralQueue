@@ -24,8 +24,18 @@ import org.junit.Test;
 import com.coralblocks.coralqueue.example.mpmc.Basics.Consumer;
 import com.coralblocks.coralqueue.example.mpmc.Basics.Message;
 import com.coralblocks.coralqueue.example.mpmc.Basics.Producer;
+import com.coralblocks.coralqueue.util.Builder;
 
 public class AtomicMpMcTest {
+
+	@Test
+	public void testCapacity() {
+		MpMc<Message> mpmc = new AtomicMpMc<Message>(2, Builder.createBuilder(Message.class), 1, 1);
+
+		Assert.assertNotNull(mpmc.nextToDispatch(0));
+		Assert.assertNotNull(mpmc.nextToDispatch(0));
+		Assert.assertNull(mpmc.nextToDispatch(0));
+	}
 	
 	@Test
 	public void testAll() throws InterruptedException {
