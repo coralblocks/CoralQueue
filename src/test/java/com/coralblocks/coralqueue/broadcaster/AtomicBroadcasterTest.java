@@ -24,6 +24,17 @@ import com.coralblocks.coralqueue.example.broadcaster.Basics.Producer;
 
 
 public class AtomicBroadcasterTest {
+
+	@Test
+	public void testDisablingAllConsumersDoesNotBlockProducer() {
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(2, Message.class, 2);
+		broadcaster.disableConsumer(0);
+		broadcaster.disableConsumer(1);
+
+		Assert.assertNotNull(broadcaster.nextToDispatch());
+		Assert.assertNotNull(broadcaster.nextToDispatch());
+		Assert.assertNotNull(broadcaster.nextToDispatch());
+	}
 	
 	@Test
 	public void testAll() throws InterruptedException {

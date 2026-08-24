@@ -130,7 +130,8 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	}
 	
 	private final long calcMaxSeqBeforeWrapping() {
-		return minCursosFetchSeq() + capacity;
+		long minFetchSeq = minCursosFetchSeq();
+		return minFetchSeq == Long.MAX_VALUE ? Long.MAX_VALUE : minFetchSeq + capacity;
 	}
 	
 	private final int calcIndex(long value) {
