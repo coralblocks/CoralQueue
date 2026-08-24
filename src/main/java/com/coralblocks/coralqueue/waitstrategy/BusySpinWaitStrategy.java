@@ -16,7 +16,7 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * A wait strategy that does nothing for its await operation, in other words, it simply busy spins.
+ * A wait strategy that calls {@link Thread#onSpinWait()} while busy spinning.
  */
 public class BusySpinWaitStrategy extends AbstractWaitStrategy {
 	
@@ -30,6 +30,6 @@ public class BusySpinWaitStrategy extends AbstractWaitStrategy {
 
 	@Override
 	protected final void awaitOperation() {
-		// busy spinning so do nothing
+		Thread.onSpinWait();
 	}
 }
