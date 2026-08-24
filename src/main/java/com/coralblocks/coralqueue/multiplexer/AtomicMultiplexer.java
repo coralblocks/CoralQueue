@@ -31,6 +31,7 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	private final int numberOfProducers;
 	private final Queue<E>[] queues;
 	private final long[] avail;
+	private final boolean[] needsDoneFetching;
 	private int producerIndex = 0;
 	private final Producer<E>[] producers;
 	
@@ -47,10 +48,10 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 		this.queues = (Queue<E>[]) new AtomicQueue[numberOfProducers];
 		this.producers = (Producer<E>[]) new Producer[numberOfProducers];
 		this.avail = new long[numberOfProducers];
+		this.needsDoneFetching = new boolean[numberOfProducers];
 		for(int i = 0; i < numberOfProducers; i++) {
 			queues[i] = new AtomicQueue<E>(capacity, builder);
 			producers[i] = new Producer<E>(this, i);
-			avail[i] = -1;
 		}
 	}
 	
@@ -92,7 +93,8 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 			queues[i].clear();
 		}
 		for(int i = 0; i < avail.length; i++) {
-			avail[i] = -1;
+			avail[i] = 0;
+			needsDoneFetching[i] = false;
 		}
 	}
 
@@ -123,11 +125,7 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 		long total = 0;
 		for(int i = 0; i < numberOfProducers; i++) {
 			long x = queues[i].availableToFetch();
-			if (x == 0) {
-				avail[i] = -1;
-			} else {
-				total += (avail[i] = x);
-			}
+			total += (avail[i] = x);
 		}
 		return total;
     }
@@ -139,7 +137,9 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 			if (producerIndex == numberOfProducers) producerIndex = 0;
 			if (avail[index] > 0) {
 				avail[index]--;
-				return queues[index].fetch();
+				E e = queues[index].fetch();
+				needsDoneFetching[index] = true;
+				return e;
 			}
 		}
 		return null;
@@ -148,8 +148,9 @@ public class AtomicMultiplexer<E> implements Multiplexer<E> {
 	@Override
     public final void doneFetching(boolean lazySet) {
 		for(int i = 0; i < numberOfProducers; i++) {
-			if (avail[i] != -1) {
+			if (needsDoneFetching[i]) {
 				queues[i].doneFetching(lazySet);
+				needsDoneFetching[i] = false;
 			}
 		}
     }

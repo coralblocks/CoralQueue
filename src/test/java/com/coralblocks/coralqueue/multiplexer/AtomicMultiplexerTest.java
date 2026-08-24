@@ -25,6 +25,19 @@ import com.coralblocks.coralqueue.example.multiplexer.Basics.Message;
 import com.coralblocks.coralqueue.example.multiplexer.Basics.Producer;
 
 public class AtomicMultiplexerTest {
+
+	@Test
+	public void testDoneFetchingAfterAvailabilityRecheck() {
+		Multiplexer<Message> mux = new AtomicMultiplexer<Message>(1, Message.class, 1);
+
+		Assert.assertNotNull(mux.nextToDispatch(0));
+		mux.flush(0);
+		Assert.assertEquals(1, mux.availableToFetch());
+		Assert.assertNotNull(mux.fetch());
+		Assert.assertEquals(0, mux.availableToFetch());
+		mux.doneFetching();
+		Assert.assertNotNull(mux.nextToDispatch(0));
+	}
 	
 	@Test
 	public void testAll() throws InterruptedException {
