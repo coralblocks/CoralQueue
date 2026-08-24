@@ -33,20 +33,22 @@ public class Minimal {
         public int x;
         public int y;
         public int result;
-         
+
         @Override
         public boolean execute() {
-        	randomSleep(10);
+            if (!randomSleep(10)) return false;
             this.result = x + y;
             return true; // successful!
         }
         
-        private final void randomSleep(int maxSleepTime) {
-        	try {
-        		Thread.sleep(rand.nextInt(maxSleepTime) + 1);
-        	} catch(InterruptedException e) {
-        		throw new RuntimeException(e);
-        	}
+        private final boolean randomSleep(int maxSleepTime) {
+            try {
+                Thread.sleep(rand.nextInt(maxSleepTime) + 1);
+                return true;
+            } catch(InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
         }
     }
 	
