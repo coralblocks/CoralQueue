@@ -20,7 +20,7 @@ package com.coralblocks.coralqueue.util;
  */
 public class MutableLong {
 	
-	private static long DEFAULT_VALUE = 0;
+	private static final long DEFAULT_VALUE = 0;
 	
 	private long value;
 	

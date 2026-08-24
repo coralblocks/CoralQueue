@@ -37,6 +37,18 @@ public class ParkBackOffWaitStrategy extends AbstractWaitStrategy {
 
 	public ParkBackOffWaitStrategy(long maxAwaitCycleCount, long startParkTimeInNanos, long maxParkTimeInNanos, int stepInNanos) {
 		super(maxAwaitCycleCount);
+		if (startParkTimeInNanos < 0) {
+			throw new IllegalArgumentException("startParkTimeInNanos cannot be negative: " + startParkTimeInNanos);
+		}
+		if (maxParkTimeInNanos < 0) {
+			throw new IllegalArgumentException("maxParkTimeInNanos cannot be negative: " + maxParkTimeInNanos);
+		}
+		if (startParkTimeInNanos > maxParkTimeInNanos) {
+			throw new IllegalArgumentException("startParkTimeInNanos cannot exceed maxParkTimeInNanos");
+		}
+		if (stepInNanos <= 0) {
+			throw new IllegalArgumentException("stepInNanos must be positive: " + stepInNanos);
+		}
 		this.startParkTimeInNanos = startParkTimeInNanos;
 		this.maxParkTimeInNanos = maxParkTimeInNanos;
 		this.stepInNanos = stepInNanos;

@@ -35,6 +35,18 @@ public class SleepBackOffWaitStrategy extends AbstractWaitStrategy {
 
 	public SleepBackOffWaitStrategy(long maxAwaitCycleCount, long startSleepTimeInMillis, long maxSleepTimeInMillis, int stepInMillis) {
 		super(maxAwaitCycleCount);
+		if (startSleepTimeInMillis < 0) {
+			throw new IllegalArgumentException("startSleepTimeInMillis cannot be negative: " + startSleepTimeInMillis);
+		}
+		if (maxSleepTimeInMillis < 0) {
+			throw new IllegalArgumentException("maxSleepTimeInMillis cannot be negative: " + maxSleepTimeInMillis);
+		}
+		if (startSleepTimeInMillis > maxSleepTimeInMillis) {
+			throw new IllegalArgumentException("startSleepTimeInMillis cannot exceed maxSleepTimeInMillis");
+		}
+		if (stepInMillis <= 0) {
+			throw new IllegalArgumentException("stepInMillis must be positive: " + stepInMillis);
+		}
 		this.startSleepTimeInMillis = startSleepTimeInMillis;
 		this.maxSleepTimeInMillis = maxSleepTimeInMillis;
 		this.stepInMillis = stepInMillis;

@@ -35,6 +35,18 @@ public class BusySleepBackOffWaitStrategy extends AbstractWaitStrategy {
 
 	public BusySleepBackOffWaitStrategy(long maxAwaitCycleCount, long startSleepTimeInNanos, long maxSleepTimeInNanos, int stepInNanos) {
 		super(maxAwaitCycleCount);
+		if (startSleepTimeInNanos < 0) {
+			throw new IllegalArgumentException("startSleepTimeInNanos cannot be negative: " + startSleepTimeInNanos);
+		}
+		if (maxSleepTimeInNanos < 0) {
+			throw new IllegalArgumentException("maxSleepTimeInNanos cannot be negative: " + maxSleepTimeInNanos);
+		}
+		if (startSleepTimeInNanos > maxSleepTimeInNanos) {
+			throw new IllegalArgumentException("startSleepTimeInNanos cannot exceed maxSleepTimeInNanos");
+		}
+		if (stepInNanos <= 0) {
+			throw new IllegalArgumentException("stepInNanos must be positive: " + stepInNanos);
+		}
 		this.startSleepTimeInNanos = startSleepTimeInNanos;
 		this.maxSleepTimeInNanos = maxSleepTimeInNanos;
 		this.stepInNanos = stepInNanos;

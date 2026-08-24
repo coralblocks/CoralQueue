@@ -29,6 +29,11 @@ public class CompositeWaitStrategy implements WaitStrategy {
 	private int currIndex = 0;
 	
 	public CompositeWaitStrategy(WaitStrategy ... waitStrategies) {
+		if (waitStrategies == null) throw new NullPointerException("waitStrategies");
+		if (waitStrategies.length == 0) throw new IllegalArgumentException("At least one wait strategy is required");
+		for(int i = 0; i < waitStrategies.length; i++) {
+			if (waitStrategies[i] == null) throw new NullPointerException("waitStrategies[" + i + "]");
+		}
 		this.waitStrategies = waitStrategies;
 	}
 	
