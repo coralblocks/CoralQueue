@@ -22,6 +22,9 @@ import com.coralblocks.coralqueue.util.Builder;
 /**
  * An implementation of {@link MpMcBroadcaster} that uses <i>memory barriers</i> to synchronize producer and consumer threads.
  * All consumers receive all messages.
+ * Consumer-side batch operations inspect one internal queue per producer. Therefore,
+ * <code>availableToFetch()</code> and <code>doneFetching()</code> scale linearly with the number of producers,
+ * and <code>fetch()</code> may inspect up to that many queues to find data.
  *
  * @param <E> The data transfer mutable object to be used by this mpmc broadcaster
  */
