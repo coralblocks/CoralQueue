@@ -61,7 +61,7 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	
 	@Override
 	public final void clear() {
-		broadcaster.clear();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

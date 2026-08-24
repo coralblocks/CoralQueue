@@ -26,6 +26,22 @@ import com.coralblocks.coralqueue.example.broadcaster.Basics.Producer;
 public class AtomicBroadcasterTest {
 
 	@Test
+	public void testDelegateCannotClearBroadcaster() {
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(1, Message.class, 2);
+		BroadcasterDelegateQueue<Message> delegate = new BroadcasterDelegateQueue<Message>(broadcaster, 0);
+
+		Assert.assertNotNull(broadcaster.nextToDispatch());
+		broadcaster.flush();
+		Assert.assertEquals(1, broadcaster.availableToFetch(0));
+		Assert.assertEquals(1, broadcaster.availableToFetch(1));
+
+		Assert.assertThrows(UnsupportedOperationException.class, delegate::clear);
+
+		Assert.assertEquals(1, broadcaster.availableToFetch(0));
+		Assert.assertEquals(1, broadcaster.availableToFetch(1));
+	}
+
+	@Test
 	public void testDisabledConsumerCannotFetch() {
 		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(1, Message.class, 1);
 		broadcaster.disableConsumer(0);
