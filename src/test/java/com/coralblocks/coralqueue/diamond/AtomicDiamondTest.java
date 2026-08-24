@@ -22,9 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.coralblocks.coralqueue.waitstrategy.WaitStrategy;
 
 
 public class AtomicDiamondTest {
@@ -43,6 +47,63 @@ public class AtomicDiamondTest {
             return true; // successful!
         }
     }
+
+	public static class StopTask extends Task {
+
+		private CountDownLatch executed;
+
+		@Override
+		public boolean execute() {
+			if (executed != null) executed.countDown();
+			return true;
+		}
+	}
+
+	@Test
+	public void testStopWhileWorkerWaitsForOutput() throws InterruptedException {
+
+		CountDownLatch workerDied = new CountDownLatch(1);
+		WorkerThreadListener listener = new WorkerThreadListener() {
+
+			@Override
+			public WaitStrategy onStarted(int index) {
+				return null;
+			}
+
+			@Override
+			public void onDied(int index) {
+				workerDied.countDown();
+			}
+		};
+
+		Diamond<StopTask> diamond = new AtomicDiamond<StopTask>(1, StopTask.class, 1, listener);
+		Input<StopTask> input = diamond.getInput();
+		Output<StopTask> output = diamond.getOutput();
+		CountDownLatch secondTaskExecuted = new CountDownLatch(1);
+
+		diamond.start(true);
+
+		try {
+			StopTask task;
+			while((task = input.nextToDispatch()) == null) Thread.yield();
+			input.flush();
+
+			while((task = input.nextToDispatch()) == null) Thread.yield();
+			task.executed = secondTaskExecuted;
+			input.flush();
+
+			Assert.assertTrue(secondTaskExecuted.await(1, TimeUnit.SECONDS));
+
+			diamond.stop();
+			Assert.assertTrue(workerDied.await(1, TimeUnit.SECONDS));
+		} finally {
+			diamond.stop();
+			long avail = output.availableToFetch();
+			for(long i = 0; i < avail; i++) output.fetch();
+			if (avail > 0) output.doneFetching();
+			diamond.join();
+		}
+	}
      
     @Test
     public void testTwoThreads() throws InterruptedException {

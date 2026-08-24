@@ -99,7 +99,7 @@ public class AtomicDiamond<E extends Task> implements Diamond<E> {
 
 							if (waitStrategy != null) waitStrategy.reset();
 
-							for(long x = 0; x < avail; x++) {
+							for(long x = 0; x < avail && isRunning[index].get(); x++) {
 								E inVal = demux.fetch(index); // get object from demux
 
 								inVal.exec(); // execute
@@ -107,8 +107,11 @@ public class AtomicDiamond<E extends Task> implements Diamond<E> {
 								E outVal = null; // prepare to swap with mux
 
 								while((outVal = mux.nextToDispatch(index, inVal)) == null) { // !!! note that we are swapping !!!
+									if (!isRunning[index].get()) break;
 									if (waitStrategy != null) waitStrategy.await();
 								}
+
+								if (outVal == null) break;
 
 								if (waitStrategy != null) waitStrategy.reset();
 
