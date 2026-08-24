@@ -82,7 +82,7 @@ public class AtomicMpMcBroadcaster<E> implements MpMcBroadcaster<E> {
 		this.consumers = (Consumer<E>[]) new Consumer[numberOfConsumers];
 		
 		for(int i = 0; i < numberOfProducers; i++) {
-			this.broadcasters[i] = new AtomicBroadcaster<E>(builder, numberOfConsumers);
+			this.broadcasters[i] = new AtomicBroadcaster<E>(capacity, builder, numberOfConsumers);
 			this.producers[i] = new Producer<E>(this.broadcasters[i], i);
 		}
 		

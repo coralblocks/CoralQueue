@@ -21,9 +21,19 @@ import org.junit.Test;
 import com.coralblocks.coralqueue.example.mpmcbroadcaster.Basics.Consumer;
 import com.coralblocks.coralqueue.example.mpmcbroadcaster.Basics.Message;
 import com.coralblocks.coralqueue.example.mpmcbroadcaster.Basics.Producer;
+import com.coralblocks.coralqueue.util.Builder;
 
 
 public class AtomicMpMcBroadcasterTest {
+
+	@Test
+	public void testCapacity() {
+		MpMcBroadcaster<Message> broadcaster = new AtomicMpMcBroadcaster<Message>(2, Builder.createBuilder(Message.class), 1, 1);
+
+		Assert.assertNotNull(broadcaster.nextToDispatch(0));
+		Assert.assertNotNull(broadcaster.nextToDispatch(0));
+		Assert.assertNull(broadcaster.nextToDispatch(0));
+	}
 	
 	@Test
 	public void testAll() throws InterruptedException {
