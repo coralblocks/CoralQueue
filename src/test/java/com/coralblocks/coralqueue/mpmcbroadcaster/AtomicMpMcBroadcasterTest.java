@@ -27,6 +27,19 @@ import com.coralblocks.coralqueue.util.Builder;
 public class AtomicMpMcBroadcasterTest {
 
 	@Test
+	public void testDoneFetchingAfterAvailabilityRecheck() {
+		MpMcBroadcaster<Message> broadcaster = new AtomicMpMcBroadcaster<Message>(1, Message.class, 1, 1);
+
+		Assert.assertNotNull(broadcaster.nextToDispatch(0));
+		broadcaster.flush(0);
+		Assert.assertEquals(1, broadcaster.availableToFetch(0));
+		Assert.assertNotNull(broadcaster.fetch(0));
+		Assert.assertEquals(0, broadcaster.availableToFetch(0));
+		broadcaster.doneFetching(0);
+		Assert.assertNotNull(broadcaster.nextToDispatch(0));
+	}
+
+	@Test
 	public void testCapacity() {
 		MpMcBroadcaster<Message> broadcaster = new AtomicMpMcBroadcaster<Message>(2, Builder.createBuilder(Message.class), 1, 1);
 

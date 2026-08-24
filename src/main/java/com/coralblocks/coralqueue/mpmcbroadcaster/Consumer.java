@@ -50,7 +50,6 @@ public class Consumer<E> {
 			long x = consumers[i].availableToFetch();
 			availToFetch[i] = x;
 			total += x;
-			needsDoneFetching[i] = false;
 		}
 		currConsumerIndex = 0;
 		return total;
@@ -85,7 +84,10 @@ public class Consumer<E> {
 	 */
 	public final void doneFetching(boolean lazySet) {
 		for(int i = 0; i < nConsumers; i++) {
-			if (needsDoneFetching[i]) consumers[i].doneFetching(lazySet);
+			if (needsDoneFetching[i]) {
+				consumers[i].doneFetching(lazySet);
+				needsDoneFetching[i] = false;
+			}
 		}
 	}
 	
@@ -94,7 +96,10 @@ public class Consumer<E> {
 	 */
 	public final void doneFetching() {
 		for(int i = 0; i < nConsumers; i++) {
-			if (needsDoneFetching[i]) consumers[i].doneFetching();
+			if (needsDoneFetching[i]) {
+				consumers[i].doneFetching();
+				needsDoneFetching[i] = false;
+			}
 		}
 	}
 	
