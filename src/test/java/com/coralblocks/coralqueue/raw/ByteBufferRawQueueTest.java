@@ -34,6 +34,22 @@ public class ByteBufferRawQueueTest {
 	private static final int BYTE_ORDER_TEST_VALUE = 0x01020304;
 
 	@Test
+	public void testCapacityMustBePowerOfTwo() {
+		assertInvalidCapacity(-1);
+		assertInvalidCapacity(0);
+		assertInvalidCapacity(3);
+	}
+
+	private static void assertInvalidCapacity(int capacity) {
+		try {
+			new ByteBufferRawQueue(capacity, false);
+			Assert.fail("Expected IllegalArgumentException");
+		} catch(IllegalArgumentException expected) {
+			// expected
+		}
+	}
+
+	@Test
 	public void testDefaultsToNativeByteOrder() {
 		assertByteOrder(new ByteBufferRawQueue(8, false), ByteOrder.nativeOrder());
 	}

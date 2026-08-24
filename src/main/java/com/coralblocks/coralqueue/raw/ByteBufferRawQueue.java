@@ -18,6 +18,7 @@ package com.coralblocks.coralqueue.raw;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import com.coralblocks.coralqueue.util.MathUtils;
 import com.coralblocks.coralqueue.util.PaddedAtomicLong;
 
 /**
@@ -51,11 +52,12 @@ public class ByteBufferRawQueue implements RawQueue {
 	/**
 	 * Creates a new <code>ByteBufferRawQueue</code>.
 	 * 
-	 * @param capacity the capacity of the queue (and the underlying <code>ByteBuffer</code>)
+	 * @param capacity the capacity of the queue (and the underlying <code>ByteBuffer</code>), which must be a power of two
 	 * @param isDirect is the <code>ByteBuffer</code> used by this queue direct or in the heap?
 	 * @param byteOrder the byte order used to read and write primitive values
 	 */
 	public ByteBufferRawQueue(int capacity, boolean isDirect, ByteOrder byteOrder) {
+		MathUtils.ensurePowerOfTwo(capacity);
 		this.data = (isDirect ? ByteBuffer.allocateDirect(capacity) : ByteBuffer.allocate(capacity)).order(byteOrder);
 		this.rawReader = new RawReader(data);
 		this.rawWriter = new RawWriter(data);
@@ -64,7 +66,7 @@ public class ByteBufferRawQueue implements RawQueue {
 	/**
 	 * Creates a new <code>ByteBufferRawQueue</code> using the native byte order.
 	 *
-	 * @param capacity the capacity of the queue (and the underlying <code>ByteBuffer</code>)
+	 * @param capacity the capacity of the queue (and the underlying <code>ByteBuffer</code>), which must be a power of two
 	 * @param isDirect is the <code>ByteBuffer</code> used by this queue direct or in the heap?
 	 */
 	public ByteBufferRawQueue(int capacity, boolean isDirect) {
@@ -74,7 +76,7 @@ public class ByteBufferRawQueue implements RawQueue {
 	/**
 	 * Creates a new <code>ByteBufferRawQueue</code> with the default isDirect for the <code>ByteBuffer</code>.
 	 * 
-	 * @param capacity the capacity of the queue (and the underlying <code>ByteBuffer</code>)
+	 * @param capacity the capacity of the queue (and the underlying <code>ByteBuffer</code>), which must be a power of two
 	 */
 	public ByteBufferRawQueue(int capacity) {
 		this(capacity, DEFAULT_DIRECT);

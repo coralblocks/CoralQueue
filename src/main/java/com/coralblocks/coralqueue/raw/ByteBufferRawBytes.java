@@ -20,8 +20,6 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.coralblocks.coralqueue.util.MathUtils;
-
 /**
  * A {@link RawBytes} backed by a Java <code>ByteBuffer</code>. 
  */
@@ -29,7 +27,6 @@ public abstract class ByteBufferRawBytes implements RawBytes {
 
     private final ByteBuffer viewBuffer;
     private final int capacityMinusOne;
-    private final boolean isPowerOfTwo;
     
     int position;
     int length;
@@ -38,7 +35,6 @@ public abstract class ByteBufferRawBytes implements RawBytes {
     
     ByteBufferRawBytes(ByteBuffer backingBuffer) {
         this.capacity = backingBuffer.capacity();
-        this.isPowerOfTwo = MathUtils.isPowerOfTwo(capacity);
         this.capacityMinusOne = capacity - 1;
         this.viewBuffer = backingBuffer.duplicate().order(backingBuffer.order());
         this.viewBuffer.limit(viewBuffer.capacity()).position(0); // to be safe
@@ -71,28 +67,11 @@ public abstract class ByteBufferRawBytes implements RawBytes {
     }
     
     final int calcPos(long sequence) {
-    	if (isPowerOfTwo) {
-    		return (int) ((sequence - 1) & capacityMinusOne);
-    	} else {
-    		return (int) ((sequence - 1) % capacity);
-    	}
+        return (int) ((sequence - 1) & capacityMinusOne);
     }
     
     private final int calcRealPos() {
-    	
-    	int realPos;
-    	
-    	if (isPowerOfTwo) {
-    		realPos = (position + pos) & capacityMinusOne;
-    	} else {
-    		realPos = (position + pos) % capacity;
-    	}
-    	
-    	// Integer overflow corner case
-    	// (for when position is too large and modulus return a negative number)
-    	if (realPos < 0) realPos += capacity;
-    	
-    	return realPos;
+        return (position + pos) & capacityMinusOne;
     }
     
     @Override

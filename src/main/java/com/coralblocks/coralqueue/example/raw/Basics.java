@@ -128,7 +128,10 @@ public class Basics {
 		final int messagesToSend = args.length > 0 ? Integer.parseInt(args[0]) : 10000;
 		final int batchSizeToSend = args.length > 1 ? Integer.parseInt(args[1]) : 100;
 		
-		RawQueue queue = new ByteBufferRawQueue(Math.max(batchSizeToSend * MSG_SIZE * 2, 1024));
+		int queueCapacity = ByteBufferRawQueue.DEFAULT_CAPACITY;
+		// Round up until the queue can hold two batches while keeping its capacity a power of two.
+		while(queueCapacity < batchSizeToSend * MSG_SIZE * 2) queueCapacity <<= 1;
+		RawQueue queue = new ByteBufferRawQueue(queueCapacity);
 		
 		Producer producer = new Producer(queue, messagesToSend, batchSizeToSend);
 		Consumer consumer = new Consumer(queue);
