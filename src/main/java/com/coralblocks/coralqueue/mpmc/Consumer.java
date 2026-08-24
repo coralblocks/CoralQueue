@@ -65,13 +65,12 @@ public class Consumer<E> {
 		while(true) {
 			if (availToFetch[currConsumerIndex] > 0) {
 				E e = consumers[currConsumerIndex].fetch();
-				needsDoneFetching[currConsumerIndex] = true;
 				if (e == null) {
-					if (++currConsumerIndex == nConsumers) return null;
-				} else {
-					availToFetch[currConsumerIndex]--;
-					return e;
+					throw new IllegalStateException("Internal queue returned null despite reported availability");
 				}
+				needsDoneFetching[currConsumerIndex] = true;
+				availToFetch[currConsumerIndex]--;
+				return e;
 			} else {
 				if (++currConsumerIndex == nConsumers) return null;
 			}

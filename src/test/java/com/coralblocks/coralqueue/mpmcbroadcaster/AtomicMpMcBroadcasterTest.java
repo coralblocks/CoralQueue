@@ -27,6 +27,18 @@ import com.coralblocks.coralqueue.util.Builder;
 public class AtomicMpMcBroadcasterTest {
 
 	@Test
+	public void testNullSlotFailsLoudly() {
+		MpMcBroadcaster<Message> broadcaster = new AtomicMpMcBroadcaster<Message>(1, () -> null, 1, 1);
+
+		Assert.assertNull(broadcaster.nextToDispatch(0));
+		broadcaster.flush(0);
+		Assert.assertEquals(1, broadcaster.availableToFetch(0));
+
+		IllegalStateException e = Assert.assertThrows(IllegalStateException.class, () -> broadcaster.fetch(0));
+		Assert.assertEquals("Internal queue returned null despite reported availability", e.getMessage());
+	}
+
+	@Test
 	public void testFetchAfterExhaustionReturnsNull() {
 		MpMcBroadcaster<Message> broadcaster = new AtomicMpMcBroadcaster<Message>(1, Message.class, 1, 1);
 
