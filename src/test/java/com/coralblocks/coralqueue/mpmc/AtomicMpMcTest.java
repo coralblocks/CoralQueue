@@ -29,6 +29,19 @@ import com.coralblocks.coralqueue.util.Builder;
 public class AtomicMpMcTest {
 
 	@Test
+	public void testFetchAfterExhaustionReturnsNull() {
+		MpMc<Message> mpmc = new AtomicMpMc<Message>(1, Message.class, 1, 1);
+
+		Assert.assertNotNull(mpmc.nextToDispatch(0));
+		mpmc.flush(0);
+		Assert.assertEquals(1, mpmc.availableToFetch(0));
+		Assert.assertNotNull(mpmc.fetch(0));
+		Assert.assertNull(mpmc.fetch(0));
+		Assert.assertNull(mpmc.fetch(0));
+		mpmc.doneFetching(0);
+	}
+
+	@Test
 	public void testDoneFetchingAfterAvailabilityRecheck() {
 		MpMc<Message> mpmc = new AtomicMpMc<Message>(1, Message.class, 1, 1);
 

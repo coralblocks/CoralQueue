@@ -61,6 +61,7 @@ public class Consumer<E> {
 	 * @return a data transfer mutable object from the queue
 	 */
 	public final E fetch() {
+		if (currConsumerIndex == nConsumers) return null;
 		while(true) {
 			if (availToFetch[currConsumerIndex] > 0) {
 				E e = consumers[currConsumerIndex].fetch();
