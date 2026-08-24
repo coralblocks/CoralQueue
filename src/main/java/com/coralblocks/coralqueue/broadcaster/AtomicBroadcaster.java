@@ -126,7 +126,7 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	
 	@Override
 	public final void disableConsumer(int index) {
-		cursors[index].setFetchSequenceToMax();
+		cursors[index].disable();
 	}
 	
 	private final long calcMaxSeqBeforeWrapping() {
@@ -167,17 +167,20 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 
 	@Override
 	public final long availableToFetch(int consumer) {
-		return offerSequence.get() - cursors[consumer].getLastFetchedSeq();
+		Cursor cursor = cursors[consumer];
+		if (cursor.isDisabled()) return 0;
+		return offerSequence.get() - cursor.getLastFetchedSeq();
 	}
 
 	@Override
 	public final E fetch(int consumer, boolean remove) {
+		Cursor cursor = cursors[consumer];
+		cursor.ensureEnabled();
 		if (remove) {
-			Cursor cursor = cursors[consumer];
 			cursor.incrementFetchCount();
 			return data[calcIndex(cursor.incrementLastFetchedSeq())];
 		} else {
-			return data[calcIndex(cursors[consumer].getLastFetchedSeq() + 1)];
+			return data[calcIndex(cursor.getLastFetchedSeq() + 1)];
 		}
 	}
 	
@@ -201,6 +204,7 @@ public class AtomicBroadcaster<E> implements Broadcaster<E> {
 	@Override
 	public final void rollBack(int consumer, long count) {
 		Cursor cursor = cursors[consumer];
+		cursor.ensureEnabled();
 		if (count < 0 || count > cursor.getFetchCount()) {
 			throw new RuntimeException("Invalid rollback request! fetched=" + cursor.getFetchCount() + " requested=" + count);
 		}

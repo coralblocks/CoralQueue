@@ -22,11 +22,20 @@ class Cursor {
 	private long fetchCount = 0;
 	private long lastFetchedSeq = 0;
 	private final PaddedAtomicLong fetchSequence = new PaddedAtomicLong(0);
+	private volatile boolean disabled = false;
 	
 	final void clear() {
 		fetchCount = 0;
 		lastFetchedSeq = 0;
-		fetchSequence.set(lastFetchedSeq);
+		fetchSequence.set(disabled ? Long.MAX_VALUE : lastFetchedSeq);
+	}
+
+	final boolean isDisabled() {
+		return disabled;
+	}
+
+	final void ensureEnabled() {
+		if (disabled) throw new IllegalStateException("Consumer is disabled");
 	}
 	
 	final long getLastFetchedSeq() {
@@ -58,10 +67,15 @@ class Cursor {
 	}
 	
 	final void updateFetchSequence(boolean lazySet) {
+		ensureEnabled();
 		if (lazySet) {
 			fetchSequence.lazySet(lastFetchedSeq);
 		} else {
 			fetchSequence.set(lastFetchedSeq);
+		}
+		if (disabled) {
+			fetchSequence.set(Long.MAX_VALUE);
+			throw new IllegalStateException("Consumer is disabled");
 		}
 	}
 	
@@ -69,7 +83,8 @@ class Cursor {
 		return fetchSequence.get();
 	}
 	
-	final void setFetchSequenceToMax() {
+	final void disable() {
+		disabled = true;
 		fetchSequence.set(Long.MAX_VALUE);
 	}
 }

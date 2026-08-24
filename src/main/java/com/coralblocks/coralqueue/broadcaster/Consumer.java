@@ -74,7 +74,7 @@ public class Consumer<E> {
 	}
 	
 	/**
-	 * Disable this consumer by delegating to the <code>disableConsumer(int)</code> method of this broadcaster
+	 * Permanently disable this consumer by delegating to the <code>disableConsumer(int)</code> method of this broadcaster.
 	 */
 	public final void disable() {
 		broadcaster.disableConsumer(consumerIndex);

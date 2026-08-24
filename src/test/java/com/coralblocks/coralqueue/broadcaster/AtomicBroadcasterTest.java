@@ -26,6 +26,58 @@ import com.coralblocks.coralqueue.example.broadcaster.Basics.Producer;
 public class AtomicBroadcasterTest {
 
 	@Test
+	public void testDisabledConsumerCannotFetch() {
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(1, Message.class, 1);
+		broadcaster.disableConsumer(0);
+
+		Assert.assertNotNull(broadcaster.nextToDispatch());
+		broadcaster.flush();
+		Assert.assertEquals(0, broadcaster.availableToFetch(0));
+
+		try {
+			broadcaster.fetch(0);
+			Assert.fail("Expected IllegalStateException");
+		} catch(IllegalStateException expected) {
+			// expected
+		}
+	}
+
+	@Test
+	public void testDoneFetchingCannotReenableDisabledConsumer() {
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(1, Message.class, 1);
+
+		Assert.assertNotNull(broadcaster.nextToDispatch());
+		broadcaster.flush();
+		Assert.assertEquals(1, broadcaster.availableToFetch(0));
+		Assert.assertNotNull(broadcaster.fetch(0));
+		broadcaster.disableConsumer(0);
+
+		try {
+			broadcaster.doneFetching(0);
+			Assert.fail("Expected IllegalStateException");
+		} catch(IllegalStateException expected) {
+			// expected
+		}
+
+		Assert.assertNotNull(broadcaster.nextToDispatch());
+		Assert.assertNotNull(broadcaster.nextToDispatch());
+	}
+
+	@Test
+	public void testDisableIsPermanentAcrossClear() {
+		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(1, Message.class, 1);
+		broadcaster.disableConsumer(0);
+		broadcaster.clear();
+
+		try {
+			broadcaster.fetch(0);
+			Assert.fail("Expected IllegalStateException");
+		} catch(IllegalStateException expected) {
+			// expected
+		}
+	}
+
+	@Test
 	public void testDisablingAllConsumersDoesNotBlockProducer() {
 		Broadcaster<Message> broadcaster = new AtomicBroadcaster<Message>(2, Message.class, 2);
 		broadcaster.disableConsumer(0);
