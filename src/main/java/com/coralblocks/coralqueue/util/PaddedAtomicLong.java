@@ -15,46 +15,88 @@
  */
 package com.coralblocks.coralqueue.util;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+
+abstract class PaddedAtomicLongLhsPadding {
+	// 56 bytes before the hot value
+	// 7 longs (56 bytes) are enough (instead of 8 longs / 64 bytes) because, 
+	// on HotSpot with 64-byte cache lines, an aligned long cannot occupy two cache lines
+	long p01, p02, p03, p04, p05, p06, p07;
+}
+
+abstract class PaddedAtomicLongValue extends PaddedAtomicLongLhsPadding {
+	// On HotSpot with 64-byte cache lines, this aligned long cannot be split across two cache lines
+	volatile long value;
+}
+
+abstract class PaddedAtomicLongRhsPadding extends PaddedAtomicLongValue {
+	// 56 bytes after the hot value
+	// 7 longs (56 bytes) are enough (instead of 8 longs / 64 bytes) because, 
+	// on HotSpot with 64-byte cache lines, an aligned long cannot occupy two cache lines
+	long p08, p09, p10, p11, p12, p13, p14;
+}
 
 /**
- * <p>A padded <code>AtomicLong</code> that occupies a whole CPU cache line (64Kb) so that
- * two different sequences (from producer and from consumer) do not mess with each other inside the CPU cache.</p>
- * 
- * <p>NOTE: The <code>AtomicLong</code> class stores its long value internally as a <i>volatile</i> variable.</p>
+ * <p>Each CPU core has a small, fast L1 cache. It stores memory in blocks called cache lines,
+ * commonly 64 bytes. Writing anything in a line invalidates other cores' copies of the whole line.
+ * Therefore the goal is to prevent writes to unrelated values from invalidating the cache line containing
+ * our hot sequence.</p>
+ *
+ * <p>Basically padding on both sides keeps unrelated values out of its cache line, so their writes cannot invalidate it.
+ * Padding is needed on both sides because our cached long sequence may be near either end of the line.</p>
+ *
+ * <p>HotSpot aligns an 8-byte long, so it cannot cross a 64-byte line. In other words, our cached hot long sequence
+ * can never be split across two cache lines. At most 56 bytes remain on either side; therefore seven padding longs are enough.
+ * In order to keep the sequence value between the two padding blocks, we use separate superclasses to enforce the order:
+ * left padding, hot value, right padding.</p>
  */
-public class PaddedAtomicLong extends AtomicLong {
-	
-	private static final long VALUE_LONG = 19760120L;
-	
-	public volatile long value1 = VALUE_LONG + 0;
-	public volatile long value2 = VALUE_LONG + 1;
-	public volatile long value3 = VALUE_LONG + 2;
-	public volatile long value4 = VALUE_LONG + 3;
-	public volatile long value5 = VALUE_LONG + 4;
-	public volatile long value6 = VALUE_LONG + 5;
-	
-	/*
-	 * Why do we only need 6 longs and not 7 ???
-	 * 
-	 * That's because each object has at least a header with 8 bytes.
-	 * 
-	 * So to complete a 64bytes cache line, we have:
-	 * 
-	 *  - the header (8 bytes)
-	 *  - our sequence (8 bytes)
-	 *  - 6 longs (6 x 8 = 48 bytes)
-	 *  
-	 *  TOTAL: 64 bytes
-	 */
+public class PaddedAtomicLong extends PaddedAtomicLongRhsPadding {
+
+	private static final VarHandle VALUE;
+
+	static {
+		try {
+			VALUE = MethodHandles.lookup().findVarHandle(PaddedAtomicLongValue.class, "value", long.class);
+		} catch (ReflectiveOperationException e) {
+			throw new ExceptionInInitializerError(e);
+		}
+	}
 	
 	/**
-	 * Creates a new <code>PaddedAtomicLong</code> by calling <code>super(value)</code>.
+	 * Creates a new <code>PaddedAtomicLong</code> with the given value.
 	 * 
-	 * @param value the value of the <code>AtomicLong</code> superclass.
+	 * @param value the initial value
 	 */
 	public PaddedAtomicLong(final long value) {
-		super(value);
+		this.value = value;
+	}
+
+	/**
+	 * Returns the current value with volatile read semantics.
+	 *
+	 * @return the current value
+	 */
+	public final long get() {
+		return value;
+	}
+
+	/**
+	 * Sets the value with volatile write semantics.
+	 *
+	 * @param value the new value
+	 */
+	public final void set(long value) {
+		this.value = value;
+	}
+
+	/**
+	 * Sets the value with release semantics.
+	 *
+	 * @param value the new value
+	 */
+	public final void lazySet(long value) {
+		VALUE.setRelease(this, value);
 	}
 
 	/**
@@ -64,6 +106,7 @@ public class PaddedAtomicLong extends AtomicLong {
 	 */
 	public long getTotal() {
 		// Prevent HotSpot optimization and code removal
-		return value1 + value2 - value3 + value4 - value5 + value6 - this.get();
+		return p01 + p02 + p03 + p04 + p05 + p06 + p07
+				+ p08 + p09 + p10 + p11 + p12 + p13 + p14 - get();
 	}
 }
