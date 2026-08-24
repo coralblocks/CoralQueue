@@ -16,11 +16,14 @@
 package com.coralblocks.coralqueue.raw;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import com.coralblocks.coralqueue.util.PaddedAtomicLong;
 
 /**
- * An implementation of {@link RawQueue} that uses a {@link ByteBufferRawBytes}. 
+ * An implementation of {@link RawQueue} that uses a {@link ByteBufferRawBytes}.
+ * Primitive values use the native byte order by default. Use
+ * {@link #ByteBufferRawQueue(int, boolean, ByteOrder)} to select a specific byte order.
  */
 public class ByteBufferRawQueue implements RawQueue {
 	
@@ -34,6 +37,11 @@ public class ByteBufferRawQueue implements RawQueue {
 	 */
 	public static final boolean DEFAULT_DIRECT = true;
 
+	/**
+	 * The default byte order for the ByteBuffer
+	 */
+	public static final ByteOrder DEFAULT_BYTE_ORDER = ByteOrder.nativeOrder();
+
 	private final ByteBuffer data;
 	private final PaddedAtomicLong nextSequenceToWrite = new PaddedAtomicLong(1);
 	private final PaddedAtomicLong nextSequenceToRead = new PaddedAtomicLong(1);
@@ -45,11 +53,22 @@ public class ByteBufferRawQueue implements RawQueue {
 	 * 
 	 * @param capacity the capacity of the queue (and the underlying <code>ByteBuffer</code>)
 	 * @param isDirect is the <code>ByteBuffer</code> used by this queue direct or in the heap?
+	 * @param byteOrder the byte order used to read and write primitive values
 	 */
-	public ByteBufferRawQueue(int capacity, boolean isDirect) {
-		this.data = isDirect ? ByteBuffer.allocateDirect(capacity) : ByteBuffer.allocate(capacity);
+	public ByteBufferRawQueue(int capacity, boolean isDirect, ByteOrder byteOrder) {
+		this.data = (isDirect ? ByteBuffer.allocateDirect(capacity) : ByteBuffer.allocate(capacity)).order(byteOrder);
 		this.rawReader = new RawReader(data);
 		this.rawWriter = new RawWriter(data);
+	}
+
+	/**
+	 * Creates a new <code>ByteBufferRawQueue</code> using the native byte order.
+	 *
+	 * @param capacity the capacity of the queue (and the underlying <code>ByteBuffer</code>)
+	 * @param isDirect is the <code>ByteBuffer</code> used by this queue direct or in the heap?
+	 */
+	public ByteBufferRawQueue(int capacity, boolean isDirect) {
+		this(capacity, isDirect, DEFAULT_BYTE_ORDER);
 	}
 	
 	/**

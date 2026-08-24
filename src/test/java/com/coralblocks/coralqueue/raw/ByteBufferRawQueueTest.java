@@ -17,6 +17,8 @@ package com.coralblocks.coralqueue.raw;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +30,36 @@ import com.coralblocks.coralqueue.example.raw.Basics.Consumer;
 import com.coralblocks.coralqueue.example.raw.Basics.Producer;
 
 public class ByteBufferRawQueueTest {
+
+	private static final int BYTE_ORDER_TEST_VALUE = 0x01020304;
+
+	@Test
+	public void testDefaultsToNativeByteOrder() {
+		assertByteOrder(new ByteBufferRawQueue(8, false), ByteOrder.nativeOrder());
+	}
+
+	@Test
+	public void testByteOrderCanBeConfigured() {
+		assertByteOrder(new ByteBufferRawQueue(8, false, ByteOrder.BIG_ENDIAN), ByteOrder.BIG_ENDIAN);
+		assertByteOrder(new ByteBufferRawQueue(8, false, ByteOrder.LITTLE_ENDIAN), ByteOrder.LITTLE_ENDIAN);
+	}
+
+	private static void assertByteOrder(RawQueue queue, ByteOrder byteOrder) {
+		byte[] expected = ByteBuffer.allocate(Integer.BYTES).order(byteOrder)
+				.putInt(BYTE_ORDER_TEST_VALUE).array();
+
+		queue.getProducer().putInt(BYTE_ORDER_TEST_VALUE);
+		queue.flush();
+
+		byte[] actual = new byte[Integer.BYTES];
+		queue.getConsumer().getByteArray(actual, 0, actual.length);
+		Assert.assertArrayEquals(expected, actual);
+
+		queue.clear();
+		queue.getProducer().putByteArray(expected, 0, expected.length);
+		queue.flush();
+		Assert.assertEquals(BYTE_ORDER_TEST_VALUE, queue.getConsumer().getInt());
+	}
 
 	@Test
 	public void testGetProducerRefreshesWritableLength() {
