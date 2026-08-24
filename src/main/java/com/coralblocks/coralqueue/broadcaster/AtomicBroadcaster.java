@@ -145,7 +145,7 @@ public class AtomicBroadcaster<E> extends AtomicBroadcasterProducerRhsPadding im
 		maxSeqBeforeWrapping = calcMaxSeqBeforeWrapping();
 	}
 	
-	private final long minCursosFetchSeq() {
+	private final long minCursorFetchSeq() {
 		long min = Long.MAX_VALUE;
 		for(int i = 0; i < cursors.length; i++) {
 			min = Math.min(cursors[i].getFetchSequence(), min);
@@ -159,7 +159,7 @@ public class AtomicBroadcaster<E> extends AtomicBroadcasterProducerRhsPadding im
 	}
 	
 	private final long calcMaxSeqBeforeWrapping() {
-		long minFetchSeq = minCursosFetchSeq();
+		long minFetchSeq = minCursorFetchSeq();
 		return minFetchSeq == Long.MAX_VALUE ? Long.MAX_VALUE : minFetchSeq + capacity;
 	}
 	

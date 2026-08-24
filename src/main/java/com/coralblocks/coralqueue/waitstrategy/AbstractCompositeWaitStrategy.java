@@ -16,7 +16,7 @@
 package com.coralblocks.coralqueue.waitstrategy;
 
 /**
- * <p>An abstract implementation of the {@link WaitStrategy} interface that you can as the base class for
+ * <p>An abstract implementation of the {@link WaitStrategy} interface that you can use as the base class for
  * your <i>composite</i> wait strategy implementations. It takes care of most of the boilerplate code like registering and
  * unregistering listeners, calling the listeners, returning false from <code>await()</code>, etc.</p>
  * 

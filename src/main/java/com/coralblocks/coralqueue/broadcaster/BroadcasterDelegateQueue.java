@@ -51,7 +51,7 @@ public class BroadcasterDelegateQueue<E> implements Queue<E> {
 	}
 	
 	/**
-	 * Return the broadcaster used as the deledage
+	 * Return the broadcaster used as the delegate
 	 * 
 	 * @return the broadcaster used as the delegate
 	 */

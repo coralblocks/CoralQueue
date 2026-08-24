@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>An abstract implementation of the {@link WaitStrategy} interface that you can as the base class for
+ * <p>An abstract implementation of the {@link WaitStrategy} interface that you can use as the base class for
  * your wait strategy implementations. It takes care of most of the boilerplate code like registering and
  * unregistering listeners, calling the listeners, counting the number of wait cycles, returning false from
  * <code>await()</code>, etc.</p>

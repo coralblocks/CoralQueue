@@ -45,7 +45,7 @@ public class MathUtils {
 	}
 	
 	/**
-	 * Ensure the given number (integer) is a power of two of throw an IllegalArgumentException.
+	 * Ensure the given number (integer) is a power of two or throw an IllegalArgumentException.
 	 *  
 	 * @param number the number to check
 	 */
@@ -54,7 +54,7 @@ public class MathUtils {
 	}
 	
 	/**
-	 * Ensure the given number (long) is a power of two of throw an IllegalArgumentException.
+	 * Ensure the given number (long) is a power of two or throw an IllegalArgumentException.
 	 *  
 	 * @param number the number to check
 	 */
