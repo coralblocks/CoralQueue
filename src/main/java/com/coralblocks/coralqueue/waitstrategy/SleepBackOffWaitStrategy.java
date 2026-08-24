@@ -54,13 +54,9 @@ public class SleepBackOffWaitStrategy extends AbstractWaitStrategy {
 	}
 	
 	@Override
-	protected final void awaitOperation() {
-		
-		try {
-			Thread.sleep(currSleepTimeInMillis);
-		} catch(InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+	protected final void awaitOperation() throws InterruptedException {
+
+		Thread.sleep(currSleepTimeInMillis);
 		
 		if (currSleepTimeInMillis == 1) {
 			currSleepTimeInMillis = currSleepTimeInMillis + stepInMillis - 1;

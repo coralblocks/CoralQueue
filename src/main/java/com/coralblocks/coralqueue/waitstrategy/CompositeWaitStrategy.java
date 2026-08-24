@@ -47,7 +47,7 @@ public class CompositeWaitStrategy implements WaitStrategy {
 	}
 
 	@Override
-	public boolean await() {
+	public boolean await() throws InterruptedException {
 		WaitStrategy waitStrategy = waitStrategies[currIndex];
 		boolean done = waitStrategy.await();
 		if (!done) return false; // still going...

@@ -55,12 +55,22 @@ public class Basics {
 		
 		@Override
 		public final void run() {
+			try {
+				runInterruptibly();
+			} catch(InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+
+		private void runInterruptibly() throws InterruptedException {
 			int remaining = messagesToSend;
 			while(remaining > 0) {
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				for(int i = 0; i < batchToSend; i++) {
+					if (Thread.currentThread().isInterrupted()) return;
 					Message m;
 					while((m = queue.nextToDispatch()) == null) { // <=========
+						if (Thread.currentThread().isInterrupted()) return;
 						// busy spin while waiting (default and fastest wait strategy)
 						busySpinCount++;
 						producerWaitStrategy.await();
@@ -103,8 +113,16 @@ public class Basics {
 		
 		@Override
 		public final void run() {
+			try {
+				runInterruptibly();
+			} catch(InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+
+		private void runInterruptibly() throws InterruptedException {
 			boolean isRunning = true;
-			while(isRunning) {
+			while(isRunning && !Thread.currentThread().isInterrupted()) {
 				long avail = queue.availableToFetch(); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {

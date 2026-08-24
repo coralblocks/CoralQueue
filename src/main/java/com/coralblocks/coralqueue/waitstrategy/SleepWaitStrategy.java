@@ -38,11 +38,7 @@ public class SleepWaitStrategy extends AbstractWaitStrategy {
 	}
 
 	@Override
-	protected final void awaitOperation() {
-		try {
-			Thread.sleep(sleepTimeInMillis);
-		} catch(InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+	protected final void awaitOperation() throws InterruptedException {
+		Thread.sleep(sleepTimeInMillis);
 	}
 }

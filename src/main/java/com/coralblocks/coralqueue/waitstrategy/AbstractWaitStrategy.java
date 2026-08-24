@@ -82,7 +82,7 @@ public abstract class AbstractWaitStrategy implements WaitStrategy {
 	}
 
 	@Override
-	public final boolean await() {
+	public final boolean await() throws InterruptedException {
 		// Only increment awaitCycleCount if you really have to
 		boolean done = false;
 		if (maxAwaitCycleCount < 0) done = false; // we will be never done
@@ -113,8 +113,10 @@ public abstract class AbstractWaitStrategy implements WaitStrategy {
 	/**
 	 * Implement this abstract method to perform the actually operation that will cause the waiting.
 	 * For example, one such operation can be <code>Thread.sleep(long)</code>.
+	 *
+	 * @throws InterruptedException if the thread is interrupted while waiting
 	 */
-	protected abstract void awaitOperation();
+	protected abstract void awaitOperation() throws InterruptedException;
 	
 	/**
 	 * Implement this method to reset any state of the wait strategy after waiting for one or more invocations of the <code>await()</code> method.

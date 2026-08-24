@@ -43,7 +43,7 @@ public abstract class AbstractCompositeWaitStrategy implements WaitStrategy {
 	}
 	
 	@Override
-	public final boolean await() {
+	public final boolean await() throws InterruptedException {
 		return getCompositeWaitStrategy().await();
 	}
 

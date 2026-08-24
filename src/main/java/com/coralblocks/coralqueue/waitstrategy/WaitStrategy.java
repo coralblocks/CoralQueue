@@ -33,8 +33,9 @@ public interface WaitStrategy {
 	 * <p>This method can be called multiple times before {@link #reset()} is finally called.</p>
 	 * 
 	 * @return true if this wait strategy has finished
+	 * @throws InterruptedException if the thread is interrupted while waiting
 	 */
-	public boolean await();
+	public boolean await() throws InterruptedException;
 	
 	/**
 	 * <p>This method is used to indicate that after waiting for one or several cycles, we finally were able to accomplish what we were waiting for

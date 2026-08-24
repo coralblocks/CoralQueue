@@ -87,37 +87,39 @@ public class AtomicDiamond<E extends Task> implements Diamond<E> {
 					
 					WaitStrategy waitStrategy = null;
 					if (listener != null) waitStrategy = listener.onStarted(index);
-					
-					while(isRunning[index].get()) {
-					
-						long avail = demux.availableToFetch(index);
-						
-						if (avail == 0) {
-							if (waitStrategy != null) waitStrategy.await();
-							continue;
-						}
-						
-						if (waitStrategy != null) waitStrategy.reset();
-						
-						for(long x = 0; x < avail; x++) {
-						
-							E inVal = demux.fetch(index); // get object from demux
-							
-							inVal.exec(); // execute
-							
-							E outVal = null; // prepare to swap with mux
-							
-							while((outVal = mux.nextToDispatch(index, inVal)) == null) { // !!! note that we are swapping !!!
-								if (waitStrategy != null) waitStrategy.await();
-							}
-							
-							if (waitStrategy != null) waitStrategy.reset();
-							
-							demux.replace(index, outVal); // move from mux to demux
-						}
 
-						mux.flush(index);
-						demux.doneFetching(index);
+					try {
+						while(isRunning[index].get()) {
+							long avail = demux.availableToFetch(index);
+
+							if (avail == 0) {
+								if (waitStrategy != null) waitStrategy.await();
+								continue;
+							}
+
+							if (waitStrategy != null) waitStrategy.reset();
+
+							for(long x = 0; x < avail; x++) {
+								E inVal = demux.fetch(index); // get object from demux
+
+								inVal.exec(); // execute
+
+								E outVal = null; // prepare to swap with mux
+
+								while((outVal = mux.nextToDispatch(index, inVal)) == null) { // !!! note that we are swapping !!!
+									if (waitStrategy != null) waitStrategy.await();
+								}
+
+								if (waitStrategy != null) waitStrategy.reset();
+
+								demux.replace(index, outVal); // move from mux to demux
+							}
+
+							mux.flush(index);
+							demux.doneFetching(index);
+						}
+					} catch(InterruptedException e) {
+						Thread.currentThread().interrupt();
 					}
 					
 					if (listener != null) listener.onDied(index);
