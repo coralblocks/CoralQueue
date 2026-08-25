@@ -46,17 +46,26 @@ public class Minimal {
 
 						MutableLong ml; // our data transfer mutable object
 
-						while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null); // busy spin
+						while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null) { // busy spin
+							if (Thread.currentThread().isInterrupted()) return;
+							Thread.onSpinWait();
+						}
 						ml.set(i);
 
-						while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null); // busy spin
+						while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null) { // busy spin
+							if (Thread.currentThread().isInterrupted()) return;
+							Thread.onSpinWait();
+						}
 						ml.set(i + 1);
 
 						mpmcBroadcaster.flush(producerIndex); // don't forget to notify consumer
 					}
 
 					MutableLong ml;
-					while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null); // busy spin
+					while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null) { // busy spin
+						if (Thread.currentThread().isInterrupted()) return;
+						Thread.onSpinWait();
+					}
 					ml.set(-1); // -1 to signal to the consumers to finish
 
 					mpmcBroadcaster.flush(producerIndex);

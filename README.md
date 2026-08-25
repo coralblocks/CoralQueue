@@ -64,7 +64,10 @@ final Queue<StringBuilder> queue = new AtomicQueue<StringBuilder>(512, builder);
 To send a message to the queue, you grab a data transfer mutable object from the queue, fill it with your data and call <code>flush()</code> as the code below illustrates:
 ```Java
 StringBuilder sb;
-while((sb = queue.nextToDispatch()) == null); // busy spin...
+while((sb = queue.nextToDispatch()) == null) { // busy spin...
+    if (Thread.currentThread().isInterrupted()) return;
+    Thread.onSpinWait();
+}
 sb.setLength(0);
 sb.append("Hello there!");
 queue.flush();
@@ -76,11 +79,17 @@ You can (and should) send messages in batches:
 ```Java
 StringBuilder sb;
  
-while((sb = queue.nextToDispatch()) == null); // busy spin...
+while((sb = queue.nextToDispatch()) == null) { // busy spin...
+    if (Thread.currentThread().isInterrupted()) return;
+    Thread.onSpinWait();
+}
 sb.setLength(0);
 sb.append("Hello there!");
  
-while((sb = queue.nextToDispatch()) == null); // busy spin...
+while((sb = queue.nextToDispatch()) == null) { // busy spin...
+    if (Thread.currentThread().isInterrupted()) return;
+    Thread.onSpinWait();
+}
 sb.setLength(0);
 sb.append("Hello again!");
  

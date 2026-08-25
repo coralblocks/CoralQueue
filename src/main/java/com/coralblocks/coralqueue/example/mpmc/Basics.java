@@ -86,6 +86,8 @@ public class Basics {
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
 					while((m = mpmc.nextToDispatch(producerIndex)) == null) { // <=========
+						if (Thread.currentThread().isInterrupted()) return;
+						Thread.onSpinWait();
 						// busy spin while waiting (default and fastest wait strategy)
 						busySpinCount++; // save the number of busy-spins, just for extra info later
 					}
@@ -101,6 +103,8 @@ public class Basics {
 			for(int i = 0; i < numberOfConsumers; i++) {
 				Message m;
 				while((m = mpmc.nextToDispatch(producerIndex, i)) == null) { // <========= directed to a specific consumer
+					if (Thread.currentThread().isInterrupted()) return;
+					Thread.onSpinWait();
 					// busy spin while waiting (default and fastest wait strategy)
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}

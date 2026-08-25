@@ -71,11 +71,16 @@ public class Basics {
 		
 		int tasksSent = tasks;
 		int tasksReceived = 0;
+
+		sendTasks:
 		while(tasksSent > 0 && !Thread.currentThread().isInterrupted()) {
 			int batchToSend = Math.min(batchSizeToSend, tasksSent);
 			for(int i = 0; i < batchToSend; i++) {
 				AddTask at;
-				while((at = input.nextToDispatch()) == null); // busy spin
+				while((at = input.nextToDispatch()) == null) { // busy spin
+					if (Thread.currentThread().isInterrupted()) break sendTasks;
+					Thread.onSpinWait();
+				}
 				at.x = rand.nextInt(1000);
 				at.y = rand.nextInt(1000);
 			}

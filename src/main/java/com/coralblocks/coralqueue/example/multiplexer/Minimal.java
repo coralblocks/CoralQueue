@@ -46,10 +46,16 @@ public class Minimal {
 
 						MutableLong ml; // our data transfer mutable object
 
-						while((ml = mux.nextToDispatch(producerIndex)) == null); // busy spin
+						while((ml = mux.nextToDispatch(producerIndex)) == null) { // busy spin
+							if (Thread.currentThread().isInterrupted()) return;
+							Thread.onSpinWait();
+						}
 						ml.set(i);
 
-						while((ml = mux.nextToDispatch(producerIndex)) == null); // busy spin
+						while((ml = mux.nextToDispatch(producerIndex)) == null) { // busy spin
+							if (Thread.currentThread().isInterrupted()) return;
+							Thread.onSpinWait();
+						}
 						ml.set(i + 1);
 
 						mux.flush(producerIndex); // don't forget to notify consumer

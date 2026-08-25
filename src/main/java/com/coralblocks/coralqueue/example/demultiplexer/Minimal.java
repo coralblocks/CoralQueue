@@ -39,10 +39,16 @@ public class Minimal {
 					
 					MutableLong ml; // our data transfer mutable object
 					
-					while((ml = demux.nextToDispatch()) == null); // busy spin
+					while((ml = demux.nextToDispatch()) == null) { // busy spin
+						if (Thread.currentThread().isInterrupted()) return;
+						Thread.onSpinWait();
+					}
 					ml.set(i);
 					
-					while((ml = demux.nextToDispatch()) == null); // busy spin
+					while((ml = demux.nextToDispatch()) == null) { // busy spin
+						if (Thread.currentThread().isInterrupted()) return;
+						Thread.onSpinWait();
+					}
 					ml.set(i + 1);
 					
 					demux.flush(); // don't forget to notify consumers
@@ -51,7 +57,10 @@ public class Minimal {
 				for(int consumerIndex = 0; consumerIndex < numberOfConsumers; consumerIndex++) { // send a final message (-1) to each consumer
 					MutableLong ml;
 					
-					while((ml = demux.nextToDispatch(consumerIndex)) == null); // busy spin (note we are sending to a specific consumer)
+					while((ml = demux.nextToDispatch(consumerIndex)) == null) { // busy spin (note we are sending to a specific consumer)
+						if (Thread.currentThread().isInterrupted()) return;
+						Thread.onSpinWait();
+					}
 					ml.set(-1); // -1 to signal to the consumer to finish
 				}
 				

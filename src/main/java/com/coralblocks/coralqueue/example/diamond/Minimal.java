@@ -66,18 +66,25 @@ public class Minimal {
 		
 		diamond.start(false); // false = non-daemon thread...
 		
+		sendTasks:
 		for(int i = 0; i < tasks; i += 2) { // note we are looping 2 by 2 (we are sending a batch of 2 messages)
 			
 			if (Thread.currentThread().isInterrupted()) break;
 			
 			AddTask at;
 			
-			while((at = input.nextToDispatch()) == null); // busy spin
+			while((at = input.nextToDispatch()) == null) { // busy spin
+				if (Thread.currentThread().isInterrupted()) break sendTasks;
+				Thread.onSpinWait();
+			}
 			at.id = ids++;
 			at.x = rand.nextInt(100);
 			at.y = rand.nextInt(100);
 			
-			while((at = input.nextToDispatch()) == null); // busy spin
+			while((at = input.nextToDispatch()) == null) { // busy spin
+				if (Thread.currentThread().isInterrupted()) break sendTasks;
+				Thread.onSpinWait();
+			}
 			at.id = ids++;
 			at.x = rand.nextInt(100);
 			at.y = rand.nextInt(100);

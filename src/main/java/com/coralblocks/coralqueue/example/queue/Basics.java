@@ -56,6 +56,8 @@ public class Basics {
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
 					while((m = queue.nextToDispatch()) == null) { // <=========
+						if (Thread.currentThread().isInterrupted()) return;
+						Thread.onSpinWait();
 						// busy spin while waiting (default and fastest wait strategy)
 						busySpinCount++;
 					}

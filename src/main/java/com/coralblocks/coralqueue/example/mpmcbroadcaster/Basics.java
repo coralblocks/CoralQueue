@@ -83,6 +83,8 @@ public class Basics {
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
 					while((m = mpmcBroadcaster.nextToDispatch(producerIndex)) == null) { // <=========
+						if (Thread.currentThread().isInterrupted()) return;
+						Thread.onSpinWait();
 						// busy spin while waiting (default and fastest wait strategy)
 						busySpinCount++; // save the number of busy-spins, just for extra info later
 					}
