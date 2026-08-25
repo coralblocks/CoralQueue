@@ -35,6 +35,8 @@ public class Minimal {
 
 				for(int i = 0; i < messagesToSend; i += 2) { // note we are looping 2 by 2 (we are sending a batch of 2 messages)
 					
+					if (Thread.currentThread().isInterrupted()) return;
+					
 					MutableLong ml; // our data transfer mutable object
 					
 					while((ml = demux.nextToDispatch()) == null); // busy spin
@@ -47,7 +49,6 @@ public class Minimal {
 				}
 				
 				for(int consumerIndex = 0; consumerIndex < numberOfConsumers; consumerIndex++) { // send a final message (-1) to each consumer
-				
 					MutableLong ml;
 					
 					while((ml = demux.nextToDispatch(consumerIndex)) == null); // busy spin (note we are sending to a specific consumer)
@@ -72,7 +73,7 @@ public class Minimal {
 	
 					boolean isRunning = true;
 					
-					while(isRunning) {
+					while(isRunning && !Thread.currentThread().isInterrupted()) {
 						
 						long avail = demux.availableToFetch(consumerIndex); // read available batches as fast as possible
 						

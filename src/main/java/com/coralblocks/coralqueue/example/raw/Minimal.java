@@ -34,6 +34,8 @@ public class Minimal {
 
 				for(int i = 0; i < messagesToSend; i += 2) { // note we are looping 2 by 2 (we are sending a batch of 2 messages)
 					
+					if (Thread.currentThread().isInterrupted()) return;
+					
 					while(queue.availableToWrite() < 16); // busy spin
 					
 					RawBytes rawBytes = queue.getProducer();
@@ -54,7 +56,7 @@ public class Minimal {
 				
 				boolean isRunning = true;
 				
-				while(isRunning) {
+				while(isRunning && !Thread.currentThread().isInterrupted()) {
 					
 					while(queue.availableToRead() < 8); // busy spin
 					

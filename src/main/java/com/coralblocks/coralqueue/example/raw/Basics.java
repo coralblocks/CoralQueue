@@ -51,7 +51,7 @@ public class Basics {
 			
 			int remaining = messagesToSend;
 			
-			while(remaining > 0) {
+			while(remaining > 0 && !Thread.currentThread().isInterrupted()) {
 				
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				
@@ -102,7 +102,7 @@ public class Basics {
 		@Override
 		public final void run() {
 			boolean isRunning = true;
-			while(isRunning) {
+			while(isRunning && !Thread.currentThread().isInterrupted()) {
 				long avail = queue.availableToRead(); // <=========
 				if (avail >= MSG_SIZE) {
 					long batchAvail = avail / MSG_SIZE;

@@ -78,7 +78,7 @@ public class Basics {
 		@Override
 		public final void run() {
 			int remaining = messagesToSend;
-			while(remaining > 0) {
+			while(remaining > 0 && !Thread.currentThread().isInterrupted()) {
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
@@ -124,7 +124,7 @@ public class Basics {
 		@Override
 		public final void run() {
 			boolean isRunning = true;
-			while(isRunning) {
+			while(isRunning && !Thread.currentThread().isInterrupted()) {
 				long avail = mux.availableToFetch(); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {

@@ -81,6 +81,7 @@ public class Basics {
 		public final void run() {
 			int remaining = messagesToSend - numberOfConsumers;
 			while(remaining > 0) {
+				if (Thread.currentThread().isInterrupted()) return;
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
@@ -141,7 +142,7 @@ public class Basics {
 		@Override
 		public final void run() {
 			boolean isRunning = true;
-			while(isRunning) {
+			while(isRunning && !Thread.currentThread().isInterrupted()) {
 				long avail = mpmc.availableToFetch(consumerIndex); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {

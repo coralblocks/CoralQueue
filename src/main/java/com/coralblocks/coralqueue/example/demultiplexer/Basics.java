@@ -53,6 +53,7 @@ public class Basics {
 			final int numberOfConsumers = demux.getNumberOfConsumers();
 			int remaining = messagesToSend - numberOfConsumers; // last message to each consumer will be sent later
 			while(remaining > 0) {
+				if (Thread.currentThread().isInterrupted()) return;
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				for(int i = 0; i < batchToSend; i++) {
 					Message m;
@@ -109,7 +110,7 @@ public class Basics {
 		@Override
 		public final void run() {
 			boolean isRunning = true;
-			while(isRunning) {
+			while(isRunning && !Thread.currentThread().isInterrupted()) {
 				long avail = demux.availableToFetch(consumerIndex); // <=========
 				if (avail > 0) {
 					for(long i = 0; i < avail; i++) {

@@ -34,6 +34,8 @@ public class Minimal {
 
 				for(int i = 0; i < messagesToSend; i += 2) { // note we are looping 2 by 2 (we are sending a batch of 2 messages)
 					
+					if (Thread.currentThread().isInterrupted()) return;
+
 					MutableLong ml; // our data transfer mutable object
 					
 					while((ml = queue.nextToDispatch()) == null); // busy spin
@@ -55,7 +57,7 @@ public class Minimal {
 				
 				boolean isRunning = true;
 				
-				while(isRunning) {
+				while(isRunning && !Thread.currentThread().isInterrupted()) {
 					
 					long avail = queue.availableToFetch(); // read available batches as fast as possible
 					

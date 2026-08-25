@@ -71,7 +71,7 @@ public class Basics {
 		
 		int tasksSent = tasks;
 		int tasksReceived = 0;
-		while(tasksSent > 0) {
+		while(tasksSent > 0 && !Thread.currentThread().isInterrupted()) {
 			int batchToSend = Math.min(batchSizeToSend, tasksSent);
 			for(int i = 0; i < batchToSend; i++) {
 				AddTask at;
@@ -86,12 +86,12 @@ public class Basics {
 		
 		System.out.println("Tasks received while sending: " + tasksReceived);
 		
-		while(tasksReceived != tasks) tasksReceived += receiveTasks(output); // finish draining (while => busy spin)
+		while(tasksReceived != tasks && !Thread.currentThread().isInterrupted()) tasksReceived += receiveTasks(output); // finish draining (while => busy spin)
 		
-		System.out.println("Finished receiving all tasks: " + tasksReceived);
+		if (tasksReceived == tasks) System.out.println("Finished receiving all tasks: " + tasksReceived);
 		
-        diamond.stop(); // stop all worker threads...
-        diamond.join();
+		diamond.stop(); // stop all worker threads...
+		diamond.join();
         
 	}
 }

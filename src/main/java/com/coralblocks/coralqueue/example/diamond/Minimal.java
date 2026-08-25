@@ -68,6 +68,8 @@ public class Minimal {
 		
 		for(int i = 0; i < tasks; i += 2) { // note we are looping 2 by 2 (we are sending a batch of 2 messages)
 			
+			if (Thread.currentThread().isInterrupted()) break;
+			
 			AddTask at;
 			
 			while((at = input.nextToDispatch()) == null); // busy spin
@@ -85,7 +87,7 @@ public class Minimal {
 		
 		long received = 0;
 		
-		while(received != tasks) {
+		while(received != tasks && !Thread.currentThread().isInterrupted()) {
 			
 			long avail = output.availableToFetch();
 			
@@ -101,8 +103,8 @@ public class Minimal {
 			received += avail;
 		}
 		
-        diamond.stop(); // stop all worker threads...
-        diamond.join();
+		diamond.stop(); // stop all worker threads...
+		diamond.join();
         
 	}
 }

@@ -39,25 +39,26 @@ public class Minimal {
 	
 				@Override
 				public void run() {
-	
+
 					for(int i = 0; i < messagesToSend; i += 2) { // note we are looping 2 by 2 (we are sending a batch of 2 messages)
 						
+						if (Thread.currentThread().isInterrupted()) return;
+
 						MutableLong ml; // our data transfer mutable object
-						
+
 						while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null); // busy spin
 						ml.set(i);
-						
+
 						while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null); // busy spin
 						ml.set(i + 1);
-						
+
 						mpmcBroadcaster.flush(producerIndex); // don't forget to notify consumer
 					}
-					
+
 					MutableLong ml;
-						
 					while((ml = mpmcBroadcaster.nextToDispatch(producerIndex)) == null); // busy spin
 					ml.set(-1); // -1 to signal to the consumers to finish
-					
+
 					mpmcBroadcaster.flush(producerIndex);
 				}
 				
@@ -79,7 +80,7 @@ public class Minimal {
 	
 					boolean isRunning = true;
 					
-					while(isRunning) {
+					while(isRunning && !Thread.currentThread().isInterrupted()) {
 						
 						long avail = mpmcBroadcaster.availableToFetch(consumerIndex); // read available batches as fast as possible
 						
