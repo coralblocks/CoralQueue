@@ -69,6 +69,7 @@ public class BusySleepBackOffWaitStrategy extends AbstractWaitStrategy {
 	protected final void awaitOperation() {
 
 		BusySleepWaitStrategy.sleepFor(currSleepTimeInNanos);
+		throwIfInterrupted();
 		
 		if (currSleepTimeInNanos == 1) {
 			currSleepTimeInNanos = currSleepTimeInNanos + stepInNanos - 1;

@@ -25,7 +25,7 @@ public class WaitStrategyValidationTest {
 	}
 
 	@Test
-	public void testAwaitCycleLimitAndReset() throws InterruptedException {
+	public void testAwaitCycleLimitAndReset() {
 		WaitStrategy waitStrategy = new BusySpinWaitStrategy(2);
 
 		Assert.assertFalse(waitStrategy.await());

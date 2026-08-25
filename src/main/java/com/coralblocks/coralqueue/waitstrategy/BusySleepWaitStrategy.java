@@ -40,6 +40,7 @@ public class BusySleepWaitStrategy extends AbstractWaitStrategy {
 	@Override
 	protected final void awaitOperation() {
 		sleepFor(sleepTimeInNanos);
+		throwIfInterrupted();
 	}
 	
 	/**

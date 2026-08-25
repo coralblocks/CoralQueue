@@ -23,6 +23,7 @@ import com.coralblocks.coralqueue.multiplexer.AtomicMultiplexer;
 import com.coralblocks.coralqueue.multiplexer.Multiplexer;
 import com.coralblocks.coralqueue.util.Builder;
 import com.coralblocks.coralqueue.waitstrategy.WaitStrategy;
+import com.coralblocks.coralqueue.waitstrategy.WaitStrategyInterruptedException;
 
 public class AtomicDiamond<E extends Task> implements Diamond<E> {
 
@@ -131,8 +132,8 @@ public class AtomicDiamond<E extends Task> implements Diamond<E> {
 							mux.flush(index);
 							demux.doneFetching(index);
 						}
-					} catch(InterruptedException e) {
-						Thread.currentThread().interrupt();
+					} catch(WaitStrategyInterruptedException e) {
+						// The wait strategy has already preserved the interrupt status.
 					}
 					
 					if (listener != null) listener.onDied(index);

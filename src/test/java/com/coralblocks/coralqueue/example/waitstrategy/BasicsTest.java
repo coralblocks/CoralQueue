@@ -15,6 +15,8 @@
  */
 package com.coralblocks.coralqueue.example.waitstrategy;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,6 +25,7 @@ import com.coralblocks.coralqueue.queue.Queue;
 import com.coralblocks.coralqueue.example.waitstrategy.Basics.Consumer;
 import com.coralblocks.coralqueue.example.waitstrategy.Basics.Message;
 import com.coralblocks.coralqueue.example.waitstrategy.Basics.Producer;
+import com.coralblocks.coralqueue.waitstrategy.WaitStrategyInterruptedException;
 
 public class BasicsTest {
 
@@ -31,6 +34,14 @@ public class BasicsTest {
 		Queue<Message> queue = new AtomicQueue<Message>(1, Message.class);
 		Producer producer = new Producer(queue, Integer.MAX_VALUE, 1);
 		Consumer consumer = new Consumer(queue);
+		AtomicReference<Throwable> unexpectedException = new AtomicReference<Throwable>();
+		Thread.UncaughtExceptionHandler exceptionHandler = (thread, exception) -> {
+			if (!(exception instanceof WaitStrategyInterruptedException)) {
+				unexpectedException.compareAndSet(null, exception);
+			}
+		};
+		producer.setUncaughtExceptionHandler(exceptionHandler);
+		consumer.setUncaughtExceptionHandler(exceptionHandler);
 		producer.setDaemon(true);
 		consumer.setDaemon(true);
 
@@ -43,5 +54,6 @@ public class BasicsTest {
 
 		Assert.assertFalse(producer.isAlive());
 		Assert.assertFalse(consumer.isAlive());
+		Assert.assertNull(unexpectedException.get());
 	}
 }

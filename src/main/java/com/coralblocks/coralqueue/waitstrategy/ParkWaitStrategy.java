@@ -42,5 +42,6 @@ public class ParkWaitStrategy extends AbstractWaitStrategy {
 	@Override
 	protected final void awaitOperation() {
 		LockSupport.parkNanos(parkTimeInNanos);
+		throwIfInterrupted();
 	}
 }

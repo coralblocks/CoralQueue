@@ -82,14 +82,19 @@ public abstract class AbstractWaitStrategy implements WaitStrategy {
 	}
 
 	@Override
-	public final boolean await() throws InterruptedException {
+	public final boolean await() {
 		// Only increment awaitCycleCount if you really have to
 		boolean done = false;
 		if (maxAwaitCycleCount < 0) done = false; // we will be never done
 		else if (awaitCycleCount == maxAwaitCycleCount) done = true; // don't increment forever
 		else if (++awaitCycleCount == maxAwaitCycleCount) done = true; // increment
 		
-		awaitOperation();
+		try {
+			awaitOperation();
+		} catch(InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new WaitStrategyInterruptedException(e);
+		}
 		
 		for(int i = listeners.size() - 1; i >= 0; i--) {
 			listeners.get(i).waited(this, done);
@@ -117,6 +122,16 @@ public abstract class AbstractWaitStrategy implements WaitStrategy {
 	 * @throws InterruptedException if the thread is interrupted while waiting
 	 */
 	protected abstract void awaitOperation() throws InterruptedException;
+
+	/**
+	 * Throw a {@link WaitStrategyInterruptedException} if the current thread is interrupted.
+	 * The thread's interrupt status remains set.
+	 *
+	 * @throws WaitStrategyInterruptedException if the current thread is interrupted
+	 */
+	protected final void throwIfInterrupted() {
+		if (Thread.currentThread().isInterrupted()) throw new WaitStrategyInterruptedException();
+	}
 	
 	/**
 	 * Implement this method to reset any state of the wait strategy after waiting for one or more invocations of the <code>await()</code> method.

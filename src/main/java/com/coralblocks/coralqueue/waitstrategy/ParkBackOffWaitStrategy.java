@@ -71,6 +71,7 @@ public class ParkBackOffWaitStrategy extends AbstractWaitStrategy {
 	protected final void awaitOperation() {
 
 		LockSupport.parkNanos(currParkTimeInNanos);
+		throwIfInterrupted();
 		
 		if (currParkTimeInNanos == 1) {
 			currParkTimeInNanos = currParkTimeInNanos + stepInNanos - 1;

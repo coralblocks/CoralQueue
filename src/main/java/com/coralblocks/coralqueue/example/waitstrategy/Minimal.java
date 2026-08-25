@@ -37,22 +37,26 @@ public class Minimal {
 			@Override
 			public void run() {
 
-				try {
-					for(int i = 0; i < messagesToSend; i += 2) { // note we are looping 2 by 2 (we are sending a batch of 2 messages)
-						MutableLong ml; // our data transfer mutable object
+				// note we are looping 2 by 2 (we are sending a batch of 2 messages)
+				for(int i = 0; i < messagesToSend && !Thread.currentThread().isInterrupted(); i += 2) {
 
-						while((ml = queue.nextToDispatch()) == null) producerWaitStrategy.await();
-						producerWaitStrategy.reset();
-						ml.set(i);
+					MutableLong ml; // our data transfer mutable object
 
-						while((ml = queue.nextToDispatch()) == null) producerWaitStrategy.await();
-						producerWaitStrategy.reset();
-						ml.set(i + 1);
-
-						queue.flush(); // don't forget to notify consumer
+					while ((ml = queue.nextToDispatch()) == null) {
+						producerWaitStrategy.await();
 					}
-				} catch(InterruptedException e) {
-					Thread.currentThread().interrupt();
+
+					producerWaitStrategy.reset();
+					ml.set(i);
+
+					while ((ml = queue.nextToDispatch()) == null) {
+						producerWaitStrategy.await();
+					}
+
+					producerWaitStrategy.reset();
+					ml.set(i + 1);
+
+					queue.flush(); // don't forget to notify consumer
 				}
 			}
 			
@@ -67,29 +71,24 @@ public class Minimal {
 				
 				boolean isRunning = true;
 
-				try {
-					while(isRunning) {
-						long avail = queue.availableToFetch(); // read available batches as fast as possible
+				while(isRunning && !Thread.currentThread().isInterrupted()) {
 
-						if (avail == 0) {
-							consumerWaitStrategy.await();
-							continue;
-						}
+					long avail = queue.availableToFetch(); // read available batches as fast as possible
 
-						for(int i = 0; i < avail; i++) {
-							MutableLong ml = queue.fetch();
-
-							System.out.print(ml.get());
-
-							if (ml.get() == messagesToSend - 1) isRunning = false; // done receiving all messages
-						}
-
-						queue.doneFetching(); // don't forget to notify producer
-
-						consumerWaitStrategy.reset();
+					if (avail == 0) {
+						consumerWaitStrategy.await();
+						continue;
 					}
-				} catch(InterruptedException e) {
-					Thread.currentThread().interrupt();
+
+					for(int i = 0; i < avail; i++) {
+						MutableLong ml = queue.fetch();
+						System.out.print(ml.get());
+						if (ml.get() == messagesToSend - 1) isRunning = false; // done receiving all messages
+					}
+
+					queue.doneFetching(); // don't forget to notify producer
+
+					consumerWaitStrategy.reset();
 				}
 			}
 			

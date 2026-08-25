@@ -31,5 +31,6 @@ public class YieldWaitStrategy extends AbstractWaitStrategy {
 	@Override
 	protected final void awaitOperation() {
 		Thread.yield();
+		throwIfInterrupted();
 	}
 }
