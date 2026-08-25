@@ -101,7 +101,9 @@ queue.flush();
 To read messages from the queue you fetch them from a consumer thread, as the code below shows:
 ```Java
 long avail;
-while((avail = queue.availableToFetch()) == 0); // busy spin
+while((avail = queue.availableToFetch()) == 0) { // busy spin
+    Thread.onSpinWait();
+}
 for(int i = 0; i < avail; i++) {
     StringBuilder sb = queue.fetch();
     // do whatever you want with the StringBuilder

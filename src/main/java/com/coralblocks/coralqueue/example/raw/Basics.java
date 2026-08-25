@@ -55,11 +55,11 @@ public class Basics {
 				
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				
-				while(queue.availableToWrite() < MSG_SIZE * batchToSend) { // <=========
+				if (queue.availableToWrite() < MSG_SIZE * batchToSend) { // <=========
 					// busy spin while waiting (default and fastest wait strategy)
-					if (Thread.currentThread().isInterrupted()) return;
 					Thread.onSpinWait();
 					busySpinCount++;
+					continue;
 				}
 				
 				RawBytes rawBytes = queue.getProducer();
@@ -119,6 +119,7 @@ public class Basics {
 					batchesReceived.add(batchAvail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin while waiting (default and fastest wait strategy)
+					Thread.onSpinWait();
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}

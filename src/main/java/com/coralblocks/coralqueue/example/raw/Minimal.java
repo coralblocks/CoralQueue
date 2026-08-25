@@ -61,7 +61,10 @@ public class Minimal {
 				
 				while(isRunning && !Thread.currentThread().isInterrupted()) {
 					
-					while(queue.availableToRead() < 8); // busy spin
+					if (queue.availableToRead() < 8) { // busy spin
+						Thread.onSpinWait();
+						continue;
+					}
 					
 					RawBytes rawBytes = queue.getConsumer();
 					

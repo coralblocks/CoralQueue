@@ -111,6 +111,7 @@ public class Basics {
 					batchesReceived.add(avail); // save the batch sizes received, just so we can double check
 				} else {
 					// busy spin while waiting (default and fastest wait strategy)
+					Thread.onSpinWait();
 					busySpinCount++; // save the number of busy-spins, just for extra info later
 				}
 			}

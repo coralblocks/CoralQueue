@@ -96,7 +96,10 @@ public class Minimal {
 						
 						long avail = mpmc.availableToFetch(consumerIndex); // read available batches as fast as possible
 						
-						if (avail == 0) continue; // busy spin
+						if (avail == 0) { // busy spin
+							Thread.onSpinWait();
+							continue;
+						}
 						
 						for(int i = 0; i < avail; i++) {
 							

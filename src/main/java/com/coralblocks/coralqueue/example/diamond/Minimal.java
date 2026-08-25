@@ -98,7 +98,10 @@ public class Minimal {
 			
 			long avail = output.availableToFetch();
 			
-			if (avail == 0) continue; // busy spin
+			if (avail == 0) { // busy spin
+				Thread.onSpinWait();
+				continue;
+			}
 			
 			for(long i = 0; i < avail; i++) {
 				AddTask at = output.fetch();

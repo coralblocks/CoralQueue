@@ -91,7 +91,14 @@ public class Basics {
 		
 		System.out.println("Tasks received while sending: " + tasksReceived);
 		
-		while(tasksReceived != tasks && !Thread.currentThread().isInterrupted()) tasksReceived += receiveTasks(output); // finish draining (while => busy spin)
+		while(tasksReceived != tasks && !Thread.currentThread().isInterrupted()) { // finish draining (while => busy spin)
+			long received = receiveTasks(output);
+			if (received == 0) {
+				Thread.onSpinWait();
+			} else {
+				tasksReceived += received;
+			}
+		}
 		
 		if (tasksReceived == tasks) System.out.println("Finished receiving all tasks: " + tasksReceived);
 		
