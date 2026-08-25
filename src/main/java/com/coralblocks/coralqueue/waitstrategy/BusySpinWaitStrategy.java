@@ -17,8 +17,6 @@ package com.coralblocks.coralqueue.waitstrategy;
 
 /**
  * A wait strategy that calls {@link Thread#onSpinWait()} while busy spinning.
- * To keep its hot path as small as possible, this strategy does not check for interruption.
- * Callers that need cancellation must check the current thread's interrupt status in their outer wait loop.
  */
 public class BusySpinWaitStrategy extends AbstractWaitStrategy {
 	
@@ -33,5 +31,6 @@ public class BusySpinWaitStrategy extends AbstractWaitStrategy {
 	@Override
 	protected final void awaitOperation() {
 		Thread.onSpinWait();
+		throwIfInterrupted();
 	}
 }

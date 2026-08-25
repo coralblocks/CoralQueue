@@ -119,7 +119,7 @@ By default, you should busy-spin when the queue is full or empty. That’s usual
 - [BusySpinParkBackOffWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/BusySpinParkBackOffWaitStrategy.java): first busy spins for 10,000,000 cycles then it starts to park (i.e. sleep) by using the ParkBackOffWaitStrategy above. This is an example of a composite wait strategy, which combines multiple wait stratgies in a single one. The number of busy-spin cycles can be configured.
 - [BusySpinYieldSleepWaitStrategy](https://github.com/coralblocks/CoralQueue/blob/main/src/main/java/com/coralblocks/coralqueue/waitstrategy/BusySpinYieldSleepWaitStrategy.java): busy spins for 10,000,000 cycles, yields for 100 cycles then starts to sleep for 1 millisecond. All previous values can be changed/configured.
 
-All built-in non-composite wait strategies except `BusySpinWaitStrategy` throw `WaitStrategyInterruptedException`, an unchecked exception, when interrupted. They preserve the thread's interrupt status. The busy-spin strategy deliberately avoids checking the interrupt flag on its hot path, so its caller must check the flag in the outer wait loop. Composite strategies follow the behavior of their current strategy.
+All built-in wait strategies throw `WaitStrategyInterruptedException`, an unchecked exception, when interrupted. They preserve the thread's interrupt status.
 
 To use a wait strategy, all you have to do is call its <code>await()</code> and <code>reset()</code> methods instead of busy spinning:
 

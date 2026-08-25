@@ -75,22 +75,16 @@ public class WaitStrategyInterruptTest {
 	}
 
 	@Test
-	public void testBusySpinWaitStrategyPreservesInterrupt() {
-		Thread.currentThread().interrupt();
-		try {
-			Assert.assertFalse(new BusySpinWaitStrategy().await());
-			Assert.assertTrue(Thread.currentThread().isInterrupted());
-		} finally {
-			Thread.interrupted();
-		}
+	public void testBusySpinWaitStrategyThrowsUncheckedInterrupt() {
+		assertUncheckedInterrupt(new BusySpinWaitStrategy());
 	}
 
 	@Test
-	public void testBusySpinCompositesThrowAfterSpinStage() {
-		assertBusySpinCompositeDefersInterrupt(new BusySpinYieldWaitStrategy(1));
-		assertBusySpinCompositeDefersInterrupt(new BusySpinYieldSleepWaitStrategy(1, 1, 0));
-		assertBusySpinCompositeDefersInterrupt(new BusySpinParkBackOffWaitStrategy(1, 0, 0, 1));
-		assertBusySpinCompositeDefersInterrupt(new BusySpinSleepBackOffWaitStrategy(1, 0, 0, 1));
+	public void testBusySpinCompositesThrowUncheckedInterrupt() {
+		assertUncheckedInterrupt(new BusySpinYieldWaitStrategy(1));
+		assertUncheckedInterrupt(new BusySpinYieldSleepWaitStrategy(1, 1, 0));
+		assertUncheckedInterrupt(new BusySpinParkBackOffWaitStrategy(1, 0, 0, 1));
+		assertUncheckedInterrupt(new BusySpinSleepBackOffWaitStrategy(1, 0, 0, 1));
 	}
 
 	private static void assertInterruptIsWrapped(WaitStrategy waitStrategy) {
@@ -114,15 +108,4 @@ public class WaitStrategyInterruptTest {
 		}
 	}
 
-	private static void assertBusySpinCompositeDefersInterrupt(WaitStrategy waitStrategy) {
-		Thread.currentThread().interrupt();
-		try {
-			Assert.assertFalse(waitStrategy.await());
-			Assert.assertTrue(Thread.currentThread().isInterrupted());
-			Assert.assertThrows(WaitStrategyInterruptedException.class, waitStrategy::await);
-			Assert.assertTrue(Thread.currentThread().isInterrupted());
-		} finally {
-			Thread.interrupted();
-		}
-	}
 }

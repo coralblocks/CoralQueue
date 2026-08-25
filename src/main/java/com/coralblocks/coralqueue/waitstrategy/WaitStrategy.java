@@ -22,10 +22,8 @@ package com.coralblocks.coralqueue.waitstrategy;
  * <p>Note that it is not mandatory to use a <code>WaitStrategy</code> as producers and consumers can simply choose to busy spin. 
  * However, as a CPU core is a scarce resource, there can be situations where you will not want to waste clock cycles by busy spinning.</p>
  *
- * <p>All provided non-composite strategies except {@link BusySpinWaitStrategy} throw
- * {@link WaitStrategyInterruptedException} when they observe an interruption. The busy-spin strategy deliberately
- * leaves interruption handling to the caller to keep its hot path minimal. A {@link CompositeWaitStrategy} follows
- * the behavior of its current strategy. The thread's interrupt status remains set when the exception is thrown.</p>
+ * <p>All provided wait strategies throw {@link WaitStrategyInterruptedException} when they observe an interruption.
+ * The thread's interrupt status remains set when the exception is thrown.</p>
  */
 public interface WaitStrategy {
 	
