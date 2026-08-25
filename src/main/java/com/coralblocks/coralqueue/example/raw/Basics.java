@@ -57,6 +57,8 @@ public class Basics {
 				
 				while(queue.availableToWrite() < MSG_SIZE * batchToSend) { // <=========
 					// busy spin while waiting (default and fastest wait strategy)
+					if (Thread.currentThread().isInterrupted()) return;
+					Thread.onSpinWait();
 					busySpinCount++;
 				}
 				

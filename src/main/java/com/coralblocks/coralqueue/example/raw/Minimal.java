@@ -36,7 +36,10 @@ public class Minimal {
 					
 					if (Thread.currentThread().isInterrupted()) return;
 					
-					while(queue.availableToWrite() < 16); // busy spin
+					while(queue.availableToWrite() < 16) { // busy spin
+						if (Thread.currentThread().isInterrupted()) return;
+						Thread.onSpinWait();
+					}
 					
 					RawBytes rawBytes = queue.getProducer();
 					
