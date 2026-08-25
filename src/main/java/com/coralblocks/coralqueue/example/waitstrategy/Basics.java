@@ -56,10 +56,9 @@ public class Basics {
 		@Override
 		public final void run() {
 			int remaining = messagesToSend;
-			while(remaining > 0) {
+			while(remaining > 0 && !Thread.currentThread().isInterrupted()) {
 				int batchToSend = Math.min(batchSizeToSend, remaining);
 				for(int i = 0; i < batchToSend; i++) {
-					if (Thread.currentThread().isInterrupted()) return;
 					Message m;
 					while((m = queue.nextToDispatch()) == null) { // <=========
 						// busy spin while waiting (default and fastest wait strategy)
