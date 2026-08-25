@@ -102,6 +102,7 @@ To read messages from the queue you fetch them from a consumer thread, as the co
 ```Java
 long avail;
 while((avail = queue.availableToFetch()) == 0) { // busy spin
+    if (Thread.currentThread().isInterrupted()) return;
     Thread.onSpinWait();
 }
 for(int i = 0; i < avail; i++) {
