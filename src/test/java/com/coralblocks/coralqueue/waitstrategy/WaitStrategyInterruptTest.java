@@ -65,6 +65,29 @@ public class WaitStrategyInterruptTest {
 	}
 
 	@Test
+	public void testBusySleepWaitStrategyThrowsUncheckedInterruptWhileWaiting() throws InterruptedException {
+		AtomicBoolean interruptionThrown = new AtomicBoolean();
+		AtomicBoolean interruptStatusAfterException = new AtomicBoolean();
+		Thread thread = new Thread(() -> {
+			try {
+				new BusySleepWaitStrategy(TimeUnit.SECONDS.toNanos(10)).await();
+			} catch(WaitStrategyInterruptedException expected) {
+				interruptionThrown.set(true);
+				interruptStatusAfterException.set(Thread.currentThread().isInterrupted());
+			}
+		});
+		thread.setDaemon(true);
+
+		thread.start();
+		thread.interrupt();
+		thread.join(1_000);
+
+		Assert.assertFalse(thread.isAlive());
+		Assert.assertTrue(interruptionThrown.get());
+		Assert.assertTrue(interruptStatusAfterException.get());
+	}
+
+	@Test
 	public void testYieldWaitStrategyThrowsUncheckedInterrupt() {
 		assertUncheckedInterrupt(new YieldWaitStrategy());
 	}

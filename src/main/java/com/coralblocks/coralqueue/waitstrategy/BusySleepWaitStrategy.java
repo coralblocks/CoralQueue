@@ -44,10 +44,11 @@ public class BusySleepWaitStrategy extends AbstractWaitStrategy {
 	}
 	
 	/**
-	 * This method uses <code>System.nanoTime()</code> to loop until the given number of nanoseconds has elapsed.
+	 * This method uses <code>System.nanoTime()</code> to loop until the given number of nanoseconds has elapsed or the current
+	 * thread is interrupted. It returns early without clearing the thread's interrupt status when an interruption is observed.
 	 * 
 	 * @param nanos the number of nanoseconds to wait for
-	 * @return the number of times it has to loop to reach the given number of nanoseconds
+	 * @return the number of completed loop iterations before the duration elapsed or an interruption was observed
 	 */
     public static final long sleepFor(long nanos) {
     	// NOTE: we are returning loops from a public method
@@ -55,6 +56,7 @@ public class BusySleepWaitStrategy extends AbstractWaitStrategy {
     	long loops = 0;
         long time = System.nanoTime();
         while((System.nanoTime() - time) < nanos) {
+			if (Thread.currentThread().isInterrupted()) break;
 			Thread.onSpinWait();
         	loops++;
         }
